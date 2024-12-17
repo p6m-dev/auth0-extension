@@ -24853,7 +24853,7 @@ var import_cookie_parser = __toESM(require_cookie_parser());
 var import_morgan = __toESM(require_morgan());
 
 // webtask.json
-var version = "0.1.1";
+var version = "0.1.2";
 
 // src/app.ts
 var app = (0, import_express.default)();
