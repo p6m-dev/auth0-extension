@@ -24896,14 +24896,17 @@ app.use((0, import_morgan.default)("dev"));
 app.use(import_express.default.json());
 app.use(import_express.default.urlencoded({ extended: false }));
 app.use((0, import_cookie_parser.default)());
-app.use("/meta", (req, res) => {
-  res.status(200).send(webtask_default);
+app.get("/", (req, res) => {
+  res.status(200).json({ healthy: true, version: webtask_default.version });
 });
-app.use("/.lifecycle", (req, res) => {
+app.get("/meta", (req, res) => {
+  res.status(200).json(webtask_default);
+});
+app.post("/.lifecycle", (req, res) => {
   res.status(204).send();
 });
-app.use("/", (req, res) => {
-  res.status(200).json({ healthy: true, version: webtask_default.version });
+app.use((req, res) => {
+  res.status(404).json({ message: "Not Found", url: req.url });
 });
 var app_default = app;
 
