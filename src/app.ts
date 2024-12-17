@@ -1,7 +1,10 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
-import webtask from '../webtask.json';
+import meta from './routes/meta';
+import lifecycle from './routes/lifecycle';
+import api from './routes/api';
+import { version } from '../webtask.json';
 
 const app = express();
 
@@ -10,16 +13,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-app.get('/meta', (req, res) => {
-  res.status(200).json(webtask);
-});
+app.use('/api', api());
+app.use('/meta', meta());
+app.use('/.lifecycle', lifecycle());
 
-app.post('/.lifecycle', (req, res) => {
-  res.status(204).send();
-});
-
-app.get('/health', (req, res) => {
-  res.status(200).json({ healthy: true, version: webtask.version });
+app.use((req, res) => {
+  res.status(404).json({ error: 'Not Found', url: req.url, version });
 });
 
 export default app;
