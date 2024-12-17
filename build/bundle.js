@@ -24848,15 +24848,19 @@ var require_morgan = __commonJS({
 });
 
 // src/app.ts
-var import_express = __toESM(require_express2());
+var import_express4 = __toESM(require_express2());
 var import_cookie_parser = __toESM(require_cookie_parser());
 var import_morgan = __toESM(require_morgan());
 
+// src/routes/meta.ts
+var import_express = __toESM(require_express2());
+
 // webtask.json
+var version = "0.1.5";
 var webtask_default = {
   title: "p6m-dev/auth0-extension",
   name: "p6m-auth0-extension",
-  version: "0.1.5",
+  version,
   preVersion: "0.1.4",
   author: "P6m",
   useHashName: false,
@@ -24890,20 +24894,46 @@ var webtask_default = {
   }
 };
 
+// src/routes/meta.ts
+var meta_default = () => {
+  const router = import_express.default.Router();
+  router.get("/", (req, res) => {
+    res.status(200).json(webtask_default);
+  });
+  return router;
+};
+
+// src/routes/lifecycle.ts
+var import_express2 = __toESM(require_express2());
+var lifecycle_default = () => {
+  const router = import_express2.default.Router();
+  router.get("/", (req, res) => {
+    res.status(204).send();
+  });
+  return router;
+};
+
+// src/routes/api.ts
+var import_express3 = __toESM(require_express2());
+var api_default = () => {
+  const router = import_express3.default.Router();
+  router.get("/", (req, res) => {
+    res.status(200).json({ version });
+  });
+  return router;
+};
+
 // src/app.ts
-var app = (0, import_express.default)();
+var app = (0, import_express4.default)();
 app.use((0, import_morgan.default)("dev"));
-app.use(import_express.default.json());
-app.use(import_express.default.urlencoded({ extended: false }));
+app.use(import_express4.default.json());
+app.use(import_express4.default.urlencoded({ extended: false }));
 app.use((0, import_cookie_parser.default)());
-app.get("/meta", (req, res) => {
-  res.status(200).json(webtask_default);
-});
-app.post("/.lifecycle", (req, res) => {
-  res.status(204).send();
-});
-app.get("/health", (req, res) => {
-  res.status(200).json({ healthy: true, version: webtask_default.version });
+app.use("/api", api_default());
+app.use("/meta", meta_default());
+app.use("/.lifecycle", lifecycle_default());
+app.use((req, res) => {
+  res.status(404).json({ error: "Not Found", url: req.url, version });
 });
 var app_default = app;
 
