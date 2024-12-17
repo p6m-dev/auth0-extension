@@ -24871,6 +24871,9 @@ app.use((0, import_cookie_parser.default)());
 app.use("/", (req, res) => {
   res.status(200).json({ healthy: true });
 });
+app.use("/.extensions/notify", (req, res) => {
+  res.status(204).send();
+});
 var src_default = app;
 
 // src/bundle.ts

@@ -5,7 +5,7 @@
   "preVersion": "0.1.0",
   "author": "P6m",
   "useHashName": false,
-  "description": "P6m Auth Extension",
+  "description": "P6m Auth0 Extension",
   "type": "application",
   "category": "end_user",
   "logoUrl": "https://cdn.auth0.com/manhattan/versions/1.5639.0/assets/badge.png",
@@ -14,7 +14,23 @@
   "keywords": ["p6m", "auth0", "extension"],
   "auth0": {
     "createClient": false,
+    "onUninstallPath": "/.extensions/notify",
+    "onInstallPath": "/.extensions/notify",
+    "onUpdatePath": "/.extensions/notify",
     "scopes": "read:clients"
   },
-  "secrets": {}
+  "secrets": {
+    "MANAGEMENT_CLIENT_ID": {
+      "description": "Client ID With Access to the Management API",
+      "required": true
+    },
+    "MANAGEMENT_CLIENT_SECRET": {
+      "description": "Client Secret With Access to the Management API",
+      "required": true
+    },
+    "MANAGEMENT_DOMAIN": {
+      "description": "Client Secret With Access to the Management API, e.g. https://p6m.us.auth0.com/api/v2/",
+      "required": true
+    }
+  }
 }
