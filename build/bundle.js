@@ -24856,12 +24856,12 @@ var import_morgan = __toESM(require_morgan());
 var import_express = __toESM(require_express2());
 
 // webtask.json
-var version = "0.1.6";
+var version = "0.1.7";
 var webtask_default = {
   title: "p6m-dev/auth0-extension",
   name: "p6m-auth0-extension",
   version,
-  preVersion: "0.1.5",
+  preVersion: "0.1.6",
   author: "P6m",
   useHashName: false,
   description: "P6m Auth0 Extension",
@@ -24897,7 +24897,7 @@ var webtask_default = {
 // src/routes/meta.ts
 var meta_default = () => {
   const router = import_express.default.Router();
-  router.get("/", (req, res) => {
+  router.all("/", (req, res) => {
     res.status(200).json(webtask_default);
   });
   return router;
@@ -24907,7 +24907,7 @@ var meta_default = () => {
 var import_express2 = __toESM(require_express2());
 var lifecycle_default = () => {
   const router = import_express2.default.Router();
-  router.get("/", (req, res) => {
+  router.all("/", (req, res) => {
     res.status(204).send();
   });
   return router;
@@ -24917,7 +24917,7 @@ var lifecycle_default = () => {
 var import_express3 = __toESM(require_express2());
 var api_default = () => {
   const router = import_express3.default.Router();
-  router.get("/", (req, res) => {
+  router.all("/", (req, res) => {
     res.status(200).json({ version });
   });
   return router;
