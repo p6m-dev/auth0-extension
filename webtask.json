@@ -16,16 +16,5 @@
     "createClient": true,
     "scopes": "read:clients"
   },
-  "secrets": {
-    "EXTENSION_CLIENT_ID": {
-      "description": "Client ID of the application you created in the Auth0 Management Dashboard",
-      "required": true
-    },
-    "AUTH0_CUSTOM_DOMAIN": {
-      "description": "Custom domain",
-      "example": "example.com",
-      "required": false,
-      "former": "AUTH0_ISSUER_DOMAIN"
-    }
-  }
+  "secrets": {}
 }
