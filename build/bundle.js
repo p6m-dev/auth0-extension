@@ -24853,7 +24853,42 @@ var import_cookie_parser = __toESM(require_cookie_parser());
 var import_morgan = __toESM(require_morgan());
 
 // webtask.json
-var version = "0.1.2";
+var webtask_default = {
+  title: "p6m-dev/auth0-extension",
+  name: "p6m-auth0-extension",
+  version: "0.1.3",
+  preVersion: "0.1.2",
+  author: "P6m",
+  useHashName: false,
+  description: "P6m Auth0 Extension",
+  type: "application",
+  category: "end_user",
+  logoUrl: "https://cdn.auth0.com/manhattan/versions/1.5639.0/assets/badge.png",
+  initialUrlPath: "/",
+  repository: "https://github.com/p6m-dev/auth0-extension",
+  keywords: ["p6m", "auth0", "extension", "webtask"],
+  auth0: {
+    createClient: false,
+    onUninstallPath: "/.lifecycyle",
+    onInstallPath: "/.lifecycle",
+    onUpdatePath: "/.lifecycle",
+    scopes: "read:clients"
+  },
+  secrets: {
+    MANAGEMENT_CLIENT_ID: {
+      description: "Client ID With Access to the Management API",
+      required: true
+    },
+    MANAGEMENT_CLIENT_SECRET: {
+      description: "Client Secret With Access to the Management API",
+      required: true
+    },
+    MANAGEMENT_AUDIENCE: {
+      description: "Audience for the the Management API, e.g. https://p6m.us.auth0.com/api/v2/",
+      required: true
+    }
+  }
+};
 
 // src/app.ts
 var app = (0, import_express.default)();
@@ -24861,11 +24896,14 @@ app.use((0, import_morgan.default)("dev"));
 app.use(import_express.default.json());
 app.use(import_express.default.urlencoded({ extended: false }));
 app.use((0, import_cookie_parser.default)());
+app.use("/meta", (req, res) => {
+  res.status(200).send(webtask_default);
+});
 app.use("/.lifecycle", (req, res) => {
   res.status(204).send();
 });
 app.use("/", (req, res) => {
-  res.status(200).json({ healthy: true, version });
+  res.status(200).json({ healthy: true, version: webtask_default.version });
 });
 var app_default = app;
 
