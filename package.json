@@ -2,12 +2,11 @@
   "name": "@p6m-dev/auth0-extension",
   "version": "0.1.0",
   "description": "P6m Auth0 Extension",
-  "main": "dist/app.js",
+  "main": "dist/bundle.js",
   "scripts": {
-    "build": "tsc",
-    "postinstall": "tsc",
-    "start": "tsx src/app.ts",
-    "start:prod": "tsc && node dist/app.js"
+    "build": "tsup src/bundle.ts --platform node --target node18",
+    "dev": "tsx src/app.ts",
+    "start": "npm run build && node dist/bundle.js"
   },
   "repository": {
     "type": "git",
@@ -27,20 +26,18 @@
     "@types/node": "^22.10.2",
     "@typescript-eslint/eslint-plugin": "^8.18.1",
     "@typescript-eslint/parser": "^8.18.1",
+    "cookie-parser": "^1.4.7",
     "eslint": "^9.17.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
+    "express": "^4.21.2",
     "globals": "^15.13.0",
+    "morgan": "^1.10.0",
     "prettier": "^3.4.2",
     "tsup": "^8.3.5",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
-    "typescript-eslint": "^8.18.1"
-  },
-  "dependencies": {
-    "cookie-parser": "^1.4.7",
-    "express": "^4.21.2",
-    "morgan": "^1.10.0",
+    "typescript-eslint": "^8.18.1",
     "webtask-tools": "^3.4.1"
   }
 }

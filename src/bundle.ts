@@ -1,19 +1,13 @@
-import express from 'express';
-import cookieParser from 'cookie-parser';
-import logger from 'morgan';
+import { Request, Response } from 'express';
+import app from './index';
+import { IncomingMessage, ServerResponse } from 'http';
 
-const app = express();
-
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-
-app.use('/', (req, res) => {
-  res.status(200).json({ healthy: true });
-});
-
-export default app;
+export default (
+  req: Request | IncomingMessage,
+  res: Response | ServerResponse,
+) => {
+  return app(req, res);
+};
 
 if (require.main === module) {
   process.on('unhandledRejection', (reason, promise) => {
@@ -26,7 +20,7 @@ if (require.main === module) {
     process.exit(-1);
   });
 
-  console.log('Starting app...');
+  console.log('Starting app...\n');
   app.listen(3000, '0.0.0.0', () => {
     console.log('Listening on http://0.0.0.0:3000');
   });
