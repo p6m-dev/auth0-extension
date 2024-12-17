@@ -1,22 +1,22 @@
 {
-  "title": "p6m-dev/auth0-webtask",
+  "title": "Auth0 Webtask",
   "name": "p6m-dev/auth0-webtask",
   "version": "0.1.1",
   "preVersion": "0.1.0",
   "author": "P6m",
   "useHashName": false,
-  "description": "P6m Auth0 Extension",
+  "description": "P6m Auth0 Webtask",
   "type": "application",
   "category": "end_user",
   "logoUrl": "https://cdn.auth0.com/manhattan/versions/1.5639.0/assets/badge.png",
   "initialUrlPath": "/",
   "repository": "https://github.com/p6m-dev/auth0-webtask",
-  "keywords": ["p6m", "auth0", "extension"],
+  "keywords": ["p6m", "auth0", "extension", "webtask"],
   "auth0": {
     "createClient": false,
-    "onUninstallPath": "/.extensions/notify",
-    "onInstallPath": "/.extensions/notify",
-    "onUpdatePath": "/.extensions/notify",
+    "onUninstallPath": "/.lifecycyle",
+    "onInstallPath": "/.lifecycle",
+    "onUpdatePath": "/.lifecycle",
     "scopes": "read:clients"
   },
   "secrets": {
@@ -28,8 +28,8 @@
       "description": "Client Secret With Access to the Management API",
       "required": true
     },
-    "MANAGEMENT_DOMAIN": {
-      "description": "Client Secret With Access to the Management API, e.g. https://p6m.us.auth0.com/api/v2/",
+    "MANAGEMENT_AUDIENCE": {
+      "description": "Audience for the the Management API, e.g. https://p6m.us.auth0.com/api/v2/",
       "required": true
     }
   }

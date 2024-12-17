@@ -1,7 +1,7 @@
 {
   "name": "@p6m-dev/auth0-webtask",
   "version": "0.1.1",
-  "description": "P6m Auth0 Extension",
+  "description": "P6m Auth0 Webtask",
   "main": "build/bundle.js",
   "scripts": {
     "build": "tsup src/bundle.ts --out-dir build --platform node --target node18",
