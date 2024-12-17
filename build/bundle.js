@@ -24856,12 +24856,12 @@ var import_morgan = __toESM(require_morgan());
 var import_express = __toESM(require_express2());
 
 // webtask.json
-var version = "0.1.5";
+var version = "0.1.6";
 var webtask_default = {
   title: "p6m-dev/auth0-extension",
   name: "p6m-auth0-extension",
   version,
-  preVersion: "0.1.4",
+  preVersion: "0.1.5",
   author: "P6m",
   useHashName: false,
   description: "P6m Auth0 Extension",
