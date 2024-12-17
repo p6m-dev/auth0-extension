@@ -24861,7 +24861,7 @@ app.use((0, import_morgan.default)("dev"));
 app.use(import_express.default.json());
 app.use(import_express.default.urlencoded({ extended: false }));
 app.use((0, import_cookie_parser.default)());
-app.use("/.extensions/notify", (req, res) => {
+app.use("/.lifecycle", (req, res) => {
   res.status(204).send();
 });
 app.use("/", (req, res) => {
