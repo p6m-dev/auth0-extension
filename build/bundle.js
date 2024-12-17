@@ -24856,12 +24856,12 @@ var import_morgan = __toESM(require_morgan());
 var import_express = __toESM(require_express2());
 
 // webtask.json
-var version = "0.1.8";
+var version = "0.1.9";
 var webtask_default = {
   title: "p6m-dev/auth0-extension",
   name: "p6m-auth0-extension",
   version,
-  preVersion: "0.1.7",
+  preVersion: "0.1.8",
   author: "P6m",
   useHashName: false,
   description: "P6m Auth0 Extension",
@@ -24925,16 +24925,14 @@ var api_default = () => {
 
 // src/app.ts
 var app = (0, import_express4.default)();
+var BASE_PATH = "/api/run/p6m/p6m-auth0-extension";
 app.use((0, import_morgan.default)("dev"));
 app.use(import_express4.default.json());
 app.use(import_express4.default.urlencoded({ extended: false }));
 app.use((0, import_cookie_parser.default)());
 app.use("/api", api_default());
-app.use("/meta", meta_default());
-app.use(
-  ["/.lifecycle", "/api/run/p6m/p6m-auth0-extension/.lifecycle"],
-  lifecycle_default()
-);
+app.use(["/meta", `${BASE_PATH}/meta`], meta_default());
+app.use(["/.lifecycle", `${BASE_PATH}/.lifecycle`], lifecycle_default());
 app.use((req, res) => {
   res.status(404).json({ error: "Not Found", url: req.url, version });
 });
