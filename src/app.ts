@@ -4,13 +4,9 @@ import logger from 'morgan';
 import meta from './routes/meta';
 import lifecycle from './routes/lifecycle';
 import api from './routes/api';
-import { version } from '../webtask.json';
+import { version, name } from '../webtask.json';
 
-const BASE_PATHS = [
-  '',
-  '/p6m-auth0-extension',
-  '/api/run/p6m/p6m-auth0-extension',
-];
+const BASE_PATHS = ['', `/${name}`, `/api/run/p6m/${name}`];
 const path = (path: string) => BASE_PATHS.map((p) => `${p}${path}`);
 
 const app = express();
