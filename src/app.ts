@@ -15,7 +15,10 @@ app.use(cookieParser());
 
 app.use('/api', api());
 app.use('/meta', meta());
-app.use('/.lifecycle', lifecycle());
+app.use(
+  ['/.lifecycle', '/api/run/p6m/p6m-auth0-extension/.lifecycle'],
+  lifecycle(),
+);
 
 app.use((req, res) => {
   res.status(404).json({ error: 'Not Found', url: req.url, version });
