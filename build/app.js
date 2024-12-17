@@ -24852,31 +24852,32 @@ var require_morgan = __commonJS({
   }
 });
 
-// src/bundle.ts
-var bundle_exports = {};
-__export(bundle_exports, {
-  default: () => bundle_default
+// src/app.ts
+var app_exports = {};
+__export(app_exports, {
+  default: () => app_default
 });
-module.exports = __toCommonJS(bundle_exports);
-
-// src/index.ts
+module.exports = __toCommonJS(app_exports);
 var import_express = __toESM(require_express2());
 var import_cookie_parser = __toESM(require_cookie_parser());
 var import_morgan = __toESM(require_morgan());
+
+// webtask.json
+var version = "0.1.0";
+
+// src/app.ts
 var app = (0, import_express.default)();
 app.use((0, import_morgan.default)("dev"));
 app.use(import_express.default.json());
 app.use(import_express.default.urlencoded({ extended: false }));
 app.use((0, import_cookie_parser.default)());
 app.use("/", (req, res) => {
-  res.status(200).json({ healthy: true });
+  res.status(200).json({ healthy: true, version });
 });
-var src_default = app;
-
-// src/bundle.ts
-var bundle_default = (req, res) => {
-  return src_default(req, res);
-};
+app.use("/.extensions/notify", (req, res) => {
+  res.status(204).send();
+});
+var app_default = app;
 if (require.main === module) {
   process.on("unhandledRejection", (reason, promise) => {
     console.warn("Unhandled Rejection at:", promise, "reason:", reason);
@@ -24887,7 +24888,7 @@ if (require.main === module) {
     process.exit(-1);
   });
   console.log("Starting app...\n");
-  src_default.listen(3e3, "0.0.0.0", () => {
+  app.listen(3e3, "0.0.0.0", () => {
     console.log("Listening on http://0.0.0.0:3000");
   });
 }

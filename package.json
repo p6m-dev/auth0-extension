@@ -2,9 +2,9 @@
   "name": "@p6m-dev/auth0-extension",
   "version": "0.1.0",
   "description": "P6m Auth0 Extension",
-  "main": "build/bundle.js",
+  "main": "build/app.js",
   "scripts": {
-    "build": "tsup src/bundle.ts --out-dir build --platform node --target node18",
+    "build": "tsup src/app.ts --out-dir build --platform node --target node18",
     "dev": "tsx src/app.ts",
     "start": "npm run build && node build/bundle.js",
     "prepare": "husky"
