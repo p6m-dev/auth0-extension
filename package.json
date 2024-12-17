@@ -2,11 +2,12 @@
   "name": "@p6m-dev/auth0-extension",
   "version": "0.1.0",
   "description": "P6m Auth0 Extension",
-  "main": "dist/bundle.js",
+  "main": "build/bundle.js",
   "scripts": {
-    "build": "tsup src/bundle.ts --platform node --target node18",
+    "build": "tsup src/bundle.ts --out-dir build --platform node --target node18",
     "dev": "tsx src/app.ts",
-    "start": "npm run build && node dist/bundle.js"
+    "start": "npm run build && node build/bundle.js",
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
@@ -32,6 +33,7 @@
     "eslint-plugin-prettier": "^5.2.1",
     "express": "^4.21.2",
     "globals": "^15.13.0",
+    "husky": "^9.1.7",
     "morgan": "^1.10.0",
     "prettier": "^3.4.2",
     "tsup": "^8.3.5",
