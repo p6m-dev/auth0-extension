@@ -1,15 +1,15 @@
 {
   "title": "p6m-dev/auth0-extension",
   "name": "p6m-auth0-extension",
-  "version": "0.1.4",
-  "preVersion": "0.1.3",
+  "version": "0.1.5",
+  "preVersion": "0.1.4",
   "author": "P6m",
   "useHashName": false,
   "description": "P6m Auth0 Extension",
   "type": "application",
   "category": "end_user",
   "logoUrl": "https://cdn.auth0.com/manhattan/versions/1.5639.0/assets/badge.png",
-  "initialUrlPath": "/",
+  "initialUrlPath": "/health",
   "repository": "https://github.com/p6m-dev/auth0-extension",
   "keywords": ["p6m", "auth0", "extension", "webtask"],
   "auth0": {
