@@ -24877,8 +24877,10 @@ app.use("/.extensions/notify", (req, res) => {
 var src_default = app;
 
 // src/bundle.ts
-var bundle_default = (req, res) => {
-  return src_default(req, res);
+var bundle_default = (context, req, res) => {
+  console.log("!!! context", context);
+  console.log("!!! req.url", req.url);
+  return () => src_default(req, res);
 };
 if (require.main === module) {
   process.on("unhandledRejection", (reason, promise) => {

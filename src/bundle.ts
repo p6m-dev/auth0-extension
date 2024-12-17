@@ -1,12 +1,14 @@
-import { Request, Response } from 'express';
 import app from './index';
 import { IncomingMessage, ServerResponse } from 'http';
 
 export default (
-  req: Request | IncomingMessage,
-  res: Response | ServerResponse,
+  context: unknown,
+  req: IncomingMessage,
+  res: ServerResponse,
 ) => {
-  return app(req, res);
+  console.log('!!! context', context);
+  console.log('!!! req.url', req.url);
+  return () => app(req, res);
 };
 
 if (require.main === module) {
