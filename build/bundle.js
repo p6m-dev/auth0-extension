@@ -24856,15 +24856,15 @@ var import_morgan = __toESM(require_morgan());
 var webtask_default = {
   title: "p6m-dev/auth0-extension",
   name: "p6m-auth0-extension",
-  version: "0.1.4",
-  preVersion: "0.1.3",
+  version: "0.1.5",
+  preVersion: "0.1.4",
   author: "P6m",
   useHashName: false,
   description: "P6m Auth0 Extension",
   type: "application",
   category: "end_user",
   logoUrl: "https://cdn.auth0.com/manhattan/versions/1.5639.0/assets/badge.png",
-  initialUrlPath: "/",
+  initialUrlPath: "/health",
   repository: "https://github.com/p6m-dev/auth0-extension",
   keywords: ["p6m", "auth0", "extension", "webtask"],
   auth0: {
@@ -24896,17 +24896,14 @@ app.use((0, import_morgan.default)("dev"));
 app.use(import_express.default.json());
 app.use(import_express.default.urlencoded({ extended: false }));
 app.use((0, import_cookie_parser.default)());
-app.get("/", (req, res) => {
-  res.status(200).json({ healthy: true, version: webtask_default.version });
-});
 app.get("/meta", (req, res) => {
   res.status(200).json(webtask_default);
 });
 app.post("/.lifecycle", (req, res) => {
   res.status(204).send();
 });
-app.use((req, res) => {
-  res.status(404).json({ message: "Not Found", url: req.url });
+app.get("/health", (req, res) => {
+  res.status(200).json({ healthy: true, version: webtask_default.version });
 });
 var app_default = app;
 
