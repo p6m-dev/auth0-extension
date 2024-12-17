@@ -24863,13 +24863,18 @@ module.exports = __toCommonJS(bundle_exports);
 var import_express = __toESM(require_express2());
 var import_cookie_parser = __toESM(require_cookie_parser());
 var import_morgan = __toESM(require_morgan());
+
+// webtask.json
+var version = "0.1.0";
+
+// src/index.ts
 var app = (0, import_express.default)();
 app.use((0, import_morgan.default)("dev"));
 app.use(import_express.default.json());
 app.use(import_express.default.urlencoded({ extended: false }));
 app.use((0, import_cookie_parser.default)());
 app.use("/", (req, res) => {
-  res.status(200).json({ healthy: true });
+  res.status(200).json({ healthy: true, version });
 });
 app.use("/.extensions/notify", (req, res) => {
   res.status(204).send();
