@@ -1,8 +1,8 @@
 {
   "title": "p6m-dev/auth0-extension",
   "name": "p6m-auth0-extension",
-  "version": "0.1.8",
-  "preVersion": "0.1.7",
+  "version": "0.1.9",
+  "preVersion": "0.1.8",
   "author": "P6m",
   "useHashName": false,
   "description": "P6m Auth0 Extension",

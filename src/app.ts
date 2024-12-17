@@ -7,6 +7,7 @@ import api from './routes/api';
 import { version } from '../webtask.json';
 
 const app = express();
+const BASE_PATH = '/api/run/p6m/p6m-auth0-extension';
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -14,11 +15,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use('/api', api());
-app.use('/meta', meta());
-app.use(
-  ['/.lifecycle', '/api/run/p6m/p6m-auth0-extension/.lifecycle'],
-  lifecycle(),
-);
+app.use(['/meta', `${BASE_PATH}/meta`], meta());
+app.use(['/.lifecycle', `${BASE_PATH}/.lifecycle`], lifecycle());
 
 app.use((req, res) => {
   res.status(404).json({ error: 'Not Found', url: req.url, version });
