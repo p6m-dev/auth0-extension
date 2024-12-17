@@ -1,7 +1,7 @@
 {
-  "name": "@p6m-dev/auth0-webtask",
-  "version": "0.1.1",
-  "description": "P6m Auth0 Webtask",
+  "name": "@p6m-dev/auth0-extension",
+  "version": "0.1.2",
+  "description": "P6m Auth0 Extension",
   "main": "build/bundle.js",
   "scripts": {
     "build": "tsup src/bundle.ts --out-dir build --platform node --target node18",
@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/p6m-dev/auth0-webtask.git"
+    "url": "git+https://github.com/p6m-dev/auth0-extension.git"
   },
   "author": "",
   "license": "SEE LICENSE IN LICENSE.md",
   "bugs": {
-    "url": "https://github.com/p6m-dev/auth0-webtask/issues"
+    "url": "https://github.com/p6m-dev/auth0-extension/issues"
   },
-  "homepage": "https://github.com/p6m-dev/auth0-webtask#readme",
+  "homepage": "https://github.com/p6m-dev/auth0-extension#readme",
   "devDependencies": {
     "@eslint/js": "^9.17.0",
     "@types/cookie-parser": "^1.4.8",
