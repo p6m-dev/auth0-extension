@@ -1,6 +1,6 @@
 {
-  "title": "P6m Auth0 Extension",
-  "name": "p6m-auth0-extension",
+  "title": "p6m-dev/auth0-webtask",
+  "name": "p6m-dev/auth0-webtask",
   "version": "0.1.1",
   "preVersion": "0.1.0",
   "author": "P6m",
@@ -10,7 +10,7 @@
   "category": "end_user",
   "logoUrl": "https://cdn.auth0.com/manhattan/versions/1.5639.0/assets/badge.png",
   "initialUrlPath": "/",
-  "repository": "https://github.com/p6m-dev/auth0-extension",
+  "repository": "https://github.com/p6m-dev/auth0-webtask",
   "keywords": ["p6m", "auth0", "extension"],
   "auth0": {
     "createClient": false,
