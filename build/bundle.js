@@ -24856,8 +24856,8 @@ var import_morgan = __toESM(require_morgan());
 var webtask_default = {
   title: "p6m-dev/auth0-extension",
   name: "p6m-auth0-extension",
-  version: "0.1.3",
-  preVersion: "0.1.2",
+  version: "0.1.4",
+  preVersion: "0.1.3",
   author: "P6m",
   useHashName: false,
   description: "P6m Auth0 Extension",
