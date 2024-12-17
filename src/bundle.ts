@@ -21,5 +21,5 @@ if (require.main === module) {
 module.exports = (ctx: unknown, req: IncomingMessage, res: ServerResponse) => {
   console.log('!!! ctx', ctx);
   console.log('!!! req.url', req.url);
-  return () => app(req, res);
+  return app(req, res);
 };

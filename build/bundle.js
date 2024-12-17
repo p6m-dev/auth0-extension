@@ -24887,7 +24887,7 @@ if (require.main === module) {
 module.exports = (ctx, req, res) => {
   console.log("!!! ctx", ctx);
   console.log("!!! req.url", req.url);
-  return () => app_default(req, res);
+  return app_default(req, res);
 };
 /*! Bundled license information:
 
