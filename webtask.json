@@ -13,7 +13,7 @@
   "repository": "https://github.com/p6m-dev/auth0-extension",
   "keywords": ["p6m", "auth0", "extension"],
   "auth0": {
-    "createClient": true,
+    "createClient": false,
     "scopes": "read:clients"
   },
   "secrets": {}
