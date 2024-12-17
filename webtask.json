@@ -8,7 +8,7 @@
   "description": "P6m Auth Extension",
   "type": "application",
   "category": "end_user",
-  "logoUrl": "https://cdn.auth0.com/extensions/auth0-sso-dashboard/assets/logo.svg",
+  "logoUrl": "https://cdn.auth0.com/manhattan/versions/1.5639.0/assets/badge.png",
   "initialUrlPath": "/",
   "repository": "https://github.com/p6m-dev/auth0-extension",
   "keywords": ["p6m", "auth0", "extension"],
