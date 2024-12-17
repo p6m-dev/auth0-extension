@@ -1,0 +1,15 @@
+{
+  "title": "P6m Auth0 Extension",
+  "name": "@p6m-dev/auth0-extension",
+  "author": "P6m",
+  "useHashName": false,
+  "description": "The P6m Auth0 Extension",
+  "type": "application",
+  "category": "end_user",
+  "logoUrl": "https://cdn.auth0.com/extensions/auth0-sso-dashboard/assets/logo.svg",
+  "initialUrlPath": "/",
+  "repository": "https://github.com/p6m-dev/auth0-extension",
+  "keywords": ["p6m", "auth0", "extension"],
+  "auth0": {},
+  "secrets": {}
+}

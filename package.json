@@ -1,0 +1,46 @@
+{
+  "name": "@p6m-dev/auth0-extension",
+  "version": "0.1.0",
+  "description": "P6m Auth0 Extension",
+  "main": "dist/app.js",
+  "scripts": {
+    "build": "tsc",
+    "postinstall": "tsc",
+    "start": "tsx src/app.ts",
+    "start:prod": "tsc && node dist/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/p6m-dev/auth0-extension.git"
+  },
+  "author": "",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "bugs": {
+    "url": "https://github.com/p6m-dev/auth0-extension/issues"
+  },
+  "homepage": "https://github.com/p6m-dev/auth0-extension#readme",
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@types/cookie-parser": "^1.4.8",
+    "@types/express": "^5.0.0",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^22.10.2",
+    "@typescript-eslint/eslint-plugin": "^8.18.1",
+    "@typescript-eslint/parser": "^8.18.1",
+    "eslint": "^9.17.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "globals": "^15.13.0",
+    "prettier": "^3.4.2",
+    "tsup": "^8.3.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.18.1"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "express": "^4.21.2",
+    "morgan": "^1.10.0",
+    "webtask-tools": "^3.4.1"
+  }
+}
