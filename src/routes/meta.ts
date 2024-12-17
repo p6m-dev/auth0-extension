@@ -4,7 +4,7 @@ import metadata from '../../webtask.json';
 export default () => {
   const router = express.Router();
 
-  router.get('/', (req, res) => {
+  router.all('/', (req, res) => {
     res.status(200).json(metadata);
   });
 
