@@ -1,6 +1,9 @@
 import { IncomingMessage, ServerResponse } from 'http';
 import { createApp } from './app';
 import { Context } from './types';
+import fetch from 'node-fetch';
+
+(global.fetch as any) = fetch;
 
 if (require.main === module) {
   process.on('unhandledRejection', (reason, promise) => {

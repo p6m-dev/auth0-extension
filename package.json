@@ -1,6 +1,6 @@
 {
   "name": "@p6m-dev/auth0-extension",
-  "version": "0.1.18",
+  "version": "0.1.19",
   "description": "P6m Auth0 Extension",
   "main": "build/bundle.js",
   "scripts": {
@@ -25,6 +25,7 @@
     "@types/express": "^5.0.0",
     "@types/morgan": "^1.9.9",
     "@types/node": "^22.10.2",
+    "@types/node-fetch": "^2.6.12",
     "@typescript-eslint/eslint-plugin": "^8.18.1",
     "@typescript-eslint/parser": "^8.18.1",
     "auth0": "^4.15.0",
@@ -37,11 +38,13 @@
     "globals": "^15.13.0",
     "husky": "^9.1.7",
     "morgan": "^1.10.0",
+    "node-fetch": "^3.3.2",
     "prettier": "^3.4.2",
     "tsup": "^8.3.5",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.18.1",
+    "undici": "^7.2.0",
     "webtask-tools": "^3.4.1"
   }
 }
