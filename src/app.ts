@@ -11,8 +11,6 @@ const BASE_PATHS = ['', `/${name}`, `/api/run/p6m/${name}`];
 const path = (path: string) => BASE_PATHS.map((p) => `${p}${path}`);
 
 export const createApp = (ctx: Context) => {
-  console.log('!!! ctx', JSON.stringify(ctx));
-
   const app = express();
   app.use(logger('dev'));
   app.use(express.json());
@@ -24,7 +22,9 @@ export const createApp = (ctx: Context) => {
   app.use(path('/.lifecycle'), lifecycle(ctx));
 
   app.use((req, res) => {
-    res.status(404).json({ error: 'Not Found', url: req.url, version });
+    res
+      .status(404)
+      .json({ error: 'Not Found', url: req.url, version, meta: ctx.meta });
   });
 
   return app;

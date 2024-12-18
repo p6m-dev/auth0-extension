@@ -1,6 +1,6 @@
 {
   "name": "@p6m-dev/auth0-extension",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "P6m Auth0 Extension",
   "main": "build/bundle.js",
   "scripts": {

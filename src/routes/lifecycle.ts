@@ -2,10 +2,11 @@ import express from 'express';
 import { Context } from '../types';
 
 export default (ctx: Context) => {
+  console.log('lifecycle route', ctx.meta);
+
   const router = express.Router();
 
   router.all('/', (req, res) => {
-    console.log('!!! ctx', JSON.stringify(ctx));
     res.status(204).send();
   });
 

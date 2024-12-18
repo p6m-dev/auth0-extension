@@ -1,20 +1,22 @@
 import express from 'express';
 import { version } from '../../webtask.json';
-import { withIdentity } from '../auth/middleware';
-import { Context } from '../types';
+import { identified, UnauthorizedError } from '../auth/middleware';
+import { Context, RequestWithUserInfo } from '../types';
 
 export default (ctx: Context) => {
+  console.log('api route', ctx.meta);
   const router = express.Router();
 
   router.all('/', (req, res) => {
-    console.log('!!! ctx', JSON.stringify(ctx));
-    res.status(200).json({ version });
+    res.status(200).json({ version, meta: ctx.meta });
   });
 
-  router.all('/clients', withIdentity, (req, res) => {
-    console.log('!!! ctx', JSON.stringify(ctx));
-    console.log('!!! fetching clients');
-    res.status(200).json({});
+  router.get('/me', identified(ctx), (req, res) => {
+    const { userInfo } = req as RequestWithUserInfo;
+    if (!userInfo) {
+      throw new UnauthorizedError('Missing User Info');
+    }
+    res.status(200).json(userInfo);
   });
 
   return router;
