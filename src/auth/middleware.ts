@@ -3,6 +3,7 @@ import { Context, RequestWithUserInfo, UserInfo } from '../types';
 import { fetchRemote } from '../io';
 import { version } from '../../webtask.json';
 
+export class BadRequestError extends Error {}
 export class NotFoundError extends Error {}
 export class UnauthorizedError extends Error {}
 
@@ -40,6 +41,10 @@ export const errorHandler = (ctx: Context) => {
       meta: ctx.meta,
     };
 
+    if (err instanceof BadRequestError) {
+      res.status(400);
+    }
+
     if (err instanceof UnauthorizedError) {
       res.status(401);
     }
@@ -48,10 +53,6 @@ export const errorHandler = (ctx: Context) => {
       res.status(404);
     }
 
-    if (req.accepts('html')) {
-      res.send(`Error: ${error.error}`);
-    } else {
-      res.json(error);
-    }
+    res.json(error);
   };
 };

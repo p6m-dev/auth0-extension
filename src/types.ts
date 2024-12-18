@@ -34,9 +34,13 @@ export type Context = Partial<{
   create_token_url: () => void;
 }>;
 
+export const ORG_CLAIM = 'https://p6m.dev/v1/org';
+export const ORGS_CLAIM = 'https://p6m.dev/v1/orgs';
+
 export type UserInfo = Partial<{
   exp: number;
   'https://p6m.dev/v1/org': string;
+  'https://p6m.dev/v1/orgs': Record<string, string>;
 }>;
 
 export type RequestWithUserInfo = Request & {
