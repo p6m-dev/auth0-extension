@@ -18,6 +18,21 @@ export default [
       'prettier/prettier': 'error',
       semi: ['error', 'always'],
       quotes: ['error', 'single'],
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'OptionalMemberExpression',
+          message: 'The optional chaining operator (?.) is not allowed.',
+        },
+        {
+          selector: 'OptionalCallExpression',
+          message: 'The optional chaining operator (?.) is not allowed.',
+        },
+      ],
+      'node/no-unsupported-features/es-syntax': [
+        'error',
+        { version: '>=18.0.0', ignores: ['modules'] },
+      ],
     },
   },
   pluginJs.configs.recommended,

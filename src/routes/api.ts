@@ -29,10 +29,10 @@ export default (ctx: Context) => {
   console.log('api route', ctx.meta);
 
   const auth0 = new ManagementClient({
-    clientId: ctx.secrets?.MANAGEMENT_CLIENT_ID || '',
-    clientSecret: ctx.secrets?.MANAGEMENT_CLIENT_SECRET || '',
-    domain: ctx.secrets?.AUTH0_DOMAIN || '',
-    audience: ctx.secrets?.MANAGEMENT_AUDIENCE || '',
+    clientId: ctx.secrets.MANAGEMENT_CLIENT_ID || '',
+    clientSecret: ctx.secrets.MANAGEMENT_CLIENT_SECRET || '',
+    domain: ctx.secrets.AUTH0_DOMAIN || '',
+    audience: ctx.secrets.MANAGEMENT_AUDIENCE || '',
   });
 
   const router = express.Router();
@@ -53,7 +53,8 @@ export default (ctx: Context) => {
     const org = getClaim(req, 'https://p6m.dev/v1/org');
     const orgs = getClaim(req, 'https://p6m.dev/v1/orgs');
 
-    const orgId = Object.entries(orgs).find(([, name]) => name === org)?.[0];
+    const orgId = (Object.entries(orgs).find(([, name]) => name === org) ||
+      [])[0];
 
     const clients = await fetchClients(auth0, orgId);
     res.status(200).json(clients);

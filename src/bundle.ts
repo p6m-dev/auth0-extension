@@ -14,13 +14,11 @@ if (require.main === module) {
   });
 
   console.log('Starting app...\n');
-  createApp({}).listen(3000, '0.0.0.0', () => {
+  createApp({ secrets: {} }).listen(3000, '0.0.0.0', () => {
     console.log('Listening on http://0.0.0.0:3000');
   });
 }
 
 module.exports = (ctx: Context, req: IncomingMessage, res: ServerResponse) => {
-  console.log('!!! ctx', ctx);
-  console.log('!!! req.url', req.url);
   return createApp(ctx)(req, res);
 };

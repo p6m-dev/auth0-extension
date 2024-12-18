@@ -28,11 +28,12 @@ export type Context = Partial<{
   meta: Meta;
   params: unknown;
   query: unknown;
-  secrets: Secrets;
   id: string;
   create_token: () => void;
   create_token_url: () => void;
-}>;
+}> & {
+  secrets: Secrets;
+};
 
 export const ORG_CLAIM = 'https://p6m.dev/v1/org';
 export const ORGS_CLAIM = 'https://p6m.dev/v1/orgs';
