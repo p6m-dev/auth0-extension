@@ -24857,12 +24857,12 @@ var import_express = __toESM(require_express2());
 
 // webtask.json
 var name = "auth0";
-var version = "0.1.12";
+var version = "0.1.13";
 var webtask_default = {
   title: "p6m-dev/auth0-extension",
   name,
   version,
-  preVersion: "0.1.11",
+  preVersion: "0.1.12",
   author: "P6m",
   useHashName: false,
   description: "P6m Auth0 Extension",
@@ -24897,9 +24897,9 @@ var webtask_default = {
 
 // src/routes/meta.ts
 var meta_default = (ctx) => {
+  console.log("meta route", ctx.meta);
   const router = import_express.default.Router();
   router.all("/", (req, res) => {
-    console.log("!!! ctx", JSON.stringify(ctx));
     res.status(200).json(webtask_default);
   });
   return router;
@@ -24908,9 +24908,9 @@ var meta_default = (ctx) => {
 // src/routes/lifecycle.ts
 var import_express2 = __toESM(require_express2());
 var lifecycle_default = (ctx) => {
+  console.log("lifecycle route", ctx.meta);
   const router = import_express2.default.Router();
   router.all("/", (req, res) => {
-    console.log("!!! ctx", JSON.stringify(ctx));
     res.status(204).send();
   });
   return router;
@@ -24919,24 +24919,52 @@ var lifecycle_default = (ctx) => {
 // src/routes/api.ts
 var import_express3 = __toESM(require_express2());
 
+// src/io.ts
+var fetchRemote = async (method, url, authorization) => {
+  const headers = {
+    "Content-Type": "application/json"
+  };
+  if (authorization) {
+    headers["Authorization"] = authorization;
+  }
+  return await fetch(url, {
+    method,
+    headers
+  }).then((r) => r.json());
+};
+
 // src/auth/middleware.ts
-async function withIdentity(req, res, next) {
-  const authorization = req.headers["authorization"];
-  console.log("!!! checking authorization", authorization);
-  next();
-}
+var UnauthorizedError = class extends Error {
+};
+var identified = (ctx) => {
+  return async (req, res, next) => {
+    const { AUTH0_DOMAIN } = ctx.secrets || {};
+    const authorization = req.headers["authorization"];
+    if (!authorization) {
+      return next(new UnauthorizedError("Missing authorization"));
+    }
+    req.userInfo = await fetchRemote(
+      "GET",
+      new URL(`https://${AUTH0_DOMAIN}/userinfo`),
+      authorization
+    );
+    next();
+  };
+};
 
 // src/routes/api.ts
 var api_default = (ctx) => {
+  console.log("api route", ctx.meta);
   const router = import_express3.default.Router();
   router.all("/", (req, res) => {
-    console.log("!!! ctx", JSON.stringify(ctx));
-    res.status(200).json({ version });
+    res.status(200).json({ version, meta: ctx.meta });
   });
-  router.all("/clients", withIdentity, (req, res) => {
-    console.log("!!! ctx", JSON.stringify(ctx));
-    console.log("!!! fetching clients");
-    res.status(200).json({});
+  router.get("/me", identified(ctx), (req, res) => {
+    const { userInfo } = req;
+    if (!userInfo) {
+      throw new UnauthorizedError("Missing User Info");
+    }
+    res.status(200).json(userInfo);
   });
   return router;
 };
@@ -24945,7 +24973,6 @@ var api_default = (ctx) => {
 var BASE_PATHS = ["", `/${name}`, `/api/run/p6m/${name}`];
 var path = (path2) => BASE_PATHS.map((p) => `${p}${path2}`);
 var createApp = (ctx) => {
-  console.log("!!! ctx", JSON.stringify(ctx));
   const app = (0, import_express4.default)();
   app.use((0, import_morgan.default)("dev"));
   app.use(import_express4.default.json());
@@ -24955,7 +24982,7 @@ var createApp = (ctx) => {
   app.use(path("/meta"), meta_default(ctx));
   app.use(path("/.lifecycle"), lifecycle_default(ctx));
   app.use((req, res) => {
-    res.status(404).json({ error: "Not Found", url: req.url, version });
+    res.status(404).json({ error: "Not Found", url: req.url, version, meta: ctx.meta });
   });
   return app;
 };
