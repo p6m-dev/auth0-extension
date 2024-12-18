@@ -2,8 +2,11 @@ import { IncomingMessage, ServerResponse } from 'http';
 import { createApp } from './app';
 import { Context } from './types';
 import fetch from 'node-fetch';
+import { FormData } from 'formdata-node';
 
+// polyfills
 (global.fetch as any) = fetch;
+global.FormData = FormData;
 
 if (require.main === module) {
   process.on('unhandledRejection', (reason, promise) => {
