@@ -4951,10 +4951,10 @@ var require_raw_body = __commonJS({
       var limit = bytes.parse(opts.limit);
       var length = opts.length != null && !isNaN(opts.length) ? parseInt(opts.length, 10) : null;
       if (done) {
-        return readStream2(stream4, encoding, length, limit, wrap(done));
+        return readStream3(stream4, encoding, length, limit, wrap(done));
       }
       return new Promise(function executor(resolve, reject) {
-        readStream2(stream4, encoding, length, limit, function onRead(err, buf) {
+        readStream3(stream4, encoding, length, limit, function onRead(err, buf) {
           if (err) return reject(err);
           resolve(buf);
         });
@@ -4966,7 +4966,7 @@ var require_raw_body = __commonJS({
         stream4.pause();
       }
     }
-    function readStream2(stream4, encoding, length, limit, callback) {
+    function readStream3(stream4, encoding, length, limit, callback) {
       var complete = false;
       var sync = true;
       if (limit !== null && length !== null && length > limit) {
@@ -25363,11 +25363,11 @@ var require_form_data = __commonJS({
     var mime = require_mime_types();
     var asynckit = require_asynckit();
     var populate = require_populate();
-    module2.exports = FormData5;
-    util5.inherits(FormData5, CombinedStream);
-    function FormData5(options) {
-      if (!(this instanceof FormData5)) {
-        return new FormData5(options);
+    module2.exports = FormData6;
+    util5.inherits(FormData6, CombinedStream);
+    function FormData6(options) {
+      if (!(this instanceof FormData6)) {
+        return new FormData6(options);
       }
       this._overheadLength = 0;
       this._valueLength = 0;
@@ -25378,9 +25378,9 @@ var require_form_data = __commonJS({
         this[option] = options[option];
       }
     }
-    FormData5.LINE_BREAK = "\r\n";
-    FormData5.DEFAULT_CONTENT_TYPE = "application/octet-stream";
-    FormData5.prototype.append = function(field, value, options) {
+    FormData6.LINE_BREAK = "\r\n";
+    FormData6.DEFAULT_CONTENT_TYPE = "application/octet-stream";
+    FormData6.prototype.append = function(field, value, options) {
       options = options || {};
       if (typeof options == "string") {
         options = { filename: options };
@@ -25400,7 +25400,7 @@ var require_form_data = __commonJS({
       append2(footer);
       this._trackLength(header, value, options);
     };
-    FormData5.prototype._trackLength = function(header, value, options) {
+    FormData6.prototype._trackLength = function(header, value, options) {
       var valueLength = 0;
       if (options.knownLength != null) {
         valueLength += +options.knownLength;
@@ -25410,7 +25410,7 @@ var require_form_data = __commonJS({
         valueLength = Buffer.byteLength(value);
       }
       this._valueLength += valueLength;
-      this._overheadLength += Buffer.byteLength(header) + FormData5.LINE_BREAK.length;
+      this._overheadLength += Buffer.byteLength(header) + FormData6.LINE_BREAK.length;
       if (!value || !value.path && !(value.readable && value.hasOwnProperty("httpVersion")) && !(value instanceof Stream3)) {
         return;
       }
@@ -25418,7 +25418,7 @@ var require_form_data = __commonJS({
         this._valuesToMeasure.push(value);
       }
     };
-    FormData5.prototype._lengthRetriever = function(value, callback) {
+    FormData6.prototype._lengthRetriever = function(value, callback) {
       if (value.hasOwnProperty("fd")) {
         if (value.end != void 0 && value.end != Infinity && value.start != void 0) {
           callback(null, value.end + 1 - (value.start ? value.start : 0));
@@ -25445,7 +25445,7 @@ var require_form_data = __commonJS({
         callback("Unknown stream");
       }
     };
-    FormData5.prototype._multiPartHeader = function(field, value, options) {
+    FormData6.prototype._multiPartHeader = function(field, value, options) {
       if (typeof options.header == "string") {
         return options.header;
       }
@@ -25472,12 +25472,12 @@ var require_form_data = __commonJS({
           header = [header];
         }
         if (header.length) {
-          contents += prop + ": " + header.join("; ") + FormData5.LINE_BREAK;
+          contents += prop + ": " + header.join("; ") + FormData6.LINE_BREAK;
         }
       }
-      return "--" + this.getBoundary() + FormData5.LINE_BREAK + contents + FormData5.LINE_BREAK;
+      return "--" + this.getBoundary() + FormData6.LINE_BREAK + contents + FormData6.LINE_BREAK;
     };
-    FormData5.prototype._getContentDisposition = function(value, options) {
+    FormData6.prototype._getContentDisposition = function(value, options) {
       var filename, contentDisposition;
       if (typeof options.filepath === "string") {
         filename = path2.normalize(options.filepath).replace(/\\/g, "/");
@@ -25491,7 +25491,7 @@ var require_form_data = __commonJS({
       }
       return contentDisposition;
     };
-    FormData5.prototype._getContentType = function(value, options) {
+    FormData6.prototype._getContentType = function(value, options) {
       var contentType = options.contentType;
       if (!contentType && value.name) {
         contentType = mime.lookup(value.name);
@@ -25506,13 +25506,13 @@ var require_form_data = __commonJS({
         contentType = mime.lookup(options.filepath || options.filename);
       }
       if (!contentType && typeof value == "object") {
-        contentType = FormData5.DEFAULT_CONTENT_TYPE;
+        contentType = FormData6.DEFAULT_CONTENT_TYPE;
       }
       return contentType;
     };
-    FormData5.prototype._multiPartFooter = function() {
+    FormData6.prototype._multiPartFooter = function() {
       return function(next) {
-        var footer = FormData5.LINE_BREAK;
+        var footer = FormData6.LINE_BREAK;
         var lastPart = this._streams.length === 0;
         if (lastPart) {
           footer += this._lastBoundary();
@@ -25520,10 +25520,10 @@ var require_form_data = __commonJS({
         next(footer);
       }.bind(this);
     };
-    FormData5.prototype._lastBoundary = function() {
-      return "--" + this.getBoundary() + "--" + FormData5.LINE_BREAK;
+    FormData6.prototype._lastBoundary = function() {
+      return "--" + this.getBoundary() + "--" + FormData6.LINE_BREAK;
     };
-    FormData5.prototype.getHeaders = function(userHeaders) {
+    FormData6.prototype.getHeaders = function(userHeaders) {
       var header;
       var formHeaders = {
         "content-type": "multipart/form-data; boundary=" + this.getBoundary()
@@ -25535,16 +25535,16 @@ var require_form_data = __commonJS({
       }
       return formHeaders;
     };
-    FormData5.prototype.setBoundary = function(boundary) {
+    FormData6.prototype.setBoundary = function(boundary) {
       this._boundary = boundary;
     };
-    FormData5.prototype.getBoundary = function() {
+    FormData6.prototype.getBoundary = function() {
       if (!this._boundary) {
         this._generateBoundary();
       }
       return this._boundary;
     };
-    FormData5.prototype.getBuffer = function() {
+    FormData6.prototype.getBuffer = function() {
       var dataBuffer = new Buffer.alloc(0);
       var boundary = this.getBoundary();
       for (var i2 = 0, len = this._streams.length; i2 < len; i2++) {
@@ -25555,20 +25555,20 @@ var require_form_data = __commonJS({
             dataBuffer = Buffer.concat([dataBuffer, Buffer.from(this._streams[i2])]);
           }
           if (typeof this._streams[i2] !== "string" || this._streams[i2].substring(2, boundary.length + 2) !== boundary) {
-            dataBuffer = Buffer.concat([dataBuffer, Buffer.from(FormData5.LINE_BREAK)]);
+            dataBuffer = Buffer.concat([dataBuffer, Buffer.from(FormData6.LINE_BREAK)]);
           }
         }
       }
       return Buffer.concat([dataBuffer, Buffer.from(this._lastBoundary())]);
     };
-    FormData5.prototype._generateBoundary = function() {
+    FormData6.prototype._generateBoundary = function() {
       var boundary = "--------------------------";
       for (var i2 = 0; i2 < 24; i2++) {
         boundary += Math.floor(Math.random() * 10).toString(16);
       }
       this._boundary = boundary;
     };
-    FormData5.prototype.getLengthSync = function() {
+    FormData6.prototype.getLengthSync = function() {
       var knownLength = this._overheadLength + this._valueLength;
       if (this._streams.length) {
         knownLength += this._lastBoundary().length;
@@ -25578,14 +25578,14 @@ var require_form_data = __commonJS({
       }
       return knownLength;
     };
-    FormData5.prototype.hasKnownLength = function() {
+    FormData6.prototype.hasKnownLength = function() {
       var hasKnownLength = true;
       if (this._valuesToMeasure.length) {
         hasKnownLength = false;
       }
       return hasKnownLength;
     };
-    FormData5.prototype.getLength = function(cb) {
+    FormData6.prototype.getLength = function(cb) {
       var knownLength = this._overheadLength + this._valueLength;
       if (this._streams.length) {
         knownLength += this._lastBoundary().length;
@@ -25605,7 +25605,7 @@ var require_form_data = __commonJS({
         cb(null, knownLength);
       });
     };
-    FormData5.prototype.submit = function(params, cb) {
+    FormData6.prototype.submit = function(params, cb) {
       var request, options, defaults2 = { method: "post" };
       if (typeof params == "string") {
         params = parseUrl(params);
@@ -25650,14 +25650,14 @@ var require_form_data = __commonJS({
       }.bind(this));
       return request;
     };
-    FormData5.prototype._error = function(err) {
+    FormData6.prototype._error = function(err) {
       if (!this.error) {
         this.error = err;
         this.pause();
         this.emit("error", err);
       }
     };
-    FormData5.prototype.toString = function() {
+    FormData6.prototype.toString = function() {
       return "[object FormData]";
     };
   }
@@ -26419,7 +26419,7 @@ var require_follow_redirects = __commonJS({
     (function detectUnsupportedEnvironment() {
       var looksLikeNode = typeof process !== "undefined";
       var looksLikeBrowser = typeof window !== "undefined" && typeof document !== "undefined";
-      var looksLikeV8 = isFunction2(Error.captureStackTrace);
+      var looksLikeV8 = isFunction3(Error.captureStackTrace);
       if (!looksLikeNode && (looksLikeBrowser || !looksLikeV8)) {
         console.warn("The follow-redirects package should be excluded from browser builds.");
       }
@@ -26514,7 +26514,7 @@ var require_follow_redirects = __commonJS({
       if (!isString2(data) && !isBuffer2(data)) {
         throw new TypeError("data should be a string, Buffer or Uint8Array");
       }
-      if (isFunction2(encoding)) {
+      if (isFunction3(encoding)) {
         callback = encoding;
         encoding = null;
       }
@@ -26534,10 +26534,10 @@ var require_follow_redirects = __commonJS({
       }
     };
     RedirectableRequest.prototype.end = function(data, encoding, callback) {
-      if (isFunction2(data)) {
+      if (isFunction3(data)) {
         callback = data;
         data = encoding = null;
-      } else if (isFunction2(encoding)) {
+      } else if (isFunction3(encoding)) {
         callback = encoding;
         encoding = null;
       }
@@ -26738,7 +26738,7 @@ var require_follow_redirects = __commonJS({
       if (redirectUrl.protocol !== currentUrlParts.protocol && redirectUrl.protocol !== "https:" || redirectUrl.host !== currentHost && !isSubdomain(redirectUrl.host, currentHost)) {
         removeMatchingHeaders(/^(?:(?:proxy-)?authorization|cookie)$/i, this._options.headers);
       }
-      if (isFunction2(beforeRedirect)) {
+      if (isFunction3(beforeRedirect)) {
         var responseDetails = {
           headers: response.headers,
           statusCode
@@ -26773,7 +26773,7 @@ var require_follow_redirects = __commonJS({
             options = validateUrl(input);
             input = { protocol };
           }
-          if (isFunction2(options)) {
+          if (isFunction3(options)) {
             callback = options;
             options = null;
           }
@@ -26853,7 +26853,7 @@ var require_follow_redirects = __commonJS({
     }
     function createErrorType(code, message2, baseClass) {
       function CustomError(properties) {
-        if (isFunction2(Error.captureStackTrace)) {
+        if (isFunction3(Error.captureStackTrace)) {
           Error.captureStackTrace(this, this.constructor);
         }
         Object.assign(this, properties || {});
@@ -26888,7 +26888,7 @@ var require_follow_redirects = __commonJS({
     function isString2(value) {
       return typeof value === "string" || value instanceof String;
     }
-    function isFunction2(value) {
+    function isFunction3(value) {
       return typeof value === "function";
     }
     function isBuffer2(value) {
@@ -27155,11 +27155,11 @@ var require_ponyfill_es2018 = __commonJS({
           throw new TypeError(`${context} is not a function.`);
         }
       }
-      function isObject3(x2) {
+      function isObject4(x2) {
         return typeof x2 === "object" && x2 !== null || typeof x2 === "function";
       }
       function assertObject(x2, context) {
-        if (!isObject3(x2)) {
+        if (!isObject4(x2)) {
           throw new TypeError(`${context} is not an object.`);
         }
       }
@@ -31201,9 +31201,9 @@ var require_streams2 = __commonJS({
       }
     }
     try {
-      const { Blob: Blob4 } = require("buffer");
-      if (Blob4 && !Blob4.prototype.stream) {
-        Blob4.prototype.stream = function name2(params) {
+      const { Blob: Blob5 } = require("buffer");
+      if (Blob5 && !Blob5.prototype.stream) {
+        Blob5.prototype.stream = function name2(params) {
           let position = 0;
           const blob = this;
           return new ReadableStream({
@@ -31976,12 +31976,12 @@ var import_express = __toESM(require_express2());
 
 // webtask.json
 var name = "auth0";
-var version = "0.1.19";
+var version = "0.1.20";
 var webtask_default = {
   title: "p6m-dev/auth0-extension",
   name,
   version,
-  preVersion: "0.1.18",
+  preVersion: "0.1.19",
   author: "P6m",
   useHashName: false,
   description: "P6m Auth0 Extension",
@@ -32539,8 +32539,8 @@ function toFormData(obj, formData, options) {
   const visitor = options.visitor || defaultVisitor;
   const dots = options.dots;
   const indexes = options.indexes;
-  const _Blob2 = options.Blob || typeof Blob !== "undefined" && Blob;
-  const useBlob = _Blob2 && utils_default.isSpecCompliantForm(formData);
+  const _Blob4 = options.Blob || typeof Blob !== "undefined" && Blob;
+  const useBlob = _Blob4 && utils_default.isSpecCompliantForm(formData);
   if (!utils_default.isFunction(visitor)) {
     throw new TypeError("visitor must be a function");
   }
@@ -33312,9 +33312,9 @@ function parseProtocol(url2) {
 // node_modules/axios/lib/helpers/fromDataURI.js
 var DATA_URL_PATTERN = /^(?:([^;]+);)?(?:[^;]+;)?(base64|),([\s\S]*)$/;
 function fromDataURI(uri, asBlob, options) {
-  const _Blob2 = options && options.Blob || platform_default.classes.Blob;
+  const _Blob4 = options && options.Blob || platform_default.classes.Blob;
   const protocol = parseProtocol(uri);
-  if (asBlob === void 0 && _Blob2) {
+  if (asBlob === void 0 && _Blob4) {
     asBlob = true;
   }
   if (protocol === "data") {
@@ -33328,10 +33328,10 @@ function fromDataURI(uri, asBlob, options) {
     const body = match[3];
     const buffer = Buffer.from(decodeURIComponent(body), isBase64 ? "base64" : "utf8");
     if (asBlob) {
-      if (!_Blob2) {
+      if (!_Blob4) {
         throw new AxiosError_default("Blob is not supported", AxiosError_default.ERR_NOT_SUPPORT);
       }
-      return new _Blob2([buffer], { type: mime });
+      return new _Blob4([buffer], { type: mime });
     }
     return buffer;
   }
@@ -45231,8 +45231,517 @@ function fixResponseChunkedTransferBadEnding(request, errorCallback) {
   });
 }
 
+// node_modules/formdata-node/lib/form-data.js
+var __accessCheck = (obj, member, msg) => {
+  if (!member.has(obj))
+    throw TypeError("Cannot " + msg);
+};
+var __privateGet = (obj, member, getter) => {
+  __accessCheck(obj, member, "read from private field");
+  return getter ? getter.call(obj) : member.get(obj);
+};
+var __privateAdd = (obj, member, value) => {
+  if (member.has(obj))
+    throw TypeError("Cannot add the same private member more than once");
+  member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
+};
+var __privateSet = (obj, member, value, setter) => {
+  __accessCheck(obj, member, "write to private field");
+  setter ? setter.call(obj, value) : member.set(obj, value);
+  return value;
+};
+var __privateMethod = (obj, member, method) => {
+  __accessCheck(obj, member, "access private method");
+  return method;
+};
+var isFunction2 = (value) => typeof value === "function";
+var isObject3 = (value) => typeof value === "object" && value != null && !Array.isArray(value);
+var isAsyncIterable = (value) => isObject3(value) && isFunction2(value[Symbol.asyncIterator]);
+var MAX_CHUNK_SIZE = 65536;
+async function* clonePart(value) {
+  if (value.byteLength <= MAX_CHUNK_SIZE) {
+    yield value;
+    return;
+  }
+  let offset = 0;
+  while (offset < value.byteLength) {
+    const size = Math.min(value.byteLength - offset, MAX_CHUNK_SIZE);
+    const buffer = value.buffer.slice(offset, offset + size);
+    offset += buffer.byteLength;
+    yield new Uint8Array(buffer);
+  }
+}
+async function* readStream2(readable) {
+  const reader = readable.getReader();
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) {
+      break;
+    }
+    yield value;
+  }
+}
+async function* chunkStream(stream4) {
+  for await (const value of stream4) {
+    yield* clonePart(value);
+  }
+}
+var getStreamIterator = (source) => {
+  if (isAsyncIterable(source)) {
+    return chunkStream(source);
+  }
+  if (isFunction2(source.getReader)) {
+    return chunkStream(readStream2(source));
+  }
+  throw new TypeError(
+    "Unsupported data source: Expected either ReadableStream or async iterable."
+  );
+};
+async function* consumeNodeBlob(blob) {
+  let position = 0;
+  while (position !== blob.size) {
+    const chunk = blob.slice(
+      position,
+      Math.min(blob.size, position + MAX_CHUNK_SIZE)
+    );
+    const buffer = await chunk.arrayBuffer();
+    position += buffer.byteLength;
+    yield new Uint8Array(buffer);
+  }
+}
+async function* consumeBlobParts(parts, clone3 = false) {
+  for (const part of parts) {
+    if (ArrayBuffer.isView(part)) {
+      if (clone3) {
+        yield* clonePart(part);
+      } else {
+        yield part;
+      }
+    } else if (isFunction2(part.stream)) {
+      yield* getStreamIterator(part.stream());
+    } else {
+      yield* consumeNodeBlob(part);
+    }
+  }
+}
+function* sliceBlob(blobParts, blobSize, start = 0, end) {
+  end ??= blobSize;
+  let relativeStart = start < 0 ? Math.max(blobSize + start, 0) : Math.min(start, blobSize);
+  let relativeEnd = end < 0 ? Math.max(blobSize + end, 0) : Math.min(end, blobSize);
+  const span = Math.max(relativeEnd - relativeStart, 0);
+  let added = 0;
+  for (const part of blobParts) {
+    if (added >= span) {
+      break;
+    }
+    const partSize = ArrayBuffer.isView(part) ? part.byteLength : part.size;
+    if (relativeStart && partSize <= relativeStart) {
+      relativeStart -= partSize;
+      relativeEnd -= partSize;
+    } else {
+      let chunk;
+      if (ArrayBuffer.isView(part)) {
+        chunk = part.subarray(relativeStart, Math.min(partSize, relativeEnd));
+        added += chunk.byteLength;
+      } else {
+        chunk = part.slice(relativeStart, Math.min(partSize, relativeEnd));
+        added += chunk.size;
+      }
+      relativeEnd -= partSize;
+      relativeStart = 0;
+      yield chunk;
+    }
+  }
+}
+var _parts;
+var _type;
+var _size;
+var _Blob2 = class _Blob3 {
+  /**
+   * Returns a new [`Blob`](https://developer.mozilla.org/en-US/docs/Web/API/Blob) object.
+   * The content of the blob consists of the concatenation of the values given in the parameter array.
+   *
+   * @param blobParts An `Array` strings, or [`ArrayBuffer`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer), [`ArrayBufferView`](https://developer.mozilla.org/en-US/docs/Web/API/ArrayBufferView), [`Blob`](https://developer.mozilla.org/en-US/docs/Web/API/Blob) objects, or a mix of any of such objects, that will be put inside the [`Blob`](https://developer.mozilla.org/en-US/docs/Web/API/Blob).
+   * @param options An optional object of type `BlobPropertyBag`.
+   */
+  constructor(blobParts = [], options = {}) {
+    __privateAdd(this, _parts, []);
+    __privateAdd(this, _type, "");
+    __privateAdd(this, _size, 0);
+    options ??= {};
+    if (typeof blobParts !== "object" || blobParts === null) {
+      throw new TypeError(
+        "Failed to construct 'Blob': The provided value cannot be converted to a sequence."
+      );
+    }
+    if (!isFunction2(blobParts[Symbol.iterator])) {
+      throw new TypeError(
+        "Failed to construct 'Blob': The object must have a callable @@iterator property."
+      );
+    }
+    if (typeof options !== "object" && !isFunction2(options)) {
+      throw new TypeError(
+        "Failed to construct 'Blob': parameter 2 cannot convert to dictionary."
+      );
+    }
+    const encoder2 = new TextEncoder();
+    for (const raw of blobParts) {
+      let part;
+      if (ArrayBuffer.isView(raw)) {
+        part = new Uint8Array(raw.buffer.slice(
+          raw.byteOffset,
+          raw.byteOffset + raw.byteLength
+        ));
+      } else if (raw instanceof ArrayBuffer) {
+        part = new Uint8Array(raw.slice(0));
+      } else if (raw instanceof _Blob3) {
+        part = raw;
+      } else {
+        part = encoder2.encode(String(raw));
+      }
+      __privateSet(this, _size, __privateGet(this, _size) + (ArrayBuffer.isView(part) ? part.byteLength : part.size));
+      __privateGet(this, _parts).push(part);
+    }
+    const type = options.type === void 0 ? "" : String(options.type);
+    __privateSet(this, _type, /^[\x20-\x7E]*$/.test(type) ? type : "");
+  }
+  static [Symbol.hasInstance](value) {
+    return Boolean(
+      value && typeof value === "object" && isFunction2(value.constructor) && (isFunction2(value.stream) || isFunction2(value.arrayBuffer)) && /^(Blob|File)$/.test(value[Symbol.toStringTag])
+    );
+  }
+  /**
+   * Returns the [`MIME type`](https://developer.mozilla.org/en-US/docs/Glossary/MIME_type) of the [`Blob`](https://developer.mozilla.org/en-US/docs/Web/API/Blob) or [`File`](https://developer.mozilla.org/en-US/docs/Web/API/File).
+   */
+  get type() {
+    return __privateGet(this, _type);
+  }
+  /**
+   * Returns the size of the [`Blob`](https://developer.mozilla.org/en-US/docs/Web/API/Blob) or [`File`](https://developer.mozilla.org/en-US/docs/Web/API/File) in bytes.
+   */
+  get size() {
+    return __privateGet(this, _size);
+  }
+  /**
+   * Creates and returns a new [`Blob`](https://developer.mozilla.org/en-US/docs/Web/API/Blob) object which contains data from a subset of the blob on which it's called.
+   *
+   * @param start An index into the Blob indicating the first byte to include in the new Blob. If you specify a negative value, it's treated as an offset from the end of the Blob toward the beginning. For example, -10 would be the 10th from last byte in the Blob. The default value is 0. If you specify a value for start that is larger than the size of the source Blob, the returned Blob has size 0 and contains no data.
+   * @param end An index into the Blob indicating the first byte that will *not* be included in the new Blob (i.e. the byte exactly at this index is not included). If you specify a negative value, it's treated as an offset from the end of the Blob toward the beginning. For example, -10 would be the 10th from last byte in the Blob. The default value is size.
+   * @param contentType The content type to assign to the new Blob; this will be the value of its type property. The default value is an empty string.
+   */
+  slice(start, end, contentType) {
+    return new _Blob3(sliceBlob(__privateGet(this, _parts), this.size, start, end), {
+      type: contentType
+    });
+  }
+  /**
+   * Returns a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) that resolves with a string containing the contents of the blob, interpreted as UTF-8.
+   */
+  async text() {
+    const decoder2 = new TextDecoder();
+    let result = "";
+    for await (const chunk of consumeBlobParts(__privateGet(this, _parts))) {
+      result += decoder2.decode(chunk, { stream: true });
+    }
+    result += decoder2.decode();
+    return result;
+  }
+  /**
+   * Returns a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) that resolves with the contents of the blob as binary data contained in an [`ArrayBuffer`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer).
+   */
+  async arrayBuffer() {
+    const view = new Uint8Array(this.size);
+    let offset = 0;
+    for await (const chunk of consumeBlobParts(__privateGet(this, _parts))) {
+      view.set(chunk, offset);
+      offset += chunk.length;
+    }
+    return view.buffer;
+  }
+  /**
+   * Returns a [`ReadableStream`](https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream) which upon reading returns the data contained within the [`Blob`](https://developer.mozilla.org/en-US/docs/Web/API/Blob).
+   */
+  stream() {
+    const iterator = consumeBlobParts(__privateGet(this, _parts), true);
+    return new ReadableStream({
+      async pull(controller) {
+        const { value, done } = await iterator.next();
+        if (done) {
+          return queueMicrotask(() => controller.close());
+        }
+        controller.enqueue(value);
+      },
+      async cancel() {
+        await iterator.return();
+      }
+    });
+  }
+  get [Symbol.toStringTag]() {
+    return "Blob";
+  }
+};
+_parts = /* @__PURE__ */ new WeakMap();
+_type = /* @__PURE__ */ new WeakMap();
+_size = /* @__PURE__ */ new WeakMap();
+var Blob4 = _Blob2;
+Object.defineProperties(Blob4.prototype, {
+  type: { enumerable: true },
+  size: { enumerable: true },
+  slice: { enumerable: true },
+  stream: { enumerable: true },
+  text: { enumerable: true },
+  arrayBuffer: { enumerable: true }
+});
+var isBlob3 = (value) => value instanceof Blob4;
+var _name;
+var _lastModified;
+var File3 = class extends Blob4 {
+  /**
+   * Creates a new File instance.
+   *
+   * @param fileBits An `Array` strings, or [`ArrayBuffer`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer), [`ArrayBufferView`](https://developer.mozilla.org/en-US/docs/Web/API/ArrayBufferView), [`Blob`](https://developer.mozilla.org/en-US/docs/Web/API/Blob) objects, or a mix of any of such objects, that will be put inside the [`File`](https://developer.mozilla.org/en-US/docs/Web/API/File).
+   * @param name The name of the file.
+   * @param options An options object containing optional attributes for the file.
+   */
+  constructor(fileBits, name2, options = {}) {
+    super(fileBits, options);
+    __privateAdd(this, _name, void 0);
+    __privateAdd(this, _lastModified, 0);
+    if (arguments.length < 2) {
+      throw new TypeError(
+        `Failed to construct 'File': 2 arguments required, but only ${arguments.length} present.`
+      );
+    }
+    __privateSet(this, _name, String(name2));
+    const lastModified = options.lastModified === void 0 ? Date.now() : Number(options.lastModified);
+    if (!Number.isNaN(lastModified)) {
+      __privateSet(this, _lastModified, lastModified);
+    }
+  }
+  static [Symbol.hasInstance](value) {
+    return value instanceof Blob4 && value[Symbol.toStringTag] === "File" && typeof value.name === "string";
+  }
+  /**
+   * Name of the file referenced by the File object.
+   */
+  get name() {
+    return __privateGet(this, _name);
+  }
+  /* c8 ignore next 3 */
+  get webkitRelativePath() {
+    return "";
+  }
+  /**
+   * The last modified date of the file as the number of milliseconds since the Unix epoch (January 1, 1970 at midnight). Files without a known last modified date return the current date.
+   */
+  get lastModified() {
+    return __privateGet(this, _lastModified);
+  }
+  get [Symbol.toStringTag]() {
+    return "File";
+  }
+};
+_name = /* @__PURE__ */ new WeakMap();
+_lastModified = /* @__PURE__ */ new WeakMap();
+var isFile2 = (value) => value instanceof File3;
+var _entries;
+var _setEntry;
+var setEntry_fn;
+var FormData5 = class {
+  constructor() {
+    __privateAdd(this, _setEntry);
+    __privateAdd(this, _entries, /* @__PURE__ */ new Map());
+  }
+  static [Symbol.hasInstance](value) {
+    if (!value) {
+      return false;
+    }
+    const val = value;
+    return Boolean(
+      isFunction2(val.constructor) && val[Symbol.toStringTag] === "FormData" && isFunction2(val.append) && isFunction2(val.set) && isFunction2(val.get) && isFunction2(val.getAll) && isFunction2(val.has) && isFunction2(val.delete) && isFunction2(val.entries) && isFunction2(val.values) && isFunction2(val.keys) && isFunction2(val[Symbol.iterator]) && isFunction2(val.forEach)
+    );
+  }
+  /**
+   * Appends a new value onto an existing key inside a FormData object,
+   * or adds the key if it does not already exist.
+   *
+   * The difference between `set()` and `append()` is that if the specified key already exists, `set()` will overwrite all existing values with the new one, whereas `append()` will append the new value onto the end of the existing set of values.
+   *
+   * @param name The name of the field whose data is contained in `value`.
+   * @param value The field's value. This can be [`Blob`](https://developer.mozilla.org/en-US/docs/Web/API/Blob)
+    or [`File`](https://developer.mozilla.org/en-US/docs/Web/API/File). If none of these are specified the value is converted to a string.
+   * @param fileName The filename reported to the server, when a Blob or File is passed as the second parameter. The default filename for Blob objects is "blob". The default filename for File objects is the file's filename.
+   */
+  append(name2, value, fileName) {
+    __privateMethod(this, _setEntry, setEntry_fn).call(this, {
+      name: name2,
+      fileName,
+      append: true,
+      rawValue: value,
+      argsLength: arguments.length
+    });
+  }
+  /**
+   * Set a new value for an existing key inside FormData,
+   * or add the new field if it does not already exist.
+   *
+   * @param name The name of the field whose data is contained in `value`.
+   * @param value The field's value. This can be [`Blob`](https://developer.mozilla.org/en-US/docs/Web/API/Blob)
+    or [`File`](https://developer.mozilla.org/en-US/docs/Web/API/File). If none of these are specified the value is converted to a string.
+   * @param fileName The filename reported to the server, when a Blob or File is passed as the second parameter. The default filename for Blob objects is "blob". The default filename for File objects is the file's filename.
+   *
+   */
+  set(name2, value, fileName) {
+    __privateMethod(this, _setEntry, setEntry_fn).call(this, {
+      name: name2,
+      fileName,
+      append: false,
+      rawValue: value,
+      argsLength: arguments.length
+    });
+  }
+  /**
+   * Returns the first value associated with a given key from within a `FormData` object.
+   * If you expect multiple values and want all of them, use the `getAll()` method instead.
+   *
+   * @param {string} name A name of the value you want to retrieve.
+   *
+   * @returns A `FormDataEntryValue` containing the value. If the key doesn't exist, the method returns null.
+   */
+  get(name2) {
+    const field = __privateGet(this, _entries).get(String(name2));
+    if (!field) {
+      return null;
+    }
+    return field[0];
+  }
+  /**
+   * Returns all the values associated with a given key from within a `FormData` object.
+   *
+   * @param {string} name A name of the value you want to retrieve.
+   *
+   * @returns An array of `FormDataEntryValue` whose key matches the value passed in the `name` parameter. If the key doesn't exist, the method returns an empty list.
+   */
+  getAll(name2) {
+    const field = __privateGet(this, _entries).get(String(name2));
+    if (!field) {
+      return [];
+    }
+    return field.slice();
+  }
+  /**
+   * Returns a boolean stating whether a `FormData` object contains a certain key.
+   *
+   * @param name A string representing the name of the key you want to test for.
+   *
+   * @return A boolean value.
+   */
+  has(name2) {
+    return __privateGet(this, _entries).has(String(name2));
+  }
+  /**
+   * Deletes a key and its value(s) from a `FormData` object.
+   *
+   * @param name The name of the key you want to delete.
+   */
+  delete(name2) {
+    __privateGet(this, _entries).delete(String(name2));
+  }
+  /**
+   * Returns an [`iterator`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols) allowing to go through all keys contained in this `FormData` object.
+   * Each key is a `string`.
+   */
+  *keys() {
+    for (const key of __privateGet(this, _entries).keys()) {
+      yield key;
+    }
+  }
+  /**
+   * Returns an [`iterator`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols) allowing to go through the `FormData` key/value pairs.
+   * The key of each pair is a string; the value is a [`FormDataValue`](https://developer.mozilla.org/en-US/docs/Web/API/FormDataEntryValue).
+   */
+  *entries() {
+    for (const name2 of this.keys()) {
+      const values = this.getAll(name2);
+      for (const value of values) {
+        yield [name2, value];
+      }
+    }
+  }
+  /**
+   * Returns an [`iterator`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols) allowing to go through all values contained in this object `FormData` object.
+   * Each value is a [`FormDataValue`](https://developer.mozilla.org/en-US/docs/Web/API/FormDataEntryValue).
+   */
+  *values() {
+    for (const [, value] of this) {
+      yield value;
+    }
+  }
+  /**
+   * An alias for FormData#entries()
+   */
+  [Symbol.iterator]() {
+    return this.entries();
+  }
+  /**
+   * Executes given callback function for each field of the FormData instance
+   */
+  forEach(callback, thisArg) {
+    for (const [name2, value] of this) {
+      callback.call(thisArg, value, name2, this);
+    }
+  }
+  get [Symbol.toStringTag]() {
+    return "FormData";
+  }
+};
+_entries = /* @__PURE__ */ new WeakMap();
+_setEntry = /* @__PURE__ */ new WeakSet();
+setEntry_fn = function({
+  name: name2,
+  rawValue,
+  append: append2,
+  fileName,
+  argsLength
+}) {
+  const methodName = append2 ? "append" : "set";
+  if (argsLength < 2) {
+    throw new TypeError(
+      `Failed to execute '${methodName}' on 'FormData': 2 arguments required, but only ${argsLength} present.`
+    );
+  }
+  name2 = String(name2);
+  let value;
+  if (isFile2(rawValue)) {
+    value = fileName === void 0 ? rawValue : new File3([rawValue], fileName, {
+      // otherwise, create new File with given fileName
+      type: rawValue.type,
+      lastModified: rawValue.lastModified
+    });
+  } else if (isBlob3(rawValue)) {
+    value = new File3([rawValue], fileName === void 0 ? "blob" : fileName, {
+      type: rawValue.type
+    });
+  } else if (fileName) {
+    throw new TypeError(
+      `Failed to execute '${methodName}' on 'FormData': parameter 2 is not of type 'Blob'.`
+    );
+  } else {
+    value = String(rawValue);
+  }
+  const values = __privateGet(this, _entries).get(name2);
+  if (!values) {
+    return void __privateGet(this, _entries).set(name2, [value]);
+  }
+  if (!append2) {
+    return void __privateGet(this, _entries).set(name2, [value]);
+  }
+  values.push(value);
+};
+
 // src/bundle.ts
 global.fetch = fetch2;
+global.FormData = FormData5;
 if (require.main === module) {
   process.on("unhandledRejection", (reason, promise) => {
     console.warn("Unhandled Rejection at:", promise, "reason:", reason);
@@ -45733,4 +46242,7 @@ formdata-polyfill/esm.min.js:
 
 node-domexception/index.js:
   (*! node-domexception. MIT License. Jimmy Wärting <https://jimmy.warting.se/opensource> *)
+
+formdata-node/lib/form-data.js:
+  (*! Based on fetch-blob. MIT License. Jimmy Wärting <https://jimmy.warting.se/opensource> & David Frank *)
 */
