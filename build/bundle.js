@@ -19008,14 +19008,14 @@ var require_init = __commonJS({
   "node_modules/express/lib/middleware/init.js"(exports2) {
     "use strict";
     var setPrototypeOf = require_setprototypeof();
-    exports2.init = function(app2) {
+    exports2.init = function(app) {
       return function expressInit(req, res, next) {
-        if (app2.enabled("x-powered-by")) res.setHeader("X-Powered-By", "Express");
+        if (app.enabled("x-powered-by")) res.setHeader("X-Powered-By", "Express");
         req.res = res;
         res.req = req;
         req.next = next;
-        setPrototypeOf(req, app2.request);
-        setPrototypeOf(res, app2.response);
+        setPrototypeOf(req, app.request);
+        setPrototypeOf(res, app.response);
         res.locals = res.locals || /* @__PURE__ */ Object.create(null);
         next();
       };
@@ -21704,15 +21704,15 @@ var require_application = __commonJS({
     var setPrototypeOf = require_setprototypeof();
     var hasOwnProperty = Object.prototype.hasOwnProperty;
     var slice = Array.prototype.slice;
-    var app2 = exports2 = module2.exports = {};
+    var app = exports2 = module2.exports = {};
     var trustProxyDefaultSymbol = "@@symbol:trust_proxy_default";
-    app2.init = function init() {
+    app.init = function init() {
       this.cache = {};
       this.engines = {};
       this.settings = {};
       this.defaultConfiguration();
     };
-    app2.defaultConfiguration = function defaultConfiguration() {
+    app.defaultConfiguration = function defaultConfiguration() {
       var env = process.env.NODE_ENV || "development";
       this.enable("x-powered-by");
       this.set("etag", "weak");
@@ -21750,7 +21750,7 @@ var require_application = __commonJS({
         }
       });
     };
-    app2.lazyrouter = function lazyrouter() {
+    app.lazyrouter = function lazyrouter() {
       if (!this._router) {
         this._router = new Router({
           caseSensitive: this.enabled("case sensitive routing"),
@@ -21760,7 +21760,7 @@ var require_application = __commonJS({
         this._router.use(middleware.init(this));
       }
     };
-    app2.handle = function handle(req, res, callback) {
+    app.handle = function handle(req, res, callback) {
       var router = this._router;
       var done = callback || finalhandler(req, res, {
         env: this.get("env"),
@@ -21773,7 +21773,7 @@ var require_application = __commonJS({
       }
       router.handle(req, res, done);
     };
-    app2.use = function use(fn) {
+    app.use = function use(fn) {
       var offset = 0;
       var path2 = "/";
       if (typeof fn !== "function") {
@@ -21811,11 +21811,11 @@ var require_application = __commonJS({
       }, this);
       return this;
     };
-    app2.route = function route(path2) {
+    app.route = function route(path2) {
       this.lazyrouter();
       return this._router.route(path2);
     };
-    app2.engine = function engine(ext, fn) {
+    app.engine = function engine(ext, fn) {
       if (typeof fn !== "function") {
         throw new Error("callback function required");
       }
@@ -21823,7 +21823,7 @@ var require_application = __commonJS({
       this.engines[extension] = fn;
       return this;
     };
-    app2.param = function param(name2, fn) {
+    app.param = function param(name2, fn) {
       this.lazyrouter();
       if (Array.isArray(name2)) {
         for (var i = 0; i < name2.length; i++) {
@@ -21834,7 +21834,7 @@ var require_application = __commonJS({
       this._router.param(name2, fn);
       return this;
     };
-    app2.set = function set(setting, val) {
+    app.set = function set(setting, val) {
       if (arguments.length === 1) {
         var settings = this.settings;
         while (settings && settings !== Object.prototype) {
@@ -21864,23 +21864,23 @@ var require_application = __commonJS({
       }
       return this;
     };
-    app2.path = function path2() {
+    app.path = function path2() {
       return this.parent ? this.parent.path() + this.mountpath : "";
     };
-    app2.enabled = function enabled(setting) {
+    app.enabled = function enabled(setting) {
       return Boolean(this.set(setting));
     };
-    app2.disabled = function disabled(setting) {
+    app.disabled = function disabled(setting) {
       return !this.set(setting);
     };
-    app2.enable = function enable(setting) {
+    app.enable = function enable(setting) {
       return this.set(setting, true);
     };
-    app2.disable = function disable(setting) {
+    app.disable = function disable(setting) {
       return this.set(setting, false);
     };
     methods.forEach(function(method) {
-      app2[method] = function(path2) {
+      app[method] = function(path2) {
         if (method === "get" && arguments.length === 1) {
           return this.set(path2);
         }
@@ -21890,7 +21890,7 @@ var require_application = __commonJS({
         return this;
       };
     });
-    app2.all = function all(path2) {
+    app.all = function all(path2) {
       this.lazyrouter();
       var route = this._router.route(path2);
       var args = slice.call(arguments, 1);
@@ -21899,8 +21899,8 @@ var require_application = __commonJS({
       }
       return this;
     };
-    app2.del = deprecate.function(app2.delete, "app.del: Use app.delete instead");
-    app2.render = function render(name2, options, callback) {
+    app.del = deprecate.function(app.delete, "app.del: Use app.delete instead");
+    app.render = function render(name2, options, callback) {
       var cache = this.cache;
       var done = callback;
       var engines = this.engines;
@@ -21941,7 +21941,7 @@ var require_application = __commonJS({
       }
       tryRender(view, renderOptions, done);
     };
-    app2.listen = function listen() {
+    app.listen = function listen() {
       var server = http.createServer(this);
       return server.listen.apply(server, arguments);
     };
@@ -23008,7 +23008,7 @@ var require_response = __commonJS({
       var encoding;
       var req = this.req;
       var type;
-      var app2 = this.app;
+      var app = this.app;
       if (arguments.length === 2) {
         if (typeof arguments[0] !== "number" && typeof arguments[1] === "number") {
           deprecate("res.send(body, status): Use res.status(status).send(body) instead");
@@ -23055,7 +23055,7 @@ var require_response = __commonJS({
           this.set("Content-Type", setCharset(type, "utf-8"));
         }
       }
-      var etagFn = app2.get("etag fn");
+      var etagFn = app.get("etag fn");
       var generateETag = !this.get("ETag") && typeof etagFn === "function";
       var len;
       if (chunk !== void 0) {
@@ -23107,10 +23107,10 @@ var require_response = __commonJS({
           val = arguments[1];
         }
       }
-      var app2 = this.app;
-      var escape2 = app2.get("json escape");
-      var replacer = app2.get("json replacer");
-      var spaces = app2.get("json spaces");
+      var app = this.app;
+      var escape2 = app.get("json escape");
+      var replacer = app.get("json replacer");
+      var spaces = app.get("json spaces");
       var body = stringify(val, replacer, spaces, escape2);
       if (!this.get("Content-Type")) {
         this.set("Content-Type", "application/json");
@@ -23129,12 +23129,12 @@ var require_response = __commonJS({
           val = arguments[1];
         }
       }
-      var app2 = this.app;
-      var escape2 = app2.get("json escape");
-      var replacer = app2.get("json replacer");
-      var spaces = app2.get("json spaces");
+      var app = this.app;
+      var escape2 = app.get("json escape");
+      var replacer = app.get("json replacer");
+      var spaces = app.get("json spaces");
       var body = stringify(val, replacer, spaces, escape2);
-      var callback = this.req.query[app2.get("jsonp callback name")];
+      var callback = this.req.query[app.get("jsonp callback name")];
       if (!this.get("Content-Type")) {
         this.set("X-Content-Type-Options", "nosniff");
         this.set("Content-Type", "application/json");
@@ -23399,7 +23399,7 @@ var require_response = __commonJS({
       return this;
     };
     res.render = function render(view, options, callback) {
-      var app2 = this.req.app;
+      var app = this.req.app;
       var done = callback;
       var opts = options || {};
       var req = this.req;
@@ -23413,7 +23413,7 @@ var require_response = __commonJS({
         if (err) return req.next(err);
         self.send(str);
       };
-      app2.render(view, opts, done);
+      app.render(view, opts, done);
     };
     function sendfile(res2, file, options, callback) {
       var done = false;
@@ -23621,19 +23621,19 @@ var require_express = __commonJS({
     var res = require_response();
     exports2 = module2.exports = createApplication;
     function createApplication() {
-      var app2 = function(req2, res2, next) {
-        app2.handle(req2, res2, next);
+      var app = function(req2, res2, next) {
+        app.handle(req2, res2, next);
       };
-      mixin(app2, EventEmitter.prototype, false);
-      mixin(app2, proto, false);
-      app2.request = Object.create(req, {
-        app: { configurable: true, enumerable: true, writable: true, value: app2 }
+      mixin(app, EventEmitter.prototype, false);
+      mixin(app, proto, false);
+      app.request = Object.create(req, {
+        app: { configurable: true, enumerable: true, writable: true, value: app }
       });
-      app2.response = Object.create(res, {
-        app: { configurable: true, enumerable: true, writable: true, value: app2 }
+      app.response = Object.create(res, {
+        app: { configurable: true, enumerable: true, writable: true, value: app }
       });
-      app2.init();
-      return app2;
+      app.init();
+      return app;
     }
     exports2.application = proto;
     exports2.request = req;
@@ -24857,12 +24857,12 @@ var import_express = __toESM(require_express2());
 
 // webtask.json
 var name = "auth0";
-var version = "0.1.11";
+var version = "0.1.12";
 var webtask_default = {
   title: "p6m-dev/auth0-extension",
   name,
   version,
-  preVersion: "0.1.10",
+  preVersion: "0.1.11",
   author: "P6m",
   useHashName: false,
   description: "P6m Auth0 Extension",
@@ -24896,9 +24896,10 @@ var webtask_default = {
 };
 
 // src/routes/meta.ts
-var meta_default = () => {
+var meta_default = (ctx) => {
   const router = import_express.default.Router();
   router.all("/", (req, res) => {
+    console.log("!!! ctx", JSON.stringify(ctx));
     res.status(200).json(webtask_default);
   });
   return router;
@@ -24906,9 +24907,10 @@ var meta_default = () => {
 
 // src/routes/lifecycle.ts
 var import_express2 = __toESM(require_express2());
-var lifecycle_default = () => {
+var lifecycle_default = (ctx) => {
   const router = import_express2.default.Router();
   router.all("/", (req, res) => {
+    console.log("!!! ctx", JSON.stringify(ctx));
     res.status(204).send();
   });
   return router;
@@ -24916,10 +24918,25 @@ var lifecycle_default = () => {
 
 // src/routes/api.ts
 var import_express3 = __toESM(require_express2());
-var api_default = () => {
+
+// src/auth/middleware.ts
+async function withIdentity(req, res, next) {
+  const authorization = req.headers["authorization"];
+  console.log("!!! checking authorization", authorization);
+  next();
+}
+
+// src/routes/api.ts
+var api_default = (ctx) => {
   const router = import_express3.default.Router();
   router.all("/", (req, res) => {
+    console.log("!!! ctx", JSON.stringify(ctx));
     res.status(200).json({ version });
+  });
+  router.all("/clients", withIdentity, (req, res) => {
+    console.log("!!! ctx", JSON.stringify(ctx));
+    console.log("!!! fetching clients");
+    res.status(200).json({});
   });
   return router;
 };
@@ -24927,18 +24944,21 @@ var api_default = () => {
 // src/app.ts
 var BASE_PATHS = ["", `/${name}`, `/api/run/p6m/${name}`];
 var path = (path2) => BASE_PATHS.map((p) => `${p}${path2}`);
-var app = (0, import_express4.default)();
-app.use((0, import_morgan.default)("dev"));
-app.use(import_express4.default.json());
-app.use(import_express4.default.urlencoded({ extended: false }));
-app.use((0, import_cookie_parser.default)());
-app.use(path("/api"), api_default());
-app.use(path("/meta"), meta_default());
-app.use(path("/.lifecycle"), lifecycle_default());
-app.use((req, res) => {
-  res.status(404).json({ error: "Not Found", url: req.url, version });
-});
-var app_default = app;
+var createApp = (ctx) => {
+  console.log("!!! ctx", JSON.stringify(ctx));
+  const app = (0, import_express4.default)();
+  app.use((0, import_morgan.default)("dev"));
+  app.use(import_express4.default.json());
+  app.use(import_express4.default.urlencoded({ extended: false }));
+  app.use((0, import_cookie_parser.default)());
+  app.use(path("/api"), api_default(ctx));
+  app.use(path("/meta"), meta_default(ctx));
+  app.use(path("/.lifecycle"), lifecycle_default(ctx));
+  app.use((req, res) => {
+    res.status(404).json({ error: "Not Found", url: req.url, version });
+  });
+  return app;
+};
 
 // src/bundle.ts
 if (require.main === module) {
@@ -24951,14 +24971,14 @@ if (require.main === module) {
     process.exit(-1);
   });
   console.log("Starting app...\n");
-  app_default.listen(3e3, "0.0.0.0", () => {
+  createApp({}).listen(3e3, "0.0.0.0", () => {
     console.log("Listening on http://0.0.0.0:3000");
   });
 }
 module.exports = (ctx, req, res) => {
   console.log("!!! ctx", ctx);
   console.log("!!! req.url", req.url);
-  return app_default(req, res);
+  return createApp(ctx)(req, res);
 };
 /*! Bundled license information:
 
