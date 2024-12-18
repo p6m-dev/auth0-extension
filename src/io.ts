@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 export const fetchRemote = async <T>(
   method: 'GET',
   url: URL,
@@ -11,8 +13,6 @@ export const fetchRemote = async <T>(
     headers['Authorization'] = authorization;
   }
 
-  return await fetch(url, {
-    method,
-    headers,
-  }).then((r) => r.json() as Promise<T>);
+  return (await axios.request<T>({ method, url: url.toString(), headers }))
+    .data;
 };
