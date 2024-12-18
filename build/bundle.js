@@ -24857,12 +24857,12 @@ var import_express = __toESM(require_express2());
 
 // webtask.json
 var name = "auth0";
-var version = "0.1.13";
+var version = "0.1.14";
 var webtask_default = {
   title: "p6m-dev/auth0-extension",
   name,
   version,
-  preVersion: "0.1.12",
+  preVersion: "0.1.13",
   author: "P6m",
   useHashName: false,
   description: "P6m Auth0 Extension",
@@ -24934,6 +24934,8 @@ var fetchRemote = async (method, url, authorization) => {
 };
 
 // src/auth/middleware.ts
+var NotFoundError = class extends Error {
+};
 var UnauthorizedError = class extends Error {
 };
 var identified = (ctx) => {
@@ -24949,6 +24951,28 @@ var identified = (ctx) => {
       authorization
     );
     next();
+  };
+};
+var errorHandler = (ctx) => {
+  return (err, req, res) => {
+    console.error(err);
+    res.status(500);
+    const error = {
+      error: err.message,
+      version,
+      meta: ctx.meta
+    };
+    if (err instanceof UnauthorizedError) {
+      res.status(401);
+    }
+    if (err instanceof NotFoundError) {
+      res.status(404);
+    }
+    if (req.accepts("html")) {
+      res.send(`Error: ${error.error}`);
+    } else {
+      res.json(error);
+    }
   };
 };
 
@@ -24981,9 +25005,10 @@ var createApp = (ctx) => {
   app.use(path("/api"), api_default(ctx));
   app.use(path("/meta"), meta_default(ctx));
   app.use(path("/.lifecycle"), lifecycle_default(ctx));
-  app.use((req, res) => {
-    res.status(404).json({ error: "Not Found", url: req.url, version, meta: ctx.meta });
+  app.use((req, res, next) => {
+    next(new NotFoundError(`Not Found: ${req.url}`));
   });
+  app.use(errorHandler(ctx));
   return app;
 };
 
