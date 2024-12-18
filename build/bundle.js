@@ -26909,12 +26909,12 @@ var import_express = __toESM(require_express2());
 
 // webtask.json
 var name = "auth0";
-var version = "0.1.17";
+var version = "0.1.18";
 var webtask_default = {
   title: "p6m-dev/auth0-extension",
   name,
   version,
-  preVersion: "0.1.16",
+  preVersion: "0.1.17",
   author: "P6m",
   useHashName: false,
   description: "P6m Auth0 Extension",
@@ -38838,10 +38838,10 @@ var fetchClients = async (auth0, orgId) => {
 var api_default = (ctx) => {
   console.log("api route", ctx.meta);
   const auth0 = new ManagementClient({
-    clientId: ctx.secrets?.MANAGEMENT_CLIENT_ID || "",
-    clientSecret: ctx.secrets?.MANAGEMENT_CLIENT_SECRET || "",
-    domain: ctx.secrets?.AUTH0_DOMAIN || "",
-    audience: ctx.secrets?.MANAGEMENT_AUDIENCE || ""
+    clientId: ctx.secrets.MANAGEMENT_CLIENT_ID || "",
+    clientSecret: ctx.secrets.MANAGEMENT_CLIENT_SECRET || "",
+    domain: ctx.secrets.AUTH0_DOMAIN || "",
+    audience: ctx.secrets.MANAGEMENT_AUDIENCE || ""
   });
   const router = import_express3.default.Router();
   router.all("/", (req, res) => {
@@ -38857,7 +38857,7 @@ var api_default = (ctx) => {
   router.get("/apps", identified(ctx), async (req, res) => {
     const org = getClaim(req, "https://p6m.dev/v1/org");
     const orgs = getClaim(req, "https://p6m.dev/v1/orgs");
-    const orgId = Object.entries(orgs).find(([, name2]) => name2 === org)?.[0];
+    const orgId = (Object.entries(orgs).find(([, name2]) => name2 === org) || [])[0];
     const clients = await fetchClients(auth0, orgId);
     res.status(200).json(clients);
   });
@@ -38894,13 +38894,11 @@ if (require.main === module) {
     process.exit(-1);
   });
   console.log("Starting app...\n");
-  createApp({}).listen(3e3, "0.0.0.0", () => {
+  createApp({ secrets: {} }).listen(3e3, "0.0.0.0", () => {
     console.log("Listening on http://0.0.0.0:3000");
   });
 }
 module.exports = (ctx, req, res) => {
-  console.log("!!! ctx", ctx);
-  console.log("!!! req.url", req.url);
   return createApp(ctx)(req, res);
 };
 /*! Bundled license information:
