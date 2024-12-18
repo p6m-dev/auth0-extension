@@ -1,7 +1,9 @@
-import { Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { Context, RequestWithUserInfo, UserInfo } from '../types';
 import { fetchRemote } from '../io';
+import { version } from '../../webtask.json';
 
+export class NotFoundError extends Error {}
 export class UnauthorizedError extends Error {}
 
 export const identified = (ctx: Context) => {
@@ -24,5 +26,32 @@ export const identified = (ctx: Context) => {
     );
 
     next();
+  };
+};
+
+export const errorHandler = (ctx: Context) => {
+  return (err: Error, req: Request, res: Response) => {
+    console.error(err);
+
+    res.status(500);
+    const error = {
+      error: err.message,
+      version,
+      meta: ctx.meta,
+    };
+
+    if (err instanceof UnauthorizedError) {
+      res.status(401);
+    }
+
+    if (err instanceof NotFoundError) {
+      res.status(404);
+    }
+
+    if (req.accepts('html')) {
+      res.send(`Error: ${error.error}`);
+    } else {
+      res.json(error);
+    }
   };
 };

@@ -4,8 +4,9 @@ import logger from 'morgan';
 import meta from './routes/meta';
 import lifecycle from './routes/lifecycle';
 import api from './routes/api';
-import { version, name } from '../webtask.json';
+import { name } from '../webtask.json';
 import { Context } from './types';
+import { errorHandler, NotFoundError } from './auth/middleware';
 
 const BASE_PATHS = ['', `/${name}`, `/api/run/p6m/${name}`];
 const path = (path: string) => BASE_PATHS.map((p) => `${p}${path}`);
@@ -21,11 +22,11 @@ export const createApp = (ctx: Context) => {
   app.use(path('/meta'), meta(ctx));
   app.use(path('/.lifecycle'), lifecycle(ctx));
 
-  app.use((req, res) => {
-    res
-      .status(404)
-      .json({ error: 'Not Found', url: req.url, version, meta: ctx.meta });
+  app.use((req, res, next) => {
+    next(new NotFoundError(`Not Found: ${req.url}`));
   });
+
+  app.use(errorHandler(ctx));
 
   return app;
 };
