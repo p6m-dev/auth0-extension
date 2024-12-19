@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { Context, RequestWithUserInfo, UserInfo } from './types';
 import { fetchRemote } from './io';
 import { version } from '../webtask.json';
-import { createRemoteJWKSet, jwtVerify } from 'jose';
+import { createRemoteJWKSet, decodeProtectedHeader, jwtVerify } from 'jose';
 
 export class BadRequestError extends Error {}
 export class NotFoundError extends Error {}
@@ -32,6 +32,9 @@ export const identified = (ctx: Context) => {
     if (!token) {
       return next(new UnauthorizedError('Missing authorization'));
     }
+
+    const header = decodeProtectedHeader(token);
+    console.log('!!! header', header);
 
     req.userInfo = await Promise.all(
       ['JWT', 'at+jwt'].map((typ) =>
