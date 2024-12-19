@@ -4763,14 +4763,14 @@ var require_lib = __commonJS({
     iconv.encodings = null;
     iconv.defaultCharUnicode = "\uFFFD";
     iconv.defaultCharSingleByte = "?";
-    iconv.encode = function encode(str, encoding, options) {
+    iconv.encode = function encode2(str, encoding, options) {
       str = "" + (str || "");
       var encoder2 = iconv.getEncoder(encoding, options);
       var res = encoder2.write(str);
       var trail = encoder2.end();
       return trail && trail.length > 0 ? Buffer3.concat([res, trail]) : res;
     };
-    iconv.decode = function decode2(buf, encoding, options) {
+    iconv.decode = function decode3(buf, encoding, options) {
       if (typeof buf === "string") {
         if (!iconv.skipDecodeWarning) {
           console.error("Iconv-lite warning: decode()-ing strings is deprecated. Refer to https://github.com/ashtuchkin/iconv-lite/wiki/Use-Buffers-when-decoding");
@@ -16142,7 +16142,7 @@ var require_utils = __commonJS({
         return acc;
       }, target);
     };
-    var decode2 = function(str, decoder2, charset) {
+    var decode3 = function(str, decoder2, charset) {
       var strWithoutPlus = str.replace(/\+/g, " ");
       if (charset === "iso-8859-1") {
         return strWithoutPlus.replace(/%[0-9a-f]{2}/gi, unescape);
@@ -16154,7 +16154,7 @@ var require_utils = __commonJS({
       }
     };
     var limit = 1024;
-    var encode = function encode2(str, defaultEncoder, charset, kind, format) {
+    var encode2 = function encode3(str, defaultEncoder, charset, kind, format) {
       if (str.length === 0) {
         return str;
       }
@@ -16245,8 +16245,8 @@ var require_utils = __commonJS({
       assign,
       combine,
       compact,
-      decode: decode2,
-      encode,
+      decode: decode3,
+      encode: encode2,
       isBuffer,
       isRegExp,
       maybeMap,
@@ -20392,7 +20392,7 @@ var require_send = __commonJS({
     SendStream.prototype.pipe = function pipe(res) {
       var root = this._root;
       this.res = res;
-      var path3 = decode2(this.path);
+      var path3 = decode3(this.path);
       if (path3 === -1) {
         this.error(400);
         return res;
@@ -20649,7 +20649,7 @@ var require_send = __commonJS({
       }
       return err instanceof Error ? createError(status, err, { expose: false }) : createError(status, err);
     }
-    function decode2(path3) {
+    function decode3(path3) {
       try {
         return decodeURIComponent(path3);
       } catch (err) {
@@ -22740,7 +22740,7 @@ var require_cookie = __commonJS({
       var obj = {};
       var len = str.length;
       if (len < 2) return obj;
-      var dec = opt && opt.decode || decode2;
+      var dec = opt && opt.decode || decode3;
       var index = 0;
       var eqIdx = 0;
       var endIdx = 0;
@@ -22871,15 +22871,15 @@ var require_cookie = __commonJS({
       }
       return str;
     }
-    function decode2(str) {
+    function decode3(str) {
       return str.indexOf("%") !== -1 ? decodeURIComponent(str) : str;
     }
     function isDate(val) {
       return __toString.call(val) === "[object Date]";
     }
-    function tryDecode(str, decode3) {
+    function tryDecode(str, decode4) {
       try {
-        return decode3(str);
+        return decode4(str);
       } catch (e) {
         return str;
       }
@@ -23703,7 +23703,7 @@ var require_cookie2 = __commonJS({
       var obj = {};
       var len = str.length;
       if (len < 2) return obj;
-      var dec = opt && opt.decode || decode2;
+      var dec = opt && opt.decode || decode3;
       var index = 0;
       var eqIdx = 0;
       var endIdx = 0;
@@ -23834,15 +23834,15 @@ var require_cookie2 = __commonJS({
       }
       return str;
     }
-    function decode2(str) {
+    function decode3(str) {
       return str.indexOf("%") !== -1 ? decodeURIComponent(str) : str;
     }
     function isDate(val) {
       return __toString.call(val) === "[object Date]";
     }
-    function tryDecode(str, decode3) {
+    function tryDecode(str, decode4) {
       try {
-        return decode3(str);
+        return decode4(str);
       } catch (e) {
         return str;
       }
@@ -24857,12 +24857,12 @@ var import_express = __toESM(require_express2());
 
 // webtask.json
 var name = "auth0";
-var version = "0.1.37";
+var version = "0.1.38";
 var webtask_default = {
   title: "P6m Auth0 Extension",
   name,
   version,
-  preVersion: "0.1.36",
+  preVersion: "0.1.37",
   author: "P6m",
   useHashName: false,
   description: "The P6m Auth0 Extension",
@@ -26252,6 +26252,39 @@ function createRemoteJWKSet(url, options) {
   return remoteJWKSet;
 }
 
+// node_modules/jose/dist/node/esm/util/base64url.js
+var decode2 = decode;
+
+// node_modules/jose/dist/node/esm/util/decode_protected_header.js
+function decodeProtectedHeader(token) {
+  let protectedB64u;
+  if (typeof token === "string") {
+    const parts = token.split(".");
+    if (parts.length === 3 || parts.length === 5) {
+      ;
+      [protectedB64u] = parts;
+    }
+  } else if (typeof token === "object" && token) {
+    if ("protected" in token) {
+      protectedB64u = token.protected;
+    } else {
+      throw new TypeError("Token does not contain a Protected Header");
+    }
+  }
+  try {
+    if (typeof protectedB64u !== "string" || !protectedB64u) {
+      throw new Error();
+    }
+    const result = JSON.parse(decoder.decode(decode2(protectedB64u)));
+    if (!isObject(result)) {
+      throw new Error();
+    }
+    return result;
+  } catch {
+    throw new TypeError("Invalid Token or Protected Header formatting");
+  }
+}
+
 // src/middleware.ts
 var BadRequestError = class extends Error {
 };
@@ -26275,6 +26308,8 @@ var identified = (ctx) => {
     if (!token) {
       return next(new UnauthorizedError("Missing authorization"));
     }
+    const header = decodeProtectedHeader(token);
+    console.log("!!! header", header);
     req.userInfo = await Promise.all(
       ["JWT", "at+jwt"].map(
         (typ) => jwtVerify(token, jwks, {
