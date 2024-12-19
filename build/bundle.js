@@ -24857,12 +24857,12 @@ var import_express = __toESM(require_express2());
 
 // webtask.json
 var name = "auth0";
-var version = "0.1.34";
+var version = "0.1.35";
 var webtask_default = {
   title: "P6m Auth0 Extension",
   name,
   version,
-  preVersion: "0.1.33",
+  preVersion: "0.1.34",
   author: "P6m",
   useHashName: false,
   description: "The P6m Auth0 Extension",
@@ -26273,11 +26273,18 @@ var identified = (ctx) => {
     if (!token) {
       return next(new UnauthorizedError("Missing authorization"));
     }
-    const { payload } = await jwtVerify(token, jwks, {
-      issuer: "https://auth.p6m.run/"
-    });
-    console.log("User:", JSON.stringify(req.userInfo));
-    req.userInfo = payload;
+    try {
+      const { payload } = await jwtVerify(token, jwks, {
+        issuer: "https://auth.p6m.run/"
+      });
+      console.log("User:", JSON.stringify(req.userInfo));
+      req.userInfo = payload;
+    } catch (e) {
+      if (!(e instanceof Error)) {
+        throw e;
+      }
+      return next(new UnauthorizedError(e.message));
+    }
     next();
   };
 };
