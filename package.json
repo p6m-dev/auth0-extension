@@ -1,7 +1,10 @@
 {
   "name": "@p6m-dev/auth0-extension",
-  "version": "0.1.23",
+  "version": "0.1.25",
   "description": "P6m Auth0 Extension",
+  "engines": {
+    "node": "18"
+  },
   "main": "build/bundle.js",
   "scripts": {
     "build": "tsup src/bundle.ts --out-dir build --platform node --target node18",
@@ -46,6 +49,7 @@
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.18.1",
     "undici": "^7.2.0",
+    "webtask-json-validator": "^4.1.0",
     "webtask-tools": "^3.4.1"
   }
 }
