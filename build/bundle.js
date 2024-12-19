@@ -26909,12 +26909,12 @@ var import_express = __toESM(require_express2());
 
 // webtask.json
 var name = "auth0";
-var version = "0.1.31";
+var version = "0.1.32";
 var webtask_default = {
   title: "P6m Auth0 Extension",
   name,
   version,
-  preVersion: "0.1.30",
+  preVersion: "0.1.31",
   author: "P6m",
   useHashName: false,
   description: "The P6m Auth0 Extension",
@@ -30329,9 +30329,9 @@ var getClaim = (req, claim, required) => {
 
 // src/routes/api.ts
 var fetchClients = async (client, orgId) => {
-  const clients = await client.clients.getAll().then((c) => {
+  const clients = await client.getClients().then((c) => {
     console.log("Response from auth0 api", JSON.stringify(c));
-    return c.data.filter(
+    return c.filter(
       (c2) => !orgId ? c2.client_metadata["OrganizationId"] === void 0 : c2.client_metadata["OrganizationId"] === orgId
     );
   });
