@@ -17,8 +17,8 @@ const fetchClients = async (
     //  - Otherwise, make sure the provided OrganizationId matches
     return c.filter((c) =>
       !orgId
-        ? c.client_metadata['OrganizationId'] === undefined
-        : c.client_metadata['OrganizationId'] === orgId,
+        ? (c.client_metadata || {})['OrganizationId'] === undefined
+        : (c.client_metadata || {})['OrganizationId'] === orgId,
     );
   });
 
