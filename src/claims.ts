@@ -1,6 +1,6 @@
 import { Request } from 'express';
 import { RequestWithUserInfo, UserInfo } from './types';
-import { BadRequestError } from './auth/middleware';
+import { BadRequestError } from './middleware';
 
 class MissingClaimError extends BadRequestError {
   constructor(claim: keyof UserInfo) {

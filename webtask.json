@@ -1,7 +1,7 @@
 {
   "title": "P6m Auth0 Extension",
   "name": "auth0",
-  "version": "0.1.28",
+  "version": "0.1.30",
   "preVersion": "0.1.27",
   "author": "P6m",
   "useHashName": false,

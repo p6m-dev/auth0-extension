@@ -1,6 +1,6 @@
 import express from 'express';
 import { version } from '../../webtask.json';
-import { identified } from '../auth/middleware';
+import { identified } from '../middleware';
 import { Context, RequestWithUserInfo } from '../types';
 import { ManagementClient, Client } from 'auth0';
 import { getClaim } from '../claims';

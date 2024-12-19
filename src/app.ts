@@ -6,7 +6,7 @@ import lifecycle from './routes/lifecycle';
 import api from './routes/api';
 import { name } from '../webtask.json';
 import { Context } from './types';
-import { errorHandler, NotFoundError } from './auth/middleware';
+import { errorHandler, NotFoundError } from './middleware';
 
 const BASE_PATHS = ['', `/${name}`, `/api/run/p6m/${name}`];
 const path = (path: string) => BASE_PATHS.map((p) => `${p}${path}`);
