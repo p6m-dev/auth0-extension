@@ -38,7 +38,9 @@ export default (ctx: Context) => {
   const router = express.Router();
 
   router.all('/', (req, res) => {
-    res.status(200).json({ version, meta: ctx.meta });
+    res
+      .status(200)
+      .json({ version, nodeVersion: process.version, meta: ctx.meta });
   });
 
   router.get('/me', identified(ctx), (req, res) => {
