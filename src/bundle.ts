@@ -1,7 +1,3 @@
-// Polyfills
-global.fetch = require('node-fetch');
-global.FormData = require('formdata-node');
-
 import { IncomingMessage, ServerResponse } from 'http';
 import { createApp } from './app';
 import { Context } from './types';

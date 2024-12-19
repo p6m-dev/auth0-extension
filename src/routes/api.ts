@@ -2,15 +2,15 @@ import express from 'express';
 import { version } from '../../webtask.json';
 import { identified } from '../middleware';
 import { Context, RequestWithUserInfo } from '../types';
-import { ManagementClient, Client } from 'auth0';
 import { getClaim } from '../claims';
+import type { ManagementClient as Auth0, Client } from 'auth0';
 
 const fetchClients = async (
-  auth0: ManagementClient,
+  client: Auth0,
   orgId?: string,
 ): Promise<Client[]> => {
   //TODO: Pagination
-  const clients = await auth0.clients.getAll().then((c) => {
+  const clients = await client.clients.getAll().then((c) => {
     console.log('Response from auth0 api', JSON.stringify(c));
     // Always filter!
     //  - If no orgId, only get clients without an OrganizationId in metadata (global clients)
@@ -28,12 +28,13 @@ const fetchClients = async (
 export default (ctx: Context) => {
   console.log('api route', ctx.meta);
 
-  const auth0 = new ManagementClient({
+  const auth0 = require('auth0@3.0.1');
+  const client = new auth0.ManagementClient({
     clientId: ctx.secrets.MANAGEMENT_CLIENT_ID || '',
     clientSecret: ctx.secrets.MANAGEMENT_CLIENT_SECRET || '',
     domain: ctx.secrets.AUTH0_DOMAIN || '',
     audience: ctx.secrets.MANAGEMENT_AUDIENCE || '',
-  });
+  }) as Auth0;
 
   const router = express.Router();
 
@@ -58,7 +59,7 @@ export default (ctx: Context) => {
     const orgId = (Object.entries(orgs).find(([, name]) => name === org) ||
       [])[0];
 
-    const clients = await fetchClients(auth0, orgId);
+    const clients = await fetchClients(client, orgId);
     res.status(200).json(clients);
   });
 
