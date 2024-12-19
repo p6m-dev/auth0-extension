@@ -30,18 +30,25 @@ export const identified = (ctx: Context) => {
       return next(new UnauthorizedError('Missing authorization'));
     }
 
-    try {
-      const { payload } = await jwtVerify<UserInfo>(token, jwks, {
-        issuer: 'https://auth.p6m.run/',
-      });
+    req.userInfo = await Promise.all(
+      ['JWT', 'at+jwt'].map((typ) =>
+        jwtVerify<UserInfo>(token, jwks, {
+          issuer: 'https://auth.p6m.run/',
+          typ,
+        })
+          .then(({ payload }) => {
+            console.log(`Verified ${typ} token`, JSON.stringify(payload));
+            return payload;
+          })
+          .catch((e) => {
+            console.warn(`Unverified ${typ} token: ${e.message}`);
+            return undefined;
+          }),
+      ),
+    ).then((payloads) => payloads.find((p) => !!p));
 
-      console.log('User:', JSON.stringify(req.userInfo));
-      req.userInfo = payload;
-    } catch (e) {
-      if (!(e instanceof Error)) {
-        throw e;
-      }
-      return next(new UnauthorizedError(e.message));
+    if (!req.userInfo) {
+      return next(new UnauthorizedError('Unauthorized'));
     }
 
     next();
