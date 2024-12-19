@@ -20,11 +20,14 @@ export const identified = (ctx: Context) => {
     next: NextFunction,
   ) => {
     let token = req.headers['authorization'] || '';
+    console.log('!!! token', token);
 
     const [type, jwt] = token.split(' ');
     if (type && type.toLowerCase() === 'bearer') {
       token = jwt;
     }
+
+    console.log('!!! updated token', token);
 
     if (!token) {
       return next(new UnauthorizedError('Missing authorization'));
