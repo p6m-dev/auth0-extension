@@ -10,12 +10,12 @@ const fetchClients = async (
   orgId?: string,
 ): Promise<Client[]> => {
   //TODO: Pagination
-  const clients = await client.clients.getAll().then((c) => {
+  const clients = await client.getClients().then((c) => {
     console.log('Response from auth0 api', JSON.stringify(c));
     // Always filter!
     //  - If no orgId, only get clients without an OrganizationId in metadata (global clients)
     //  - Otherwise, make sure the provided OrganizationId matches
-    return c.data.filter((c) =>
+    return c.filter((c) =>
       !orgId
         ? c.client_metadata['OrganizationId'] === undefined
         : c.client_metadata['OrganizationId'] === orgId,
