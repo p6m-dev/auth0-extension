@@ -24862,7 +24862,7 @@ var webtask_default = {
   title: "P6m Auth0 Extension",
   name,
   version,
-  preVersion: "0.1.37",
+  preVersion: "0.1.38",
   author: "P6m",
   useHashName: false,
   description: "The P6m Auth0 Extension",
@@ -26255,34 +26255,32 @@ function createRemoteJWKSet(url, options) {
 // node_modules/jose/dist/node/esm/util/base64url.js
 var decode2 = decode;
 
-// node_modules/jose/dist/node/esm/util/decode_protected_header.js
-function decodeProtectedHeader(token) {
-  let protectedB64u;
-  if (typeof token === "string") {
-    const parts = token.split(".");
-    if (parts.length === 3 || parts.length === 5) {
-      ;
-      [protectedB64u] = parts;
-    }
-  } else if (typeof token === "object" && token) {
-    if ("protected" in token) {
-      protectedB64u = token.protected;
-    } else {
-      throw new TypeError("Token does not contain a Protected Header");
-    }
-  }
+// node_modules/jose/dist/node/esm/util/decode_jwt.js
+function decodeJwt(jwt) {
+  if (typeof jwt !== "string")
+    throw new JWTInvalid("JWTs must use Compact JWS serialization, JWT must be a string");
+  const { 1: payload, length } = jwt.split(".");
+  if (length === 5)
+    throw new JWTInvalid("Only JWTs using Compact JWS serialization can be decoded");
+  if (length !== 3)
+    throw new JWTInvalid("Invalid JWT");
+  if (!payload)
+    throw new JWTInvalid("JWTs must contain a payload");
+  let decoded;
   try {
-    if (typeof protectedB64u !== "string" || !protectedB64u) {
-      throw new Error();
-    }
-    const result = JSON.parse(decoder.decode(decode2(protectedB64u)));
-    if (!isObject(result)) {
-      throw new Error();
-    }
-    return result;
+    decoded = decode2(payload);
   } catch {
-    throw new TypeError("Invalid Token or Protected Header formatting");
+    throw new JWTInvalid("Failed to base64url decode the payload");
   }
+  let result;
+  try {
+    result = JSON.parse(decoder.decode(decoded));
+  } catch {
+    throw new JWTInvalid("Failed to parse the decoded payload as JSON");
+  }
+  if (!isObject(result))
+    throw new JWTInvalid("Invalid JWT Claims Set");
+  return result;
 }
 
 // src/middleware.ts
@@ -26308,8 +26306,8 @@ var identified = (ctx) => {
     if (!token) {
       return next(new UnauthorizedError("Missing authorization"));
     }
-    const header = decodeProtectedHeader(token);
-    console.log("!!! header", header);
+    const decoded = decodeJwt(token);
+    console.log("!!! decoded", decoded);
     req.userInfo = await Promise.all(
       ["JWT", "at+jwt"].map(
         (typ) => jwtVerify(token, jwks, {
