@@ -24857,12 +24857,12 @@ var import_express = __toESM(require_express2());
 
 // webtask.json
 var name = "auth0";
-var version = "0.1.35";
+var version = "0.1.36";
 var webtask_default = {
   title: "P6m Auth0 Extension",
   name,
   version,
-  preVersion: "0.1.34",
+  preVersion: "0.1.35",
   author: "P6m",
   useHashName: false,
   description: "The P6m Auth0 Extension",
@@ -26273,17 +26273,22 @@ var identified = (ctx) => {
     if (!token) {
       return next(new UnauthorizedError("Missing authorization"));
     }
-    try {
-      const { payload } = await jwtVerify(token, jwks, {
-        issuer: "https://auth.p6m.run/"
-      });
-      console.log("User:", JSON.stringify(req.userInfo));
-      req.userInfo = payload;
-    } catch (e) {
-      if (!(e instanceof Error)) {
-        throw e;
-      }
-      return next(new UnauthorizedError(e.message));
+    req.userInfo = await Promise.all(
+      ["JWT", "at+jwt"].map(
+        (typ) => jwtVerify(token, jwks, {
+          issuer: "https://auth.p6m.run/",
+          typ
+        }).then(({ payload }) => {
+          console.log(`Verified ${typ} token`, JSON.stringify(payload));
+          return payload;
+        }).catch((e) => {
+          console.warn(`Unverified ${typ} token: ${e.message}`);
+          return void 0;
+        })
+      )
+    ).then((payloads) => payloads.find((p) => !!p));
+    if (!req.userInfo) {
+      return next(new UnauthorizedError("Unauthorized"));
     }
     next();
   };
