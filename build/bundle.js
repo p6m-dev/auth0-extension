@@ -24857,12 +24857,12 @@ var import_express = __toESM(require_express2());
 
 // webtask.json
 var name = "auth0";
-var version = "0.1.36";
+var version = "0.1.37";
 var webtask_default = {
   title: "P6m Auth0 Extension",
   name,
   version,
-  preVersion: "0.1.35",
+  preVersion: "0.1.36",
   author: "P6m",
   useHashName: false,
   description: "The P6m Auth0 Extension",
@@ -26266,10 +26266,12 @@ var identified = (ctx) => {
   );
   return async (req, res, next) => {
     let token = req.headers["authorization"] || "";
+    console.log("!!! token", token);
     const [type, jwt] = token.split(" ");
     if (type && type.toLowerCase() === "bearer") {
       token = jwt;
     }
+    console.log("!!! updated token", token);
     if (!token) {
       return next(new UnauthorizedError("Missing authorization"));
     }
