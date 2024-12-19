@@ -47,7 +47,7 @@ var require_depd = __commonJS({
       }
       return false;
     }
-    function convertDataDescriptorToAccessor(obj, prop, message2) {
+    function convertDataDescriptorToAccessor(obj, prop, message) {
       var descriptor = Object.getOwnPropertyDescriptor(obj, prop);
       var value = descriptor.value;
       descriptor.get = function getter() {
@@ -87,8 +87,8 @@ var require_depd = __commonJS({
       var stack = getStack();
       var site = callSiteLocation(stack[1]);
       var file = site[0];
-      function deprecate(message2) {
-        log.call(deprecate, message2);
+      function deprecate(message) {
+        log.call(deprecate, message);
       }
       deprecate._file = file;
       deprecate._ignored = isignored(namespace);
@@ -117,7 +117,7 @@ var require_depd = __commonJS({
       var str = process.env.TRACE_DEPRECATION || "";
       return containsNamespace(str, namespace);
     }
-    function log(message2, site) {
+    function log(message, site) {
       var haslisteners = eehaslisteners(process, "deprecation");
       if (!haslisteners && this._ignored) {
         return;
@@ -156,7 +156,7 @@ var require_depd = __commonJS({
         return;
       }
       this._warned[key] = true;
-      var msg = message2;
+      var msg = message;
       if (!msg) {
         msg = callSite === depSite || !callSite.name ? defaultMessage(depSite) : defaultMessage(callSite);
       }
@@ -242,7 +242,7 @@ var require_depd = __commonJS({
     function prepareObjectStackTrace(obj, stack) {
       return stack;
     }
-    function wrapfunction(fn, message2) {
+    function wrapfunction(fn, message) {
       if (typeof fn !== "function") {
         throw new TypeError("argument fn must be a function");
       }
@@ -257,10 +257,10 @@ var require_depd = __commonJS({
         "message",
         "site",
         '"use strict"\nreturn function (' + args + ") {log.call(deprecate, message, site)\nreturn fn.apply(this, arguments)\n}"
-      )(fn, log, this, message2, site);
+      )(fn, log, this, message, site);
       return deprecatedfn;
     }
-    function wrapproperty(obj, prop, message2) {
+    function wrapproperty(obj, prop, message) {
       if (!obj || typeof obj !== "object" && typeof obj !== "function") {
         throw new TypeError("argument obj must be object");
       }
@@ -276,25 +276,25 @@ var require_depd = __commonJS({
       var site = callSiteLocation(stack[1]);
       site.name = prop;
       if ("value" in descriptor) {
-        descriptor = convertDataDescriptorToAccessor(obj, prop, message2);
+        descriptor = convertDataDescriptorToAccessor(obj, prop, message);
       }
-      var get3 = descriptor.get;
+      var get = descriptor.get;
       var set = descriptor.set;
-      if (typeof get3 === "function") {
+      if (typeof get === "function") {
         descriptor.get = function getter() {
-          log.call(deprecate, message2, site);
-          return get3.apply(this, arguments);
+          log.call(deprecate, message, site);
+          return get.apply(this, arguments);
         };
       }
       if (typeof set === "function") {
         descriptor.set = function setter() {
-          log.call(deprecate, message2, site);
+          log.call(deprecate, message, site);
           return set.apply(this, arguments);
         };
       }
       Object.defineProperty(obj, prop, descriptor);
     }
-    function DeprecationError(namespace, message2, stack) {
+    function DeprecationError(namespace, message, stack) {
       var error = new Error();
       var stackString;
       Object.defineProperty(error, "constructor", {
@@ -303,7 +303,7 @@ var require_depd = __commonJS({
       Object.defineProperty(error, "message", {
         configurable: true,
         enumerable: false,
-        value: message2,
+        value: message,
         writable: true
       });
       Object.defineProperty(error, "name", {
@@ -342,7 +342,7 @@ var require_bytes = __commonJS({
     "use strict";
     module2.exports = bytes;
     module2.exports.format = format;
-    module2.exports.parse = parse2;
+    module2.exports.parse = parse;
     var formatThousandsRegExp = /\B(?=(\d{3})+(?!\d))/g;
     var formatDecimalsRegExp = /(?:\.0*|(\.[^0]+)0+)$/;
     var map = {
@@ -356,7 +356,7 @@ var require_bytes = __commonJS({
     var parseRegExp = /^((-|\+)?(\d+(?:\.\d+)?)) *(kb|mb|gb|tb|pb)$/i;
     function bytes(value, options) {
       if (typeof value === "string") {
-        return parse2(value);
+        return parse(value);
       }
       if (typeof value === "number") {
         return format(value, options);
@@ -400,7 +400,7 @@ var require_bytes = __commonJS({
       }
       return str + unitSeparator + unit;
     }
-    function parse2(val) {
+    function parse(val) {
       if (typeof val === "number" && !isNaN(val)) {
         return val;
       }
@@ -436,7 +436,7 @@ var require_content_type = __commonJS({
     var QUOTE_REGEXP = /([\\"])/g;
     var TYPE_REGEXP = /^[!#$%&'*+.^_`|~0-9A-Za-z-]+\/[!#$%&'*+.^_`|~0-9A-Za-z-]+$/;
     exports2.format = format;
-    exports2.parse = parse2;
+    exports2.parse = parse;
     function format(obj) {
       if (!obj || typeof obj !== "object") {
         throw new TypeError("argument obj is required");
@@ -460,7 +460,7 @@ var require_content_type = __commonJS({
       }
       return string;
     }
-    function parse2(string) {
+    function parse(string) {
       if (!string) {
         throw new TypeError("argument string is required");
       }
@@ -651,9 +651,9 @@ var require_statuses = __commonJS({
     function createMessageToStatusCodeMap(codes2) {
       var map = {};
       Object.keys(codes2).forEach(function forEachCode(code) {
-        var message2 = codes2[code];
+        var message = codes2[code];
         var status2 = Number(code);
-        map[message2.toLowerCase()] = status2;
+        map[message.toLowerCase()] = status2;
       });
       return map;
     }
@@ -662,10 +662,10 @@ var require_statuses = __commonJS({
         return Number(code);
       });
     }
-    function getStatusCode(message2) {
-      var msg = message2.toLowerCase();
+    function getStatusCode(message) {
+      var msg = message.toLowerCase();
       if (!Object.prototype.hasOwnProperty.call(status.code, msg)) {
-        throw new Error('invalid status message: "' + message2 + '"');
+        throw new Error('invalid status message: "' + message + '"');
       }
       return status.code[msg];
     }
@@ -729,13 +729,13 @@ var require_inherits = __commonJS({
   "node_modules/inherits/inherits.js"(exports2, module2) {
     "use strict";
     try {
-      util5 = require("util");
-      if (typeof util5.inherits !== "function") throw "";
-      module2.exports = util5.inherits;
+      util3 = require("util");
+      if (typeof util3.inherits !== "function") throw "";
+      module2.exports = util3.inherits;
     } catch (e) {
       module2.exports = require_inherits_browser();
     }
-    var util5;
+    var util3;
   }
 });
 
@@ -820,8 +820,8 @@ var require_http_errors = __commonJS({
     }
     function createClientErrorConstructor(HttpError, name2, code) {
       var className = toClassName(name2);
-      function ClientError(message2) {
-        var msg = message2 != null ? message2 : statuses.message[code];
+      function ClientError(message) {
+        var msg = message != null ? message : statuses.message[code];
         var err = new Error(msg);
         Error.captureStackTrace(err, ClientError);
         setPrototypeOf(err, ClientError.prototype);
@@ -859,8 +859,8 @@ var require_http_errors = __commonJS({
     }
     function createServerErrorConstructor(HttpError, name2, code) {
       var className = toClassName(name2);
-      function ServerError(message2) {
-        var msg = message2 != null ? message2 : statuses.message[code];
+      function ServerError(message) {
+        var msg = message != null ? message : statuses.message[code];
         var err = new Error(msg);
         Error.captureStackTrace(err, ServerError);
         setPrototypeOf(err, ServerError.prototype);
@@ -929,7 +929,7 @@ var require_ms = __commonJS({
       options = options || {};
       var type = typeof val;
       if (type === "string" && val.length > 0) {
-        return parse2(val);
+        return parse(val);
       } else if (type === "number" && isNaN(val) === false) {
         return options.long ? fmtLong(val) : fmtShort(val);
       }
@@ -937,7 +937,7 @@ var require_ms = __commonJS({
         "val is not a non-empty string or a valid number. val=" + JSON.stringify(val)
       );
     };
-    function parse2(str) {
+    function parse(str) {
       str = String(str);
       if (str.length > 100) {
         return;
@@ -1217,7 +1217,7 @@ var require_node = __commonJS({
   "node_modules/body-parser/node_modules/debug/src/node.js"(exports2, module2) {
     "use strict";
     var tty = require("tty");
-    var util5 = require("util");
+    var util3 = require("util");
     exports2 = module2.exports = require_debug();
     exports2.init = init;
     exports2.log = log;
@@ -1242,7 +1242,7 @@ var require_node = __commonJS({
     }, {});
     var fd = parseInt(process.env.DEBUG_FD, 10) || 2;
     if (1 !== fd && 2 !== fd) {
-      util5.deprecate(function() {
+      util3.deprecate(function() {
       }, "except for stderr(2) and stdout(1), any other usage of DEBUG_FD is deprecated. Override debug.log if you want to use a different log function (https://git.io/debug_fd)")();
     }
     var stream4 = 1 === fd ? process.stdout : 2 === fd ? process.stderr : createWritableStdioStream(fd);
@@ -1251,13 +1251,13 @@ var require_node = __commonJS({
     }
     exports2.formatters.o = function(v) {
       this.inspectOpts.colors = this.useColors;
-      return util5.inspect(v, this.inspectOpts).split("\n").map(function(str) {
+      return util3.inspect(v, this.inspectOpts).split("\n").map(function(str) {
         return str.trim();
       }).join(" ");
     };
     exports2.formatters.O = function(v) {
       this.inspectOpts.colors = this.useColors;
-      return util5.inspect(v, this.inspectOpts);
+      return util3.inspect(v, this.inspectOpts);
     };
     function formatArgs(args) {
       var name2 = this.namespace;
@@ -1272,7 +1272,7 @@ var require_node = __commonJS({
       }
     }
     function log() {
-      return stream4.write(util5.format.apply(util5, arguments) + "\n");
+      return stream4.write(util3.format.apply(util3, arguments) + "\n");
     }
     function save(namespaces) {
       if (null == namespaces) {
@@ -1437,7 +1437,7 @@ var require_safer = __commonJS({
   "node_modules/safer-buffer/safer.js"(exports2, module2) {
     "use strict";
     var buffer = require("buffer");
-    var Buffer7 = buffer.Buffer;
+    var Buffer2 = buffer.Buffer;
     var safer = {};
     var key;
     for (key in buffer) {
@@ -1446,12 +1446,12 @@ var require_safer = __commonJS({
       safer[key] = buffer[key];
     }
     var Safer = safer.Buffer = {};
-    for (key in Buffer7) {
-      if (!Buffer7.hasOwnProperty(key)) continue;
+    for (key in Buffer2) {
+      if (!Buffer2.hasOwnProperty(key)) continue;
       if (key === "allocUnsafe" || key === "allocUnsafeSlow") continue;
-      Safer[key] = Buffer7[key];
+      Safer[key] = Buffer2[key];
     }
-    safer.Buffer.prototype = Buffer7.prototype;
+    safer.Buffer.prototype = Buffer2.prototype;
     if (!Safer.from || Safer.from === Uint8Array.from) {
       Safer.from = function(value, encodingOrOffset, length) {
         if (typeof value === "number") {
@@ -1460,7 +1460,7 @@ var require_safer = __commonJS({
         if (value && typeof value.length === "undefined") {
           throw new TypeError("The first argument must be one of type string, Buffer, ArrayBuffer, Array, or Array-like Object. Received type " + typeof value);
         }
-        return Buffer7(value, encodingOrOffset, length);
+        return Buffer2(value, encodingOrOffset, length);
       };
     }
     if (!Safer.alloc) {
@@ -1471,7 +1471,7 @@ var require_safer = __commonJS({
         if (size < 0 || size >= 2 * (1 << 30)) {
           throw new RangeError('The value "' + size + '" is invalid for option "size"');
         }
-        var buf = Buffer7(size);
+        var buf = Buffer2(size);
         if (!fill || fill.length === 0) {
           buf.fill(0);
         } else if (typeof encoding === "string") {
@@ -1506,8 +1506,8 @@ var require_bom_handling = __commonJS({
     "use strict";
     var BOMChar = "\uFEFF";
     exports2.PrependBOM = PrependBOMWrapper;
-    function PrependBOMWrapper(encoder2, options) {
-      this.encoder = encoder2;
+    function PrependBOMWrapper(encoder, options) {
+      this.encoder = encoder;
       this.addBOM = true;
     }
     PrependBOMWrapper.prototype.write = function(str) {
@@ -1521,8 +1521,8 @@ var require_bom_handling = __commonJS({
       return this.encoder.end();
     };
     exports2.StripBOM = StripBOMWrapper;
-    function StripBOMWrapper(decoder2, options) {
-      this.decoder = decoder2;
+    function StripBOMWrapper(decoder, options) {
+      this.decoder = decoder;
       this.pass = false;
       this.options = options || {};
     }
@@ -1548,7 +1548,7 @@ var require_bom_handling = __commonJS({
 var require_internal = __commonJS({
   "node_modules/iconv-lite/encodings/internal.js"(exports2, module2) {
     "use strict";
-    var Buffer7 = require_safer().Buffer;
+    var Buffer2 = require_safer().Buffer;
     module2.exports = {
       // Encodings
       utf8: { type: "_internal", bomAware: true },
@@ -1570,7 +1570,7 @@ var require_internal = __commonJS({
       else if (this.enc === "cesu8") {
         this.enc = "utf8";
         this.encoder = InternalEncoderCesu8;
-        if (Buffer7.from("eda0bdedb2a9", "hex").toString() !== "\u{1F4A9}") {
+        if (Buffer2.from("eda0bdedb2a9", "hex").toString() !== "\u{1F4A9}") {
           this.decoder = InternalDecoderCesu8;
           this.defaultCharUnicode = iconv.defaultCharUnicode;
         }
@@ -1590,7 +1590,7 @@ var require_internal = __commonJS({
       this.enc = codec.enc;
     }
     InternalEncoder.prototype.write = function(str) {
-      return Buffer7.from(str, this.enc);
+      return Buffer2.from(str, this.enc);
     };
     InternalEncoder.prototype.end = function() {
     };
@@ -1602,15 +1602,15 @@ var require_internal = __commonJS({
       var completeQuads = str.length - str.length % 4;
       this.prevStr = str.slice(completeQuads);
       str = str.slice(0, completeQuads);
-      return Buffer7.from(str, "base64");
+      return Buffer2.from(str, "base64");
     };
     InternalEncoderBase64.prototype.end = function() {
-      return Buffer7.from(this.prevStr, "base64");
+      return Buffer2.from(this.prevStr, "base64");
     };
     function InternalEncoderCesu8(options, codec) {
     }
     InternalEncoderCesu8.prototype.write = function(str) {
-      var buf = Buffer7.alloc(str.length * 3), bufIdx = 0;
+      var buf = Buffer2.alloc(str.length * 3), bufIdx = 0;
       for (var i = 0; i < str.length; i++) {
         var charCode = str.charCodeAt(i);
         if (charCode < 128)
@@ -1692,7 +1692,7 @@ var require_internal = __commonJS({
 var require_utf16 = __commonJS({
   "node_modules/iconv-lite/encodings/utf16.js"(exports2) {
     "use strict";
-    var Buffer7 = require_safer().Buffer;
+    var Buffer2 = require_safer().Buffer;
     exports2.utf16be = Utf16BECodec;
     function Utf16BECodec() {
     }
@@ -1702,7 +1702,7 @@ var require_utf16 = __commonJS({
     function Utf16BEEncoder() {
     }
     Utf16BEEncoder.prototype.write = function(str) {
-      var buf = Buffer7.from(str, "ucs2");
+      var buf = Buffer2.from(str, "ucs2");
       for (var i = 0; i < buf.length; i += 2) {
         var tmp = buf[i];
         buf[i] = buf[i + 1];
@@ -1718,7 +1718,7 @@ var require_utf16 = __commonJS({
     Utf16BEDecoder.prototype.write = function(buf) {
       if (buf.length == 0)
         return "";
-      var buf2 = Buffer7.alloc(buf.length + 1), i = 0, j = 0;
+      var buf2 = Buffer2.alloc(buf.length + 1), i = 0, j = 0;
       if (this.overflowByte !== -1) {
         buf2[0] = buf[0];
         buf2[1] = this.overflowByte;
@@ -1765,7 +1765,7 @@ var require_utf16 = __commonJS({
         this.initialBytesLen += buf.length;
         if (this.initialBytesLen < 16)
           return "";
-        var buf = Buffer7.concat(this.initialBytes), encoding = detectEncoding(buf, this.options.defaultEncoding);
+        var buf = Buffer2.concat(this.initialBytes), encoding = detectEncoding(buf, this.options.defaultEncoding);
         this.decoder = this.iconv.getDecoder(encoding, this.options);
         this.initialBytes.length = this.initialBytesLen = 0;
       }
@@ -1773,7 +1773,7 @@ var require_utf16 = __commonJS({
     };
     Utf16Decoder.prototype.end = function() {
       if (!this.decoder) {
-        var buf = Buffer7.concat(this.initialBytes), encoding = detectEncoding(buf, this.options.defaultEncoding);
+        var buf = Buffer2.concat(this.initialBytes), encoding = detectEncoding(buf, this.options.defaultEncoding);
         this.decoder = this.iconv.getDecoder(encoding, this.options);
         var res = this.decoder.write(buf), trail = this.decoder.end();
         return trail ? res + trail : res;
@@ -1808,7 +1808,7 @@ var require_utf16 = __commonJS({
 var require_utf7 = __commonJS({
   "node_modules/iconv-lite/encodings/utf7.js"(exports2) {
     "use strict";
-    var Buffer7 = require_safer().Buffer;
+    var Buffer2 = require_safer().Buffer;
     exports2.utf7 = Utf7Codec;
     exports2.unicode11utf7 = "utf7";
     function Utf7Codec(codecOptions, iconv) {
@@ -1822,7 +1822,7 @@ var require_utf7 = __commonJS({
       this.iconv = codec.iconv;
     }
     Utf7Encoder.prototype.write = function(str) {
-      return Buffer7.from(str.replace(nonDirectChars, function(chunk) {
+      return Buffer2.from(str.replace(nonDirectChars, function(chunk) {
         return "+" + (chunk === "+" ? "" : this.iconv.encode(chunk, "utf16-be").toString("base64").replace(/=+$/, "")) + "-";
       }.bind(this)));
     };
@@ -1856,7 +1856,7 @@ var require_utf7 = __commonJS({
               res += "+";
             } else {
               var b64str = base64Accum + buf.slice(lastI, i2).toString();
-              res += this.iconv.decode(Buffer7.from(b64str, "base64"), "utf16-be");
+              res += this.iconv.decode(Buffer2.from(b64str, "base64"), "utf16-be");
             }
             if (buf[i2] != minusChar)
               i2--;
@@ -1873,7 +1873,7 @@ var require_utf7 = __commonJS({
         var canBeDecoded = b64str.length - b64str.length % 8;
         base64Accum = b64str.slice(canBeDecoded);
         b64str = b64str.slice(0, canBeDecoded);
-        res += this.iconv.decode(Buffer7.from(b64str, "base64"), "utf16-be");
+        res += this.iconv.decode(Buffer2.from(b64str, "base64"), "utf16-be");
       }
       this.inBase64 = inBase64;
       this.base64Accum = base64Accum;
@@ -1882,7 +1882,7 @@ var require_utf7 = __commonJS({
     Utf7Decoder.prototype.end = function() {
       var res = "";
       if (this.inBase64 && this.base64Accum.length > 0)
-        res = this.iconv.decode(Buffer7.from(this.base64Accum, "base64"), "utf16-be");
+        res = this.iconv.decode(Buffer2.from(this.base64Accum, "base64"), "utf16-be");
       this.inBase64 = false;
       this.base64Accum = "";
       return res;
@@ -1897,11 +1897,11 @@ var require_utf7 = __commonJS({
     function Utf7IMAPEncoder(options, codec) {
       this.iconv = codec.iconv;
       this.inBase64 = false;
-      this.base64Accum = Buffer7.alloc(6);
+      this.base64Accum = Buffer2.alloc(6);
       this.base64AccumIdx = 0;
     }
     Utf7IMAPEncoder.prototype.write = function(str) {
-      var inBase64 = this.inBase64, base64Accum = this.base64Accum, base64AccumIdx = this.base64AccumIdx, buf = Buffer7.alloc(str.length * 5 + 10), bufIdx = 0;
+      var inBase64 = this.inBase64, base64Accum = this.base64Accum, base64AccumIdx = this.base64AccumIdx, buf = Buffer2.alloc(str.length * 5 + 10), bufIdx = 0;
       for (var i2 = 0; i2 < str.length; i2++) {
         var uChar = str.charCodeAt(i2);
         if (32 <= uChar && uChar <= 126) {
@@ -1938,7 +1938,7 @@ var require_utf7 = __commonJS({
       return buf.slice(0, bufIdx);
     };
     Utf7IMAPEncoder.prototype.end = function() {
-      var buf = Buffer7.alloc(10), bufIdx = 0;
+      var buf = Buffer2.alloc(10), bufIdx = 0;
       if (this.inBase64) {
         if (this.base64AccumIdx > 0) {
           bufIdx += buf.write(this.base64Accum.slice(0, this.base64AccumIdx).toString("base64").replace(/\//g, ",").replace(/=+$/, ""), bufIdx);
@@ -1971,7 +1971,7 @@ var require_utf7 = __commonJS({
               res += "&";
             } else {
               var b64str = base64Accum + buf.slice(lastI, i2).toString().replace(/,/g, "/");
-              res += this.iconv.decode(Buffer7.from(b64str, "base64"), "utf16-be");
+              res += this.iconv.decode(Buffer2.from(b64str, "base64"), "utf16-be");
             }
             if (buf[i2] != minusChar)
               i2--;
@@ -1988,7 +1988,7 @@ var require_utf7 = __commonJS({
         var canBeDecoded = b64str.length - b64str.length % 8;
         base64Accum = b64str.slice(canBeDecoded);
         b64str = b64str.slice(0, canBeDecoded);
-        res += this.iconv.decode(Buffer7.from(b64str, "base64"), "utf16-be");
+        res += this.iconv.decode(Buffer2.from(b64str, "base64"), "utf16-be");
       }
       this.inBase64 = inBase64;
       this.base64Accum = base64Accum;
@@ -1997,7 +1997,7 @@ var require_utf7 = __commonJS({
     Utf7IMAPDecoder.prototype.end = function() {
       var res = "";
       if (this.inBase64 && this.base64Accum.length > 0)
-        res = this.iconv.decode(Buffer7.from(this.base64Accum, "base64"), "utf16-be");
+        res = this.iconv.decode(Buffer2.from(this.base64Accum, "base64"), "utf16-be");
       this.inBase64 = false;
       this.base64Accum = "";
       return res;
@@ -2009,7 +2009,7 @@ var require_utf7 = __commonJS({
 var require_sbcs_codec = __commonJS({
   "node_modules/iconv-lite/encodings/sbcs-codec.js"(exports2) {
     "use strict";
-    var Buffer7 = require_safer().Buffer;
+    var Buffer2 = require_safer().Buffer;
     exports2._sbcs = SBCSCodec;
     function SBCSCodec(codecOptions, iconv) {
       if (!codecOptions)
@@ -2022,8 +2022,8 @@ var require_sbcs_codec = __commonJS({
           asciiString += String.fromCharCode(i);
         codecOptions.chars = asciiString + codecOptions.chars;
       }
-      this.decodeBuf = Buffer7.from(codecOptions.chars, "ucs2");
-      var encodeBuf = Buffer7.alloc(65536, iconv.defaultCharSingleByte.charCodeAt(0));
+      this.decodeBuf = Buffer2.from(codecOptions.chars, "ucs2");
+      var encodeBuf = Buffer2.alloc(65536, iconv.defaultCharSingleByte.charCodeAt(0));
       for (var i = 0; i < codecOptions.chars.length; i++)
         encodeBuf[codecOptions.chars.charCodeAt(i)] = i;
       this.encodeBuf = encodeBuf;
@@ -2034,7 +2034,7 @@ var require_sbcs_codec = __commonJS({
       this.encodeBuf = codec.encodeBuf;
     }
     SBCSEncoder.prototype.write = function(str) {
-      var buf = Buffer7.alloc(str.length);
+      var buf = Buffer2.alloc(str.length);
       for (var i = 0; i < str.length; i++)
         buf[i] = this.encodeBuf[str.charCodeAt(i)];
       return buf;
@@ -2046,7 +2046,7 @@ var require_sbcs_codec = __commonJS({
     }
     SBCSDecoder.prototype.write = function(buf) {
       var decodeBuf = this.decodeBuf;
-      var newBuf = Buffer7.alloc(buf.length * 2);
+      var newBuf = Buffer2.alloc(buf.length * 2);
       var idx1 = 0, idx2 = 0;
       for (var i = 0; i < buf.length; i++) {
         idx1 = buf[i] * 2;
@@ -2669,7 +2669,7 @@ var require_sbcs_data_generated = __commonJS({
 var require_dbcs_codec = __commonJS({
   "node_modules/iconv-lite/encodings/dbcs-codec.js"(exports2) {
     "use strict";
-    var Buffer7 = require_safer().Buffer;
+    var Buffer2 = require_safer().Buffer;
     exports2._dbcs = DBCSCodec;
     var UNASSIGNED = -1;
     var GB18030_CODE = -2;
@@ -2852,7 +2852,7 @@ var require_dbcs_codec = __commonJS({
       this.gb18030 = codec.gb18030;
     }
     DBCSEncoder.prototype.write = function(str) {
-      var newBuf = Buffer7.alloc(str.length * (this.gb18030 ? 4 : 3)), leadSurrogate = this.leadSurrogate, seqObj = this.seqObj, nextChar = -1, i2 = 0, j = 0;
+      var newBuf = Buffer2.alloc(str.length * (this.gb18030 ? 4 : 3)), leadSurrogate = this.leadSurrogate, seqObj = this.seqObj, nextChar = -1, i2 = 0, j = 0;
       while (true) {
         if (nextChar === -1) {
           if (i2 == str.length) break;
@@ -2943,7 +2943,7 @@ var require_dbcs_codec = __commonJS({
     DBCSEncoder.prototype.end = function() {
       if (this.leadSurrogate === -1 && this.seqObj === void 0)
         return;
-      var newBuf = Buffer7.alloc(10), j = 0;
+      var newBuf = Buffer2.alloc(10), j = 0;
       if (this.seqObj) {
         var dbcsCode = this.seqObj[DEF_CHAR];
         if (dbcsCode !== void 0) {
@@ -2966,16 +2966,16 @@ var require_dbcs_codec = __commonJS({
     DBCSEncoder.prototype.findIdx = findIdx;
     function DBCSDecoder(options, codec) {
       this.nodeIdx = 0;
-      this.prevBuf = Buffer7.alloc(0);
+      this.prevBuf = Buffer2.alloc(0);
       this.decodeTables = codec.decodeTables;
       this.decodeTableSeq = codec.decodeTableSeq;
       this.defaultCharUnicode = codec.defaultCharUnicode;
       this.gb18030 = codec.gb18030;
     }
     DBCSDecoder.prototype.write = function(buf) {
-      var newBuf = Buffer7.alloc(buf.length * 2), nodeIdx = this.nodeIdx, prevBuf = this.prevBuf, prevBufOffset = this.prevBuf.length, seqStart = -this.prevBuf.length, uCode;
+      var newBuf = Buffer2.alloc(buf.length * 2), nodeIdx = this.nodeIdx, prevBuf = this.prevBuf, prevBufOffset = this.prevBuf.length, seqStart = -this.prevBuf.length, uCode;
       if (prevBufOffset > 0)
-        prevBuf = Buffer7.concat([prevBuf, buf.slice(0, 10)]);
+        prevBuf = Buffer2.concat([prevBuf, buf.slice(0, 10)]);
       for (var i2 = 0, j = 0; i2 < buf.length; i2++) {
         var curByte = i2 >= 0 ? buf[i2] : prevBuf[i2 + prevBufOffset];
         var uCode = this.decodeTables[nodeIdx][curByte];
@@ -3022,7 +3022,7 @@ var require_dbcs_codec = __commonJS({
       while (this.prevBuf.length > 0) {
         ret += this.defaultCharUnicode;
         var buf = this.prevBuf.slice(1);
-        this.prevBuf = Buffer7.alloc(0);
+        this.prevBuf = Buffer2.alloc(0);
         this.nodeIdx = 0;
         if (buf.length > 0)
           ret += this.write(buf);
@@ -4498,7 +4498,7 @@ var require_encodings = __commonJS({
 var require_streams = __commonJS({
   "node_modules/iconv-lite/lib/streams.js"(exports2, module2) {
     "use strict";
-    var Buffer7 = require("buffer").Buffer;
+    var Buffer2 = require("buffer").Buffer;
     var Transform = require("stream").Transform;
     module2.exports = function(iconv) {
       iconv.encodeStream = function encodeStream(encoding, options) {
@@ -4548,7 +4548,7 @@ var require_streams = __commonJS({
         chunks.push(chunk);
       });
       this.on("end", function() {
-        cb(null, Buffer7.concat(chunks));
+        cb(null, Buffer2.concat(chunks));
       });
       return this;
     };
@@ -4562,7 +4562,7 @@ var require_streams = __commonJS({
       constructor: { value: IconvLiteDecoderStream }
     });
     IconvLiteDecoderStream.prototype._transform = function(chunk, encoding, done) {
-      if (!Buffer7.isBuffer(chunk))
+      if (!Buffer2.isBuffer(chunk))
         return done(new Error("Iconv decoding stream needs buffers as its input."));
       try {
         var res = this.conv.write(chunk);
@@ -4599,10 +4599,10 @@ var require_streams = __commonJS({
 var require_extend_node = __commonJS({
   "node_modules/iconv-lite/lib/extend-node.js"(exports2, module2) {
     "use strict";
-    var Buffer7 = require("buffer").Buffer;
+    var Buffer2 = require("buffer").Buffer;
     module2.exports = function(iconv) {
       var original = void 0;
-      iconv.supportsNodeEncodingsExtension = !(Buffer7.from || new Buffer7(0) instanceof Uint8Array);
+      iconv.supportsNodeEncodingsExtension = !(Buffer2.from || new Buffer2(0) instanceof Uint8Array);
       iconv.extendNodeEncodings = function extendNodeEncodings() {
         if (original) return;
         original = {};
@@ -4623,14 +4623,14 @@ var require_extend_node = __commonJS({
           "utf16le": true,
           "utf-16le": true
         };
-        Buffer7.isNativeEncoding = function(enc) {
+        Buffer2.isNativeEncoding = function(enc) {
           return enc && nodeNativeEncodings[enc.toLowerCase()];
         };
         var SlowBuffer = require("buffer").SlowBuffer;
         original.SlowBufferToString = SlowBuffer.prototype.toString;
         SlowBuffer.prototype.toString = function(encoding, start, end) {
           encoding = String(encoding || "utf8").toLowerCase();
-          if (Buffer7.isNativeEncoding(encoding))
+          if (Buffer2.isNativeEncoding(encoding))
             return original.SlowBufferToString.call(this, encoding, start, end);
           if (typeof start == "undefined") start = 0;
           if (typeof end == "undefined") end = this.length;
@@ -4660,7 +4660,7 @@ var require_extend_node = __commonJS({
             }
           }
           encoding = String(encoding || "utf8").toLowerCase();
-          if (Buffer7.isNativeEncoding(encoding))
+          if (Buffer2.isNativeEncoding(encoding))
             return original.SlowBufferWrite.call(this, string, offset, length, encoding);
           if (string.length > 0 && (length < 0 || offset < 0))
             throw new RangeError("attempt to write beyond buffer bounds");
@@ -4669,28 +4669,28 @@ var require_extend_node = __commonJS({
           buf.copy(this, offset, 0, length);
           return length;
         };
-        original.BufferIsEncoding = Buffer7.isEncoding;
-        Buffer7.isEncoding = function(encoding) {
-          return Buffer7.isNativeEncoding(encoding) || iconv.encodingExists(encoding);
+        original.BufferIsEncoding = Buffer2.isEncoding;
+        Buffer2.isEncoding = function(encoding) {
+          return Buffer2.isNativeEncoding(encoding) || iconv.encodingExists(encoding);
         };
-        original.BufferByteLength = Buffer7.byteLength;
-        Buffer7.byteLength = SlowBuffer.byteLength = function(str, encoding) {
+        original.BufferByteLength = Buffer2.byteLength;
+        Buffer2.byteLength = SlowBuffer.byteLength = function(str, encoding) {
           encoding = String(encoding || "utf8").toLowerCase();
-          if (Buffer7.isNativeEncoding(encoding))
+          if (Buffer2.isNativeEncoding(encoding))
             return original.BufferByteLength.call(this, str, encoding);
           return iconv.encode(str, encoding).length;
         };
-        original.BufferToString = Buffer7.prototype.toString;
-        Buffer7.prototype.toString = function(encoding, start, end) {
+        original.BufferToString = Buffer2.prototype.toString;
+        Buffer2.prototype.toString = function(encoding, start, end) {
           encoding = String(encoding || "utf8").toLowerCase();
-          if (Buffer7.isNativeEncoding(encoding))
+          if (Buffer2.isNativeEncoding(encoding))
             return original.BufferToString.call(this, encoding, start, end);
           if (typeof start == "undefined") start = 0;
           if (typeof end == "undefined") end = this.length;
           return iconv.decode(this.slice(start, end), encoding);
         };
-        original.BufferWrite = Buffer7.prototype.write;
-        Buffer7.prototype.write = function(string, offset, length, encoding) {
+        original.BufferWrite = Buffer2.prototype.write;
+        Buffer2.prototype.write = function(string, offset, length, encoding) {
           var _offset = offset, _length = length, _encoding = encoding;
           if (isFinite(offset)) {
             if (!isFinite(length)) {
@@ -4704,7 +4704,7 @@ var require_extend_node = __commonJS({
             length = swap;
           }
           encoding = String(encoding || "utf8").toLowerCase();
-          if (Buffer7.isNativeEncoding(encoding))
+          if (Buffer2.isNativeEncoding(encoding))
             return original.BufferWrite.call(this, string, _offset, _length, _encoding);
           offset = +offset || 0;
           var remaining = this.length - offset;
@@ -4738,14 +4738,14 @@ var require_extend_node = __commonJS({
           return;
         if (!original)
           throw new Error("require('iconv-lite').undoExtendNodeEncodings(): Nothing to undo; extendNodeEncodings() is not called.");
-        delete Buffer7.isNativeEncoding;
+        delete Buffer2.isNativeEncoding;
         var SlowBuffer = require("buffer").SlowBuffer;
         SlowBuffer.prototype.toString = original.SlowBufferToString;
         SlowBuffer.prototype.write = original.SlowBufferWrite;
-        Buffer7.isEncoding = original.BufferIsEncoding;
-        Buffer7.byteLength = original.BufferByteLength;
-        Buffer7.prototype.toString = original.BufferToString;
-        Buffer7.prototype.write = original.BufferWrite;
+        Buffer2.isEncoding = original.BufferIsEncoding;
+        Buffer2.byteLength = original.BufferByteLength;
+        Buffer2.prototype.toString = original.BufferToString;
+        Buffer2.prototype.write = original.BufferWrite;
         if (iconv.supportsStreams) {
           var Readable2 = require("stream").Readable;
           Readable2.prototype.setEncoding = original.ReadableSetEncoding;
@@ -4761,30 +4761,30 @@ var require_extend_node = __commonJS({
 var require_lib = __commonJS({
   "node_modules/iconv-lite/lib/index.js"(exports2, module2) {
     "use strict";
-    var Buffer7 = require_safer().Buffer;
+    var Buffer2 = require_safer().Buffer;
     var bomHandling = require_bom_handling();
     var iconv = module2.exports;
     iconv.encodings = null;
     iconv.defaultCharUnicode = "\uFFFD";
     iconv.defaultCharSingleByte = "?";
-    iconv.encode = function encode5(str, encoding, options) {
+    iconv.encode = function encode3(str, encoding, options) {
       str = "" + (str || "");
-      var encoder2 = iconv.getEncoder(encoding, options);
-      var res = encoder2.write(str);
-      var trail = encoder2.end();
-      return trail && trail.length > 0 ? Buffer7.concat([res, trail]) : res;
+      var encoder = iconv.getEncoder(encoding, options);
+      var res = encoder.write(str);
+      var trail = encoder.end();
+      return trail && trail.length > 0 ? Buffer2.concat([res, trail]) : res;
     };
-    iconv.decode = function decode3(buf, encoding, options) {
+    iconv.decode = function decode(buf, encoding, options) {
       if (typeof buf === "string") {
         if (!iconv.skipDecodeWarning) {
           console.error("Iconv-lite warning: decode()-ing strings is deprecated. Refer to https://github.com/ashtuchkin/iconv-lite/wiki/Use-Buffers-when-decoding");
           iconv.skipDecodeWarning = true;
         }
-        buf = Buffer7.from("" + (buf || ""), "binary");
+        buf = Buffer2.from("" + (buf || ""), "binary");
       }
-      var decoder2 = iconv.getDecoder(encoding, options);
-      var res = decoder2.write(buf);
-      var trail = decoder2.end();
+      var decoder = iconv.getDecoder(encoding, options);
+      var res = decoder.write(buf);
+      var trail = decoder.end();
       return trail ? res + trail : res;
     };
     iconv.encodingExists = function encodingExists(enc) {
@@ -4834,16 +4834,16 @@ var require_lib = __commonJS({
       return ("" + encoding).toLowerCase().replace(/:\d{4}$|[^0-9a-z]/g, "");
     };
     iconv.getEncoder = function getEncoder(encoding, options) {
-      var codec = iconv.getCodec(encoding), encoder2 = new codec.encoder(options, codec);
+      var codec = iconv.getCodec(encoding), encoder = new codec.encoder(options, codec);
       if (codec.bomAware && options && options.addBOM)
-        encoder2 = new bomHandling.PrependBOM(encoder2, options);
-      return encoder2;
+        encoder = new bomHandling.PrependBOM(encoder, options);
+      return encoder;
     };
     iconv.getDecoder = function getDecoder(encoding, options) {
-      var codec = iconv.getCodec(encoding), decoder2 = new codec.decoder(options, codec);
+      var codec = iconv.getCodec(encoding), decoder = new codec.decoder(options, codec);
       if (codec.bomAware && !(options && options.stripBOM === false))
-        decoder2 = new bomHandling.StripBOM(decoder2, options);
-      return decoder2;
+        decoder = new bomHandling.StripBOM(decoder, options);
+      return decoder;
     };
     var nodeVer = typeof process !== "undefined" && process.versions && process.versions.node;
     if (nodeVer) {
@@ -4986,13 +4986,13 @@ var require_raw_body = __commonJS({
         }));
       }
       var received = 0;
-      var decoder2;
+      var decoder;
       try {
-        decoder2 = getDecoder(encoding);
+        decoder = getDecoder(encoding);
       } catch (err) {
         return done(err);
       }
-      var buffer = decoder2 ? "" : [];
+      var buffer = decoder ? "" : [];
       stream4.on("aborted", onAborted);
       stream4.on("close", cleanup);
       stream4.on("data", onData);
@@ -5037,8 +5037,8 @@ var require_raw_body = __commonJS({
             received,
             type: "entity.too.large"
           }));
-        } else if (decoder2) {
-          buffer += decoder2.write(chunk);
+        } else if (decoder) {
+          buffer += decoder.write(chunk);
         } else {
           buffer.push(chunk);
         }
@@ -5054,7 +5054,7 @@ var require_raw_body = __commonJS({
             type: "request.size.invalid"
           }));
         } else {
-          var string = decoder2 ? buffer + (decoder2.end() || "") : Buffer.concat(buffer);
+          var string = decoder ? buffer + (decoder.end() || "") : Buffer.concat(buffer);
           done(null, string);
         }
       }
@@ -5259,13 +5259,13 @@ var require_read = __commonJS({
     var unpipe = require_unpipe();
     var zlib2 = require("zlib");
     module2.exports = read;
-    function read(req, res, next, parse2, debug, options) {
+    function read(req, res, next, parse, debug, options) {
       var length;
       var opts = options;
       var stream4;
       req._body = true;
       var encoding = opts.encoding !== null ? opts.encoding : null;
-      var verify3 = opts.verify;
+      var verify = opts.verify;
       try {
         stream4 = contentstream(req, debug, opts.inflate);
         length = stream4.length;
@@ -5274,7 +5274,7 @@ var require_read = __commonJS({
         return next(err);
       }
       opts.length = length;
-      opts.encoding = verify3 ? null : encoding;
+      opts.encoding = verify ? null : encoding;
       if (opts.encoding === null && encoding !== null && !iconv.encodingExists(encoding)) {
         return next(createError(415, 'unsupported charset "' + encoding.toUpperCase() + '"', {
           charset: encoding.toLowerCase(),
@@ -5302,10 +5302,10 @@ var require_read = __commonJS({
           });
           return;
         }
-        if (verify3) {
+        if (verify) {
           try {
             debug("verify body");
-            verify3(req, res, body, encoding);
+            verify(req, res, body, encoding);
           } catch (err) {
             next(createError(403, err, {
               body,
@@ -5318,7 +5318,7 @@ var require_read = __commonJS({
         try {
           debug("parse body");
           str = typeof body !== "string" && encoding !== null ? iconv.decode(body, encoding) : body;
-          req.body = parse2(str);
+          req.body = parse(str);
         } catch (err) {
           next(createError(400, err, {
             body: str,
@@ -5387,7 +5387,7 @@ var require_media_typer = __commonJS({
     var typeNameRegExp = /^[A-Za-z0-9][A-Za-z0-9!#$&^_-]{0,126}$/;
     var typeRegExp = /^ *([A-Za-z0-9][A-Za-z0-9!#$&^_-]{0,126})\/([A-Za-z0-9][A-Za-z0-9!#$&^_.+-]{0,126}) *$/;
     exports2.format = format;
-    exports2.parse = parse2;
+    exports2.parse = parse;
     function format(obj) {
       if (!obj || typeof obj !== "object") {
         throw new TypeError("argument obj is required");
@@ -5422,7 +5422,7 @@ var require_media_typer = __commonJS({
       }
       return string;
     }
-    function parse2(string) {
+    function parse(string) {
       if (!string) {
         throw new TypeError("argument string is required");
       }
@@ -14097,7 +14097,7 @@ var require_mime_types = __commonJS({
       }
       return exports2.types[extension2] || false;
     }
-    function populateMaps(extensions, types4) {
+    function populateMaps(extensions, types) {
       var preference = ["nginx", "apache", void 0, "iana"];
       Object.keys(db).forEach(function forEachMimeType(type) {
         var mime = db[type];
@@ -14108,14 +14108,14 @@ var require_mime_types = __commonJS({
         extensions[type] = exts;
         for (var i = 0; i < exts.length; i++) {
           var extension2 = exts[i];
-          if (types4[extension2]) {
-            var from = preference.indexOf(db[types4[extension2]].source);
+          if (types[extension2]) {
+            var from = preference.indexOf(db[types[extension2]].source);
             var to = preference.indexOf(mime.source);
-            if (types4[extension2] !== "application/octet-stream" && (from > to || from === to && types4[extension2].substr(0, 12) === "application/")) {
+            if (types[extension2] !== "application/octet-stream" && (from > to || from === to && types[extension2].substr(0, 12) === "application/")) {
               continue;
             }
           }
-          types4[extension2] = type;
+          types[extension2] = type;
         }
       });
     }
@@ -14131,27 +14131,27 @@ var require_type_is = __commonJS({
     module2.exports = typeofrequest;
     module2.exports.is = typeis;
     module2.exports.hasBody = hasbody;
-    module2.exports.normalize = normalize2;
+    module2.exports.normalize = normalize;
     module2.exports.match = mimeMatch;
     function typeis(value, types_) {
       var i;
-      var types4 = types_;
+      var types = types_;
       var val = tryNormalizeType(value);
       if (!val) {
         return false;
       }
-      if (types4 && !Array.isArray(types4)) {
-        types4 = new Array(arguments.length - 1);
-        for (i = 0; i < types4.length; i++) {
-          types4[i] = arguments[i + 1];
+      if (types && !Array.isArray(types)) {
+        types = new Array(arguments.length - 1);
+        for (i = 0; i < types.length; i++) {
+          types[i] = arguments[i + 1];
         }
       }
-      if (!types4 || !types4.length) {
+      if (!types || !types.length) {
         return val;
       }
       var type;
-      for (i = 0; i < types4.length; i++) {
-        if (mimeMatch(normalize2(type = types4[i]), val)) {
+      for (i = 0; i < types.length; i++) {
+        if (mimeMatch(normalize(type = types[i]), val)) {
           return type[0] === "+" || type.indexOf("*") !== -1 ? val : type;
         }
       }
@@ -14161,20 +14161,20 @@ var require_type_is = __commonJS({
       return req.headers["transfer-encoding"] !== void 0 || !isNaN(req.headers["content-length"]);
     }
     function typeofrequest(req, types_) {
-      var types4 = types_;
+      var types = types_;
       if (!hasbody(req)) {
         return null;
       }
       if (arguments.length > 2) {
-        types4 = new Array(arguments.length - 1);
-        for (var i = 0; i < types4.length; i++) {
-          types4[i] = arguments[i + 1];
+        types = new Array(arguments.length - 1);
+        for (var i = 0; i < types.length; i++) {
+          types[i] = arguments[i + 1];
         }
       }
       var value = req.headers["content-type"];
-      return typeis(value, types4);
+      return typeis(value, types);
     }
-    function normalize2(type) {
+    function normalize(type) {
       if (typeof type !== "string") {
         return false;
       }
@@ -14248,12 +14248,12 @@ var require_json = __commonJS({
       var reviver = opts.reviver;
       var strict = opts.strict !== false;
       var type = opts.type || "application/json";
-      var verify3 = opts.verify || false;
-      if (verify3 !== false && typeof verify3 !== "function") {
+      var verify = opts.verify || false;
+      if (verify !== false && typeof verify !== "function") {
         throw new TypeError("option verify must be function");
       }
       var shouldParse = typeof type !== "function" ? typeChecker(type) : type;
-      function parse2(body) {
+      function parse(body) {
         if (body.length === 0) {
           return {};
         }
@@ -14301,11 +14301,11 @@ var require_json = __commonJS({
           }));
           return;
         }
-        read(req, res, next, parse2, debug, {
+        read(req, res, next, parse, debug, {
           encoding: charset,
           inflate,
           limit,
-          verify: verify3
+          verify
         });
       };
     }
@@ -14375,12 +14375,12 @@ var require_raw = __commonJS({
       var inflate = opts.inflate !== false;
       var limit = typeof opts.limit !== "number" ? bytes.parse(opts.limit || "100kb") : opts.limit;
       var type = opts.type || "application/octet-stream";
-      var verify3 = opts.verify || false;
-      if (verify3 !== false && typeof verify3 !== "function") {
+      var verify = opts.verify || false;
+      if (verify !== false && typeof verify !== "function") {
         throw new TypeError("option verify must be function");
       }
       var shouldParse = typeof type !== "function" ? typeChecker(type) : type;
-      function parse2(buf) {
+      function parse(buf) {
         return buf;
       }
       return function rawParser(req, res, next) {
@@ -14401,11 +14401,11 @@ var require_raw = __commonJS({
           next();
           return;
         }
-        read(req, res, next, parse2, debug, {
+        read(req, res, next, parse, debug, {
           encoding: null,
           inflate,
           limit,
-          verify: verify3
+          verify
         });
       };
     }
@@ -14433,12 +14433,12 @@ var require_text = __commonJS({
       var inflate = opts.inflate !== false;
       var limit = typeof opts.limit !== "number" ? bytes.parse(opts.limit || "100kb") : opts.limit;
       var type = opts.type || "text/plain";
-      var verify3 = opts.verify || false;
-      if (verify3 !== false && typeof verify3 !== "function") {
+      var verify = opts.verify || false;
+      if (verify !== false && typeof verify !== "function") {
         throw new TypeError("option verify must be function");
       }
       var shouldParse = typeof type !== "function" ? typeChecker(type) : type;
-      function parse2(buf) {
+      function parse(buf) {
         return buf;
       }
       return function textParser(req, res, next) {
@@ -14460,11 +14460,11 @@ var require_text = __commonJS({
           return;
         }
         var charset = getCharset(req) || defaultCharset;
-        read(req, res, next, parse2, debug, {
+        read(req, res, next, parse, debug, {
           encoding: charset,
           inflate,
           limit,
-          verify: verify3
+          verify
         });
       };
     }
@@ -16146,7 +16146,7 @@ var require_utils = __commonJS({
         return acc;
       }, target);
     };
-    var decode3 = function(str, decoder2, charset) {
+    var decode = function(str, decoder, charset) {
       var strWithoutPlus = str.replace(/\+/g, " ");
       if (charset === "iso-8859-1") {
         return strWithoutPlus.replace(/%[0-9a-f]{2}/gi, unescape);
@@ -16158,7 +16158,7 @@ var require_utils = __commonJS({
       }
     };
     var limit = 1024;
-    var encode5 = function encode6(str, defaultEncoder, charset, kind, format) {
+    var encode3 = function encode4(str, defaultEncoder, charset, kind, format) {
       if (str.length === 0) {
         return str;
       }
@@ -16249,8 +16249,8 @@ var require_utils = __commonJS({
       assign,
       combine,
       compact,
-      decode: decode3,
-      encode: encode5,
+      decode,
+      encode: encode3,
       isBuffer: isBuffer2,
       isRegExp: isRegExp2,
       maybeMap,
@@ -16312,7 +16312,7 @@ var require_stringify = __commonJS({
       return typeof v === "string" || typeof v === "number" || typeof v === "boolean" || typeof v === "symbol" || typeof v === "bigint";
     };
     var sentinel = {};
-    var stringify = function stringify2(object, prefix, generateArrayPrefix, commaRoundTrip, allowEmptyArrays, strictNullHandling, skipNulls, encodeDotInKeys, encoder2, filter2, sort, allowDots, serializeDate, format, formatter, encodeValuesOnly, charset, sideChannel) {
+    var stringify = function stringify2(object, prefix, generateArrayPrefix, commaRoundTrip, allowEmptyArrays, strictNullHandling, skipNulls, encodeDotInKeys, encoder, filter2, sort, allowDots, serializeDate, format, formatter, encodeValuesOnly, charset, sideChannel) {
       var obj = object;
       var tmpSc = sideChannel;
       var step = 0;
@@ -16345,14 +16345,14 @@ var require_stringify = __commonJS({
       }
       if (obj === null) {
         if (strictNullHandling) {
-          return encoder2 && !encodeValuesOnly ? encoder2(prefix, defaults2.encoder, charset, "key", format) : prefix;
+          return encoder && !encodeValuesOnly ? encoder(prefix, defaults2.encoder, charset, "key", format) : prefix;
         }
         obj = "";
       }
       if (isNonNullishPrimitive(obj) || utils.isBuffer(obj)) {
-        if (encoder2) {
-          var keyValue = encodeValuesOnly ? prefix : encoder2(prefix, defaults2.encoder, charset, "key", format);
-          return [formatter(keyValue) + "=" + formatter(encoder2(obj, defaults2.encoder, charset, "value", format))];
+        if (encoder) {
+          var keyValue = encodeValuesOnly ? prefix : encoder(prefix, defaults2.encoder, charset, "key", format);
+          return [formatter(keyValue) + "=" + formatter(encoder(obj, defaults2.encoder, charset, "value", format))];
         }
         return [formatter(prefix) + "=" + formatter(String(obj))];
       }
@@ -16362,8 +16362,8 @@ var require_stringify = __commonJS({
       }
       var objKeys;
       if (generateArrayPrefix === "comma" && isArray2(obj)) {
-        if (encodeValuesOnly && encoder2) {
-          obj = utils.maybeMap(obj, encoder2);
+        if (encodeValuesOnly && encoder) {
+          obj = utils.maybeMap(obj, encoder);
         }
         objKeys = [{ value: obj.length > 0 ? obj.join(",") || null : void 0 }];
       } else if (isArray2(filter2)) {
@@ -16397,7 +16397,7 @@ var require_stringify = __commonJS({
           strictNullHandling,
           skipNulls,
           encodeDotInKeys,
-          generateArrayPrefix === "comma" && encodeValuesOnly && isArray2(obj) ? null : encoder2,
+          generateArrayPrefix === "comma" && encodeValuesOnly && isArray2(obj) ? null : encoder,
           filter2,
           sort,
           allowDots,
@@ -16771,11 +16771,11 @@ var require_lib2 = __commonJS({
   "node_modules/qs/lib/index.js"(exports2, module2) {
     "use strict";
     var stringify = require_stringify();
-    var parse2 = require_parse();
+    var parse = require_parse();
     var formats = require_formats();
     module2.exports = {
       formats,
-      parse: parse2,
+      parse,
       stringify
     };
   }
@@ -16803,14 +16803,14 @@ var require_urlencoded = __commonJS({
       var inflate = opts.inflate !== false;
       var limit = typeof opts.limit !== "number" ? bytes.parse(opts.limit || "100kb") : opts.limit;
       var type = opts.type || "application/x-www-form-urlencoded";
-      var verify3 = opts.verify || false;
+      var verify = opts.verify || false;
       var depth = typeof opts.depth !== "number" ? Number(opts.depth || 32) : opts.depth;
-      if (verify3 !== false && typeof verify3 !== "function") {
+      if (verify !== false && typeof verify !== "function") {
         throw new TypeError("option verify must be function");
       }
       var queryparse = extended ? extendedparser(opts) : simpleparser(opts);
       var shouldParse = typeof type !== "function" ? typeChecker(type) : type;
-      function parse2(body) {
+      function parse(body) {
         return body.length ? queryparse(body) : {};
       }
       return function urlencodedParser(req, res, next) {
@@ -16840,12 +16840,12 @@ var require_urlencoded = __commonJS({
           }));
           return;
         }
-        read(req, res, next, parse2, debug, {
+        read(req, res, next, parse, debug, {
           debug,
           encoding: charset,
           inflate,
           limit,
-          verify: verify3,
+          verify,
           depth
         });
       };
@@ -16853,7 +16853,7 @@ var require_urlencoded = __commonJS({
     function extendedparser(options) {
       var parameterLimit = options.parameterLimit !== void 0 ? options.parameterLimit : 1e3;
       var depth = typeof options.depth !== "number" ? Number(options.depth || 32) : options.depth;
-      var parse2 = parser("qs");
+      var parse = parser("qs");
       if (isNaN(parameterLimit) || parameterLimit < 1) {
         throw new TypeError("option parameterLimit must be a positive number");
       }
@@ -16874,7 +16874,7 @@ var require_urlencoded = __commonJS({
         var arrayLimit = Math.max(100, paramCount);
         debug("parse extended urlencoding");
         try {
-          return parse2(body, {
+          return parse(body, {
             allowPrototypes: true,
             arrayLimit,
             depth,
@@ -16929,7 +16929,7 @@ var require_urlencoded = __commonJS({
     }
     function simpleparser(options) {
       var parameterLimit = options.parameterLimit !== void 0 ? options.parameterLimit : 1e3;
-      var parse2 = parser("querystring");
+      var parse = parser("querystring");
       if (isNaN(parameterLimit) || parameterLimit < 1) {
         throw new TypeError("option parameterLimit must be a positive number");
       }
@@ -16945,7 +16945,7 @@ var require_urlencoded = __commonJS({
           });
         }
         debug("parse urlencoding");
-        return parse2(body, void 0, void 0, { maxKeys: parameterLimit });
+        return parse(body, void 0, void 0, { maxKeys: parameterLimit });
       };
     }
     function typeChecker(type) {
@@ -17005,7 +17005,7 @@ var require_body_parser = __commonJS({
       };
     }
     function createParserGetter(name2) {
-      return function get3() {
+      return function get() {
         return loadParser(name2);
       };
     }
@@ -17074,7 +17074,7 @@ var require_ms2 = __commonJS({
       options = options || {};
       var type = typeof val;
       if (type === "string" && val.length > 0) {
-        return parse2(val);
+        return parse(val);
       } else if (type === "number" && isNaN(val) === false) {
         return options.long ? fmtLong(val) : fmtShort(val);
       }
@@ -17082,7 +17082,7 @@ var require_ms2 = __commonJS({
         "val is not a non-empty string or a valid number. val=" + JSON.stringify(val)
       );
     };
-    function parse2(str) {
+    function parse(str) {
       str = String(str);
       if (str.length > 100) {
         return;
@@ -17362,7 +17362,7 @@ var require_node2 = __commonJS({
   "node_modules/finalhandler/node_modules/debug/src/node.js"(exports2, module2) {
     "use strict";
     var tty = require("tty");
-    var util5 = require("util");
+    var util3 = require("util");
     exports2 = module2.exports = require_debug2();
     exports2.init = init;
     exports2.log = log;
@@ -17387,7 +17387,7 @@ var require_node2 = __commonJS({
     }, {});
     var fd = parseInt(process.env.DEBUG_FD, 10) || 2;
     if (1 !== fd && 2 !== fd) {
-      util5.deprecate(function() {
+      util3.deprecate(function() {
       }, "except for stderr(2) and stdout(1), any other usage of DEBUG_FD is deprecated. Override debug.log if you want to use a different log function (https://git.io/debug_fd)")();
     }
     var stream4 = 1 === fd ? process.stdout : 2 === fd ? process.stderr : createWritableStdioStream(fd);
@@ -17396,13 +17396,13 @@ var require_node2 = __commonJS({
     }
     exports2.formatters.o = function(v) {
       this.inspectOpts.colors = this.useColors;
-      return util5.inspect(v, this.inspectOpts).split("\n").map(function(str) {
+      return util3.inspect(v, this.inspectOpts).split("\n").map(function(str) {
         return str.trim();
       }).join(" ");
     };
     exports2.formatters.O = function(v) {
       this.inspectOpts.colors = this.useColors;
-      return util5.inspect(v, this.inspectOpts);
+      return util3.inspect(v, this.inspectOpts);
     };
     function formatArgs(args) {
       var name2 = this.namespace;
@@ -17417,7 +17417,7 @@ var require_node2 = __commonJS({
       }
     }
     function log() {
-      return stream4.write(util5.format.apply(util5, arguments) + "\n");
+      return stream4.write(util3.format.apply(util3, arguments) + "\n");
     }
     function save(namespaces) {
       if (null == namespaces) {
@@ -17556,7 +17556,7 @@ var require_parseurl = __commonJS({
   "node_modules/parseurl/index.js"(exports2, module2) {
     "use strict";
     var url2 = require("url");
-    var parse2 = url2.parse;
+    var parse = url2.parse;
     var Url = url2.Url;
     module2.exports = parseurl;
     module2.exports.original = originalurl;
@@ -17588,7 +17588,7 @@ var require_parseurl = __commonJS({
     }
     function fastparse(str) {
       if (typeof str !== "string" || str.charCodeAt(0) !== 47) {
-        return parse2(str);
+        return parse(str);
       }
       var pathname = str;
       var query = null;
@@ -17616,7 +17616,7 @@ var require_parseurl = __commonJS({
           /* #  */
           case 160:
           case 65279:
-            return parse2(str);
+            return parse(str);
         }
       }
       var url3 = Url !== void 0 ? new Url() : {};
@@ -17652,8 +17652,8 @@ var require_finalhandler = __commonJS({
       process.nextTick(fn.bind.apply(fn, arguments));
     };
     var isFinished = onFinished.isFinished;
-    function createHtmlDocument(message2) {
-      var body = escapeHtml(message2).replace(NEWLINE_REGEXP, "<br>").replace(DOUBLE_SPACE_REGEXP, " &nbsp;");
+    function createHtmlDocument(message) {
+      var body = escapeHtml(message).replace(NEWLINE_REGEXP, "<br>").replace(DOUBLE_SPACE_REGEXP, " &nbsp;");
       return '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<title>Error</title>\n</head>\n<body>\n<pre>' + body + "</pre>\n</body>\n</html>\n";
     }
     module2.exports = finalhandler;
@@ -17743,9 +17743,9 @@ var require_finalhandler = __commonJS({
     function headersSent(res) {
       return typeof res.headersSent !== "boolean" ? Boolean(res._header) : res.headersSent;
     }
-    function send(req, res, status, headers, message2) {
+    function send(req, res, status, headers, message) {
       function write() {
-        var body = createHtmlDocument(message2);
+        var body = createHtmlDocument(message);
         res.statusCode = status;
         if (req.httpVersionMajor < 2) {
           res.statusMessage = statuses.message[status];
@@ -17798,7 +17798,7 @@ var require_ms3 = __commonJS({
       options = options || {};
       var type = typeof val;
       if (type === "string" && val.length > 0) {
-        return parse2(val);
+        return parse(val);
       } else if (type === "number" && isNaN(val) === false) {
         return options.long ? fmtLong(val) : fmtShort(val);
       }
@@ -17806,7 +17806,7 @@ var require_ms3 = __commonJS({
         "val is not a non-empty string or a valid number. val=" + JSON.stringify(val)
       );
     };
-    function parse2(str) {
+    function parse(str) {
       str = String(str);
       if (str.length > 100) {
         return;
@@ -18086,7 +18086,7 @@ var require_node3 = __commonJS({
   "node_modules/express/node_modules/debug/src/node.js"(exports2, module2) {
     "use strict";
     var tty = require("tty");
-    var util5 = require("util");
+    var util3 = require("util");
     exports2 = module2.exports = require_debug3();
     exports2.init = init;
     exports2.log = log;
@@ -18111,7 +18111,7 @@ var require_node3 = __commonJS({
     }, {});
     var fd = parseInt(process.env.DEBUG_FD, 10) || 2;
     if (1 !== fd && 2 !== fd) {
-      util5.deprecate(function() {
+      util3.deprecate(function() {
       }, "except for stderr(2) and stdout(1), any other usage of DEBUG_FD is deprecated. Override debug.log if you want to use a different log function (https://git.io/debug_fd)")();
     }
     var stream4 = 1 === fd ? process.stdout : 2 === fd ? process.stderr : createWritableStdioStream(fd);
@@ -18120,13 +18120,13 @@ var require_node3 = __commonJS({
     }
     exports2.formatters.o = function(v) {
       this.inspectOpts.colors = this.useColors;
-      return util5.inspect(v, this.inspectOpts).split("\n").map(function(str) {
+      return util3.inspect(v, this.inspectOpts).split("\n").map(function(str) {
         return str.trim();
       }).join(" ");
     };
     exports2.formatters.O = function(v) {
       this.inspectOpts.colors = this.useColors;
-      return util5.inspect(v, this.inspectOpts);
+      return util3.inspect(v, this.inspectOpts);
     };
     function formatArgs(args) {
       var name2 = this.namespace;
@@ -18141,7 +18141,7 @@ var require_node3 = __commonJS({
       }
     }
     function log() {
-      return stream4.write(util5.format.apply(util5, arguments) + "\n");
+      return stream4.write(util3.format.apply(util3, arguments) + "\n");
     }
     function save(namespaces) {
       if (null == namespaces) {
@@ -18457,10 +18457,10 @@ var require_layer = __commonJS({
 var require_methods = __commonJS({
   "node_modules/methods/index.js"(exports2, module2) {
     "use strict";
-    var http3 = require("http");
+    var http2 = require("http");
     module2.exports = getCurrentNodeMethods() || getBasicNodeMethods();
     function getCurrentNodeMethods() {
-      return http3.METHODS && http3.METHODS.map(function lowerCaseMethod(method) {
+      return http2.METHODS && http2.METHODS.map(function lowerCaseMethod(method) {
         return method.toLowerCase();
       });
     }
@@ -19140,34 +19140,34 @@ var require_safe_buffer = __commonJS({
   "node_modules/safe-buffer/index.js"(exports2, module2) {
     "use strict";
     var buffer = require("buffer");
-    var Buffer7 = buffer.Buffer;
+    var Buffer2 = buffer.Buffer;
     function copyProps(src, dst) {
       for (var key in src) {
         dst[key] = src[key];
       }
     }
-    if (Buffer7.from && Buffer7.alloc && Buffer7.allocUnsafe && Buffer7.allocUnsafeSlow) {
+    if (Buffer2.from && Buffer2.alloc && Buffer2.allocUnsafe && Buffer2.allocUnsafeSlow) {
       module2.exports = buffer;
     } else {
       copyProps(buffer, exports2);
       exports2.Buffer = SafeBuffer;
     }
     function SafeBuffer(arg, encodingOrOffset, length) {
-      return Buffer7(arg, encodingOrOffset, length);
+      return Buffer2(arg, encodingOrOffset, length);
     }
-    SafeBuffer.prototype = Object.create(Buffer7.prototype);
-    copyProps(Buffer7, SafeBuffer);
+    SafeBuffer.prototype = Object.create(Buffer2.prototype);
+    copyProps(Buffer2, SafeBuffer);
     SafeBuffer.from = function(arg, encodingOrOffset, length) {
       if (typeof arg === "number") {
         throw new TypeError("Argument must not be a number");
       }
-      return Buffer7(arg, encodingOrOffset, length);
+      return Buffer2(arg, encodingOrOffset, length);
     };
     SafeBuffer.alloc = function(size, fill, encoding) {
       if (typeof size !== "number") {
         throw new TypeError("Argument must be a number");
       }
-      var buf = Buffer7(size);
+      var buf = Buffer2(size);
       if (fill !== void 0) {
         if (typeof encoding === "string") {
           buf.fill(fill, encoding);
@@ -19183,7 +19183,7 @@ var require_safe_buffer = __commonJS({
       if (typeof size !== "number") {
         throw new TypeError("Argument must be a number");
       }
-      return Buffer7(size);
+      return Buffer2(size);
     };
     SafeBuffer.allocUnsafeSlow = function(size) {
       if (typeof size !== "number") {
@@ -19199,9 +19199,9 @@ var require_content_disposition = __commonJS({
   "node_modules/content-disposition/index.js"(exports2, module2) {
     "use strict";
     module2.exports = contentDisposition;
-    module2.exports.parse = parse2;
+    module2.exports.parse = parse;
     var basename = require("path").basename;
-    var Buffer7 = require_safe_buffer().Buffer;
+    var Buffer2 = require_safe_buffer().Buffer;
     var ENCODE_URL_ATTR_CHAR_REGEXP = /[\x00-\x20"'()*,/:;<=>?@[\\\]{}\x7f]/g;
     var HEX_ESCAPE_REGEXP = /%[0-9A-Fa-f]{2}/;
     var HEX_ESCAPE_REPLACE_REGEXP = /%([0-9A-Fa-f]{2})/g;
@@ -19280,7 +19280,7 @@ var require_content_disposition = __commonJS({
           value = getlatin1(binary);
           break;
         case "utf-8":
-          value = Buffer7.from(binary, "binary").toString("utf8");
+          value = Buffer2.from(binary, "binary").toString("utf8");
           break;
         default:
           throw new TypeError("unsupported charset in extended field");
@@ -19290,7 +19290,7 @@ var require_content_disposition = __commonJS({
     function getlatin1(val) {
       return String(val).replace(NON_LATIN1_REGEXP, "?");
     }
-    function parse2(string) {
+    function parse(string) {
       if (!string || typeof string !== "string") {
         throw new TypeError("argument string is required");
       }
@@ -19370,7 +19370,7 @@ var require_ms4 = __commonJS({
       options = options || {};
       var type = typeof val;
       if (type === "string" && val.length > 0) {
-        return parse2(val);
+        return parse(val);
       } else if (type === "number" && isNaN(val) === false) {
         return options.long ? fmtLong(val) : fmtShort(val);
       }
@@ -19378,7 +19378,7 @@ var require_ms4 = __commonJS({
         "val is not a non-empty string or a valid number. val=" + JSON.stringify(val)
       );
     };
-    function parse2(str) {
+    function parse(str) {
       str = String(str);
       if (str.length > 100) {
         return;
@@ -19658,7 +19658,7 @@ var require_node4 = __commonJS({
   "node_modules/send/node_modules/debug/src/node.js"(exports2, module2) {
     "use strict";
     var tty = require("tty");
-    var util5 = require("util");
+    var util3 = require("util");
     exports2 = module2.exports = require_debug4();
     exports2.init = init;
     exports2.log = log;
@@ -19683,7 +19683,7 @@ var require_node4 = __commonJS({
     }, {});
     var fd = parseInt(process.env.DEBUG_FD, 10) || 2;
     if (1 !== fd && 2 !== fd) {
-      util5.deprecate(function() {
+      util3.deprecate(function() {
       }, "except for stderr(2) and stdout(1), any other usage of DEBUG_FD is deprecated. Override debug.log if you want to use a different log function (https://git.io/debug_fd)")();
     }
     var stream4 = 1 === fd ? process.stdout : 2 === fd ? process.stderr : createWritableStdioStream(fd);
@@ -19692,13 +19692,13 @@ var require_node4 = __commonJS({
     }
     exports2.formatters.o = function(v) {
       this.inspectOpts.colors = this.useColors;
-      return util5.inspect(v, this.inspectOpts).split("\n").map(function(str) {
+      return util3.inspect(v, this.inspectOpts).split("\n").map(function(str) {
         return str.trim();
       }).join(" ");
     };
     exports2.formatters.O = function(v) {
       this.inspectOpts.colors = this.useColors;
-      return util5.inspect(v, this.inspectOpts);
+      return util3.inspect(v, this.inspectOpts);
     };
     function formatArgs(args) {
       var name2 = this.namespace;
@@ -19713,7 +19713,7 @@ var require_node4 = __commonJS({
       }
     }
     function log() {
-      return stream4.write(util5.format.apply(util5, arguments) + "\n");
+      return stream4.write(util3.format.apply(util3, arguments) + "\n");
     }
     function save(namespaces) {
       if (null == namespaces) {
@@ -19805,14 +19805,14 @@ var require_etag = __commonJS({
   "node_modules/etag/index.js"(exports2, module2) {
     "use strict";
     module2.exports = etag;
-    var crypto6 = require("crypto");
+    var crypto = require("crypto");
     var Stats = require("fs").Stats;
     var toString3 = Object.prototype.toString;
     function entitytag(entity) {
       if (entity.length === 0) {
         return '"0-2jmj7l5rSw0yVb/vlWAYkK/YBwk"';
       }
-      var hash = crypto6.createHash("sha1").update(entity, "utf8").digest("base64").substring(0, 27);
+      var hash = crypto.createHash("sha1").update(entity, "utf8").digest("base64").substring(0, 27);
       var len = typeof entity === "string" ? Buffer.byteLength(entity, "utf8") : entity.length;
       return '"' + len.toString(16) + "-" + hash + '"';
     }
@@ -19991,7 +19991,7 @@ var require_ms5 = __commonJS({
       options = options || {};
       var type = typeof val;
       if (type === "string" && val.length > 0) {
-        return parse2(val);
+        return parse(val);
       } else if (type === "number" && isFinite(val)) {
         return options.long ? fmtLong(val) : fmtShort(val);
       }
@@ -19999,7 +19999,7 @@ var require_ms5 = __commonJS({
         "val is not a non-empty string or a valid number. val=" + JSON.stringify(val)
       );
     };
-    function parse2(str) {
+    function parse(str) {
       str = String(str);
       if (str.length > 100) {
         return;
@@ -20195,10 +20195,10 @@ var require_send = __commonJS({
     var path2 = require("path");
     var statuses = require_statuses();
     var Stream = require("stream");
-    var util5 = require("util");
+    var util3 = require("util");
     var extname = path2.extname;
     var join = path2.join;
-    var normalize2 = path2.normalize;
+    var normalize = path2.normalize;
     var resolve = path2.resolve;
     var sep = path2.sep;
     var BYTES_RANGE_REGEXP = /^ *bytes=/;
@@ -20241,7 +20241,7 @@ var require_send = __commonJS({
         this.from(opts.from);
       }
     }
-    util5.inherits(SendStream, Stream);
+    util3.inherits(SendStream, Stream);
     SendStream.prototype.etag = deprecate.function(function etag2(val) {
       this._etag = Boolean(val);
       debug("etag %s", this._etag);
@@ -20396,7 +20396,7 @@ var require_send = __commonJS({
     SendStream.prototype.pipe = function pipe(res) {
       var root = this._root;
       this.res = res;
-      var path3 = decode3(this.path);
+      var path3 = decode(this.path);
       if (path3 === -1) {
         this.error(400);
         return res;
@@ -20408,7 +20408,7 @@ var require_send = __commonJS({
       var parts;
       if (root !== null) {
         if (path3) {
-          path3 = normalize2("." + sep + path3);
+          path3 = normalize("." + sep + path3);
         }
         if (UP_PATH_REGEXP.test(path3)) {
           debug('malicious path "%s"', path3);
@@ -20416,14 +20416,14 @@ var require_send = __commonJS({
           return res;
         }
         parts = path3.split(sep);
-        path3 = normalize2(join(root, path3));
+        path3 = normalize(join(root, path3));
       } else {
         if (UP_PATH_REGEXP.test(path3)) {
           debug('malicious path "%s"', path3);
           this.error(403);
           return res;
         }
-        parts = normalize2(path3).split(sep);
+        parts = normalize(path3).split(sep);
         path3 = resolve(path3);
       }
       if (containsDotFile(parts)) {
@@ -20653,7 +20653,7 @@ var require_send = __commonJS({
       }
       return err instanceof Error ? createError(status, err, { expose: false }) : createError(status, err);
     }
-    function decode3(path3) {
+    function decode(path3) {
       try {
         return decodeURIComponent(path3);
       } catch (err) {
@@ -20729,7 +20729,7 @@ var require_forwarded = __commonJS({
       if (!req) {
         throw new TypeError("argument req is required");
       }
-      var proxyAddrs = parse2(req.headers["x-forwarded-for"] || "");
+      var proxyAddrs = parse(req.headers["x-forwarded-for"] || "");
       var socketAddr = getSocketAddr(req);
       var addrs = [socketAddr].concat(proxyAddrs);
       return addrs;
@@ -20737,7 +20737,7 @@ var require_forwarded = __commonJS({
     function getSocketAddr(req) {
       return req.socket ? req.socket.remoteAddress : req.connection.remoteAddress;
     }
-    function parse2(header) {
+    function parse(header) {
       var end = header.length;
       var list = [];
       var start = header.length;
@@ -21553,7 +21553,7 @@ var require_proxy_addr = __commonJS({
 var require_utils2 = __commonJS({
   "node_modules/express/lib/utils.js"(exports2) {
     "use strict";
-    var Buffer7 = require_safe_buffer().Buffer;
+    var Buffer2 = require_safe_buffer().Buffer;
     var contentDisposition = require_content_disposition();
     var contentType = require_content_type();
     var deprecate = require_depd()("express");
@@ -21562,7 +21562,7 @@ var require_utils2 = __commonJS({
     var etag = require_etag();
     var proxyaddr = require_proxy_addr();
     var qs = require_lib2();
-    var querystring2 = require("querystring");
+    var querystring = require("querystring");
     exports2.etag = createETagGenerator({ weak: false });
     exports2.wetag = createETagGenerator({ weak: true });
     exports2.isAbsolute = function(path2) {
@@ -21577,10 +21577,10 @@ var require_utils2 = __commonJS({
     exports2.normalizeType = function(type) {
       return ~type.indexOf("/") ? acceptParams(type) : { value: mime.lookup(type), params: {} };
     };
-    exports2.normalizeTypes = function(types4) {
+    exports2.normalizeTypes = function(types) {
       var ret = [];
-      for (var i = 0; i < types4.length; ++i) {
-        ret.push(exports2.normalizeType(types4[i]));
+      for (var i = 0; i < types.length; ++i) {
+        ret.push(exports2.normalizeType(types[i]));
       }
       return ret;
     };
@@ -21629,7 +21629,7 @@ var require_utils2 = __commonJS({
       switch (val) {
         case true:
         case "simple":
-          fn = querystring2.parse;
+          fn = querystring.parse;
           break;
         case false:
           fn = newObject;
@@ -21671,7 +21671,7 @@ var require_utils2 = __commonJS({
     };
     function createETagGenerator(options) {
       return function generateETag(body, encoding) {
-        var buf = !Buffer7.isBuffer(body) ? Buffer7.from(body, encoding) : body;
+        var buf = !Buffer2.isBuffer(body) ? Buffer2.from(body, encoding) : body;
         return etag(buf, options);
       };
     }
@@ -21697,7 +21697,7 @@ var require_application = __commonJS({
     var query = require_query();
     var debug = require_src3()("express:application");
     var View = require_view();
-    var http3 = require("http");
+    var http2 = require("http");
     var compileETag = require_utils2().compileETag;
     var compileQueryParser = require_utils2().compileQueryParser;
     var compileTrust = require_utils2().compileTrust;
@@ -21946,7 +21946,7 @@ var require_application = __commonJS({
       tryRender(view, renderOptions, done);
     };
     app.listen = function listen() {
-      var server = http3.createServer(this);
+      var server = http2.createServer(this);
       return server.listen.apply(server, arguments);
     };
     function logerror(err) {
@@ -22474,23 +22474,23 @@ var require_accepts = __commonJS({
       this.negotiator = new Negotiator(req);
     }
     Accepts.prototype.type = Accepts.prototype.types = function(types_) {
-      var types4 = types_;
-      if (types4 && !Array.isArray(types4)) {
-        types4 = new Array(arguments.length);
-        for (var i = 0; i < types4.length; i++) {
-          types4[i] = arguments[i];
+      var types = types_;
+      if (types && !Array.isArray(types)) {
+        types = new Array(arguments.length);
+        for (var i = 0; i < types.length; i++) {
+          types[i] = arguments[i];
         }
       }
-      if (!types4 || types4.length === 0) {
+      if (!types || types.length === 0) {
         return this.negotiator.mediaTypes();
       }
       if (!this.headers.accept) {
-        return types4[0];
+        return types[0];
       }
-      var mimes = types4.map(extToMime);
+      var mimes = types.map(extToMime);
       var accepts = this.negotiator.mediaTypes(mimes.filter(validMime));
       var first = accepts[0];
-      return first ? types4[mimes.indexOf(first)] : false;
+      return first ? types[mimes.indexOf(first)] : false;
     };
     Accepts.prototype.encoding = Accepts.prototype.encodings = function(encodings_) {
       var encodings = encodings_;
@@ -22548,12 +22548,12 @@ var require_request = __commonJS({
     var deprecate = require_depd()("express");
     var isIP = require("net").isIP;
     var typeis = require_type_is();
-    var http3 = require("http");
+    var http2 = require("http");
     var fresh = require_fresh();
     var parseRange = require_range_parser();
-    var parse2 = require_parseurl();
+    var parse = require_parseurl();
     var proxyaddr = require_proxy_addr();
-    var req = Object.create(http3.IncomingMessage.prototype);
+    var req = Object.create(http2.IncomingMessage.prototype);
     module2.exports = req;
     req.get = req.header = function header(name2) {
       if (!name2) {
@@ -22615,9 +22615,9 @@ var require_request = __commonJS({
       if (null != query[name2]) return query[name2];
       return defaultValue;
     };
-    req.is = function is(types4) {
-      var arr = types4;
-      if (!Array.isArray(types4)) {
+    req.is = function is(types) {
+      var arr = types;
+      if (!Array.isArray(types)) {
         arr = new Array(arguments.length);
         for (var i = 0; i < arr.length; i++) {
           arr[i] = arguments[i];
@@ -22656,7 +22656,7 @@ var require_request = __commonJS({
       return subdomains2.slice(offset);
     });
     defineGetter(req, "path", function path2() {
-      return parse2(this).pathname;
+      return parse(this).pathname;
     });
     defineGetter(req, "hostname", function hostname() {
       var trust = this.app.get("trust proxy fn");
@@ -22708,11 +22708,11 @@ var require_request = __commonJS({
 var require_cookie_signature = __commonJS({
   "node_modules/cookie-signature/index.js"(exports2) {
     "use strict";
-    var crypto6 = require("crypto");
+    var crypto = require("crypto");
     exports2.sign = function(val, secret) {
       if ("string" != typeof val) throw new TypeError("Cookie value must be provided as a string.");
       if ("string" != typeof secret) throw new TypeError("Secret string must be provided.");
-      return val + "." + crypto6.createHmac("sha256", secret).update(val).digest("base64").replace(/\=+$/, "");
+      return val + "." + crypto.createHmac("sha256", secret).update(val).digest("base64").replace(/\=+$/, "");
     };
     exports2.unsign = function(val, secret) {
       if ("string" != typeof val) throw new TypeError("Signed cookie string must be provided.");
@@ -22721,7 +22721,7 @@ var require_cookie_signature = __commonJS({
       return sha1(mac) == sha1(val) ? str : false;
     };
     function sha1(str) {
-      return crypto6.createHash("sha1").update(str).digest("hex");
+      return crypto.createHash("sha1").update(str).digest("hex");
     }
   }
 });
@@ -22730,21 +22730,21 @@ var require_cookie_signature = __commonJS({
 var require_cookie = __commonJS({
   "node_modules/express/node_modules/cookie/index.js"(exports2) {
     "use strict";
-    exports2.parse = parse2;
+    exports2.parse = parse;
     exports2.serialize = serialize;
     var __toString = Object.prototype.toString;
     var cookieNameRegExp = /^[!#$%&'*+\-.^_`|~0-9A-Za-z]+$/;
     var cookieValueRegExp = /^("?)[\u0021\u0023-\u002B\u002D-\u003A\u003C-\u005B\u005D-\u007E]*\1$/;
     var domainValueRegExp = /^([.]?[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)([.][a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*$/i;
     var pathValueRegExp = /^[\u0020-\u003A\u003D-\u007E]*$/;
-    function parse2(str, opt) {
+    function parse(str, opt) {
       if (typeof str !== "string") {
         throw new TypeError("argument str must be a string");
       }
       var obj = {};
       var len = str.length;
       if (len < 2) return obj;
-      var dec = opt && opt.decode || decode3;
+      var dec = opt && opt.decode || decode;
       var index = 0;
       var eqIdx = 0;
       var endIdx = 0;
@@ -22875,15 +22875,15 @@ var require_cookie = __commonJS({
       }
       return str;
     }
-    function decode3(str) {
+    function decode(str) {
       return str.indexOf("%") !== -1 ? decodeURIComponent(str) : str;
     }
     function isDate2(val) {
       return __toString.call(val) === "[object Date]";
     }
-    function tryDecode(str, decode4) {
+    function tryDecode(str, decode2) {
       try {
-        return decode4(str);
+        return decode2(str);
       } catch (e) {
         return str;
       }
@@ -22905,7 +22905,7 @@ var require_vary = __commonJS({
       if (!field) {
         throw new TypeError("field argument is required");
       }
-      var fields = !Array.isArray(field) ? parse2(String(field)) : field;
+      var fields = !Array.isArray(field) ? parse(String(field)) : field;
       for (var j = 0; j < fields.length; j++) {
         if (!FIELD_NAME_REGEXP.test(fields[j])) {
           throw new TypeError("field argument contains an invalid header name");
@@ -22915,7 +22915,7 @@ var require_vary = __commonJS({
         return header;
       }
       var val = header;
-      var vals = parse2(header.toLowerCase());
+      var vals = parse(header.toLowerCase());
       if (fields.indexOf("*") !== -1 || vals.indexOf("*") !== -1) {
         return "*";
       }
@@ -22928,7 +22928,7 @@ var require_vary = __commonJS({
       }
       return val;
     }
-    function parse2(header) {
+    function parse(header) {
       var end = 0;
       var list = [];
       var start = 0;
@@ -22968,19 +22968,19 @@ var require_vary = __commonJS({
 var require_response = __commonJS({
   "node_modules/express/lib/response.js"(exports2, module2) {
     "use strict";
-    var Buffer7 = require_safe_buffer().Buffer;
+    var Buffer2 = require_safe_buffer().Buffer;
     var contentDisposition = require_content_disposition();
     var createError = require_http_errors();
     var deprecate = require_depd()("express");
     var encodeUrl = require_encodeurl();
     var escapeHtml = require_escape_html();
-    var http3 = require("http");
+    var http2 = require("http");
     var isAbsolute = require_utils2().isAbsolute;
     var onFinished = require_on_finished();
     var path2 = require("path");
     var statuses = require_statuses();
     var merge2 = require_utils_merge();
-    var sign3 = require_cookie_signature().sign;
+    var sign = require_cookie_signature().sign;
     var normalizeType = require_utils2().normalizeType;
     var normalizeTypes = require_utils2().normalizeTypes;
     var setCharset = require_utils2().setCharset;
@@ -22990,7 +22990,7 @@ var require_response = __commonJS({
     var mime = send.mime;
     var resolve = path2.resolve;
     var vary = require_vary();
-    var res = Object.create(http3.ServerResponse.prototype);
+    var res = Object.create(http2.ServerResponse.prototype);
     module2.exports = res;
     var charsetRegExp = /;\s*charset\s*=/;
     res.status = function status(code) {
@@ -23043,7 +23043,7 @@ var require_response = __commonJS({
         case "object":
           if (chunk === null) {
             chunk = "";
-          } else if (Buffer7.isBuffer(chunk)) {
+          } else if (Buffer2.isBuffer(chunk)) {
             if (!this.get("Content-Type")) {
               this.type("bin");
             }
@@ -23063,12 +23063,12 @@ var require_response = __commonJS({
       var generateETag = !this.get("ETag") && typeof etagFn === "function";
       var len;
       if (chunk !== void 0) {
-        if (Buffer7.isBuffer(chunk)) {
+        if (Buffer2.isBuffer(chunk)) {
           len = chunk.length;
         } else if (!generateETag && chunk.length < 1e3) {
-          len = Buffer7.byteLength(chunk, encoding);
+          len = Buffer2.byteLength(chunk, encoding);
         } else {
-          chunk = Buffer7.from(chunk, encoding);
+          chunk = Buffer2.from(chunk, encoding);
           encoding = void 0;
           len = chunk.length;
         }
@@ -23335,7 +23335,7 @@ var require_response = __commonJS({
       }
       var val = typeof value === "object" ? "j:" + JSON.stringify(value) : String(value);
       if (signed) {
-        val = "s:" + sign3(val, secret);
+        val = "s:" + sign(val, secret);
       }
       if (opts.maxAge != null) {
         var maxAge = opts.maxAge - 0;
@@ -23387,7 +23387,7 @@ var require_response = __commonJS({
         }
       });
       this.statusCode = status;
-      this.set("Content-Length", Buffer7.byteLength(body));
+      this.set("Content-Length", Buffer2.byteLength(body));
       if (this.req.method === "HEAD") {
         this.end();
       } else {
@@ -23692,7 +23692,7 @@ var require_express2 = __commonJS({
 var require_cookie2 = __commonJS({
   "node_modules/cookie/index.js"(exports2) {
     "use strict";
-    exports2.parse = parse2;
+    exports2.parse = parse;
     exports2.serialize = serialize;
     var __toString = Object.prototype.toString;
     var __hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -23700,14 +23700,14 @@ var require_cookie2 = __commonJS({
     var cookieValueRegExp = /^("?)[\u0021\u0023-\u002B\u002D-\u003A\u003C-\u005B\u005D-\u007E]*\1$/;
     var domainValueRegExp = /^([.]?[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)([.][a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*$/i;
     var pathValueRegExp = /^[\u0020-\u003A\u003D-\u007E]*$/;
-    function parse2(str, opt) {
+    function parse(str, opt) {
       if (typeof str !== "string") {
         throw new TypeError("argument str must be a string");
       }
       var obj = {};
       var len = str.length;
       if (len < 2) return obj;
-      var dec = opt && opt.decode || decode3;
+      var dec = opt && opt.decode || decode;
       var index = 0;
       var eqIdx = 0;
       var endIdx = 0;
@@ -23838,15 +23838,15 @@ var require_cookie2 = __commonJS({
       }
       return str;
     }
-    function decode3(str) {
+    function decode(str) {
       return str.indexOf("%") !== -1 ? decodeURIComponent(str) : str;
     }
     function isDate2(val) {
       return __toString.call(val) === "[object Date]";
     }
-    function tryDecode(str, decode4) {
+    function tryDecode(str, decode2) {
       try {
-        return decode4(str);
+        return decode2(str);
       } catch (e) {
         return str;
       }
@@ -23951,33 +23951,33 @@ var require_safe_buffer2 = __commonJS({
   "node_modules/basic-auth/node_modules/safe-buffer/index.js"(exports2, module2) {
     "use strict";
     var buffer = require("buffer");
-    var Buffer7 = buffer.Buffer;
+    var Buffer2 = buffer.Buffer;
     function copyProps(src, dst) {
       for (var key in src) {
         dst[key] = src[key];
       }
     }
-    if (Buffer7.from && Buffer7.alloc && Buffer7.allocUnsafe && Buffer7.allocUnsafeSlow) {
+    if (Buffer2.from && Buffer2.alloc && Buffer2.allocUnsafe && Buffer2.allocUnsafeSlow) {
       module2.exports = buffer;
     } else {
       copyProps(buffer, exports2);
       exports2.Buffer = SafeBuffer;
     }
     function SafeBuffer(arg, encodingOrOffset, length) {
-      return Buffer7(arg, encodingOrOffset, length);
+      return Buffer2(arg, encodingOrOffset, length);
     }
-    copyProps(Buffer7, SafeBuffer);
+    copyProps(Buffer2, SafeBuffer);
     SafeBuffer.from = function(arg, encodingOrOffset, length) {
       if (typeof arg === "number") {
         throw new TypeError("Argument must not be a number");
       }
-      return Buffer7(arg, encodingOrOffset, length);
+      return Buffer2(arg, encodingOrOffset, length);
     };
     SafeBuffer.alloc = function(size, fill, encoding) {
       if (typeof size !== "number") {
         throw new TypeError("Argument must be a number");
       }
-      var buf = Buffer7(size);
+      var buf = Buffer2(size);
       if (fill !== void 0) {
         if (typeof encoding === "string") {
           buf.fill(fill, encoding);
@@ -23993,7 +23993,7 @@ var require_safe_buffer2 = __commonJS({
       if (typeof size !== "number") {
         throw new TypeError("Argument must be a number");
       }
-      return Buffer7(size);
+      return Buffer2(size);
     };
     SafeBuffer.allocUnsafeSlow = function(size) {
       if (typeof size !== "number") {
@@ -24008,9 +24008,9 @@ var require_safe_buffer2 = __commonJS({
 var require_basic_auth = __commonJS({
   "node_modules/basic-auth/index.js"(exports2, module2) {
     "use strict";
-    var Buffer7 = require_safe_buffer2().Buffer;
+    var Buffer2 = require_safe_buffer2().Buffer;
     module2.exports = auth;
-    module2.exports.parse = parse2;
+    module2.exports.parse = parse;
     var CREDENTIALS_REGEXP = /^ *(?:[Bb][Aa][Ss][Ii][Cc]) +([A-Za-z0-9._~+/-]+=*) *$/;
     var USER_PASS_REGEXP = /^([^:]*):(.*)$/;
     function auth(req) {
@@ -24021,10 +24021,10 @@ var require_basic_auth = __commonJS({
         throw new TypeError("argument req is required to be an object");
       }
       var header = getAuthorization(req);
-      return parse2(header);
+      return parse(header);
     }
     function decodeBase64(str) {
-      return Buffer7.from(str, "base64").toString();
+      return Buffer2.from(str, "base64").toString();
     }
     function getAuthorization(req) {
       if (!req.headers || typeof req.headers !== "object") {
@@ -24032,7 +24032,7 @@ var require_basic_auth = __commonJS({
       }
       return req.headers.authorization;
     }
-    function parse2(string) {
+    function parse(string) {
       if (typeof string !== "string") {
         return void 0;
       }
@@ -24066,7 +24066,7 @@ var require_ms6 = __commonJS({
       options = options || {};
       var type = typeof val;
       if (type === "string" && val.length > 0) {
-        return parse2(val);
+        return parse(val);
       } else if (type === "number" && isNaN(val) === false) {
         return options.long ? fmtLong(val) : fmtShort(val);
       }
@@ -24074,7 +24074,7 @@ var require_ms6 = __commonJS({
         "val is not a non-empty string or a valid number. val=" + JSON.stringify(val)
       );
     };
-    function parse2(str) {
+    function parse(str) {
       str = String(str);
       if (str.length > 100) {
         return;
@@ -24354,7 +24354,7 @@ var require_node5 = __commonJS({
   "node_modules/morgan/node_modules/debug/src/node.js"(exports2, module2) {
     "use strict";
     var tty = require("tty");
-    var util5 = require("util");
+    var util3 = require("util");
     exports2 = module2.exports = require_debug5();
     exports2.init = init;
     exports2.log = log;
@@ -24379,7 +24379,7 @@ var require_node5 = __commonJS({
     }, {});
     var fd = parseInt(process.env.DEBUG_FD, 10) || 2;
     if (1 !== fd && 2 !== fd) {
-      util5.deprecate(function() {
+      util3.deprecate(function() {
       }, "except for stderr(2) and stdout(1), any other usage of DEBUG_FD is deprecated. Override debug.log if you want to use a different log function (https://git.io/debug_fd)")();
     }
     var stream4 = 1 === fd ? process.stdout : 2 === fd ? process.stderr : createWritableStdioStream(fd);
@@ -24388,13 +24388,13 @@ var require_node5 = __commonJS({
     }
     exports2.formatters.o = function(v) {
       this.inspectOpts.colors = this.useColors;
-      return util5.inspect(v, this.inspectOpts).split("\n").map(function(str) {
+      return util3.inspect(v, this.inspectOpts).split("\n").map(function(str) {
         return str.trim();
       }).join(" ");
     };
     exports2.formatters.O = function(v) {
       this.inspectOpts.colors = this.useColors;
-      return util5.inspect(v, this.inspectOpts);
+      return util3.inspect(v, this.inspectOpts);
     };
     function formatArgs(args) {
       var name2 = this.namespace;
@@ -24409,7 +24409,7 @@ var require_node5 = __commonJS({
       }
     }
     function log() {
-      return stream4.write(util5.format.apply(util5, arguments) + "\n");
+      return stream4.write(util3.format.apply(util3, arguments) + "\n");
     }
     function save(namespaces) {
       if (null == namespaces) {
@@ -24784,12 +24784,12 @@ var require_morgan = __commonJS({
     });
     function clfdate(dateTime) {
       var date = dateTime.getUTCDate();
-      var hour2 = dateTime.getUTCHours();
+      var hour = dateTime.getUTCHours();
       var mins = dateTime.getUTCMinutes();
       var secs = dateTime.getUTCSeconds();
-      var year2 = dateTime.getUTCFullYear();
+      var year = dateTime.getUTCFullYear();
       var month = CLF_MONTH[dateTime.getUTCMonth()];
-      return pad2(date) + "/" + month + "/" + year2 + ":" + pad2(hour2) + ":" + pad2(mins) + ":" + pad2(secs) + " +0000";
+      return pad2(date) + "/" + month + "/" + year + ":" + pad2(hour) + ":" + pad2(mins) + ":" + pad2(secs) + " +0000";
     }
     function compile(format2) {
       if (typeof format2 !== "string") {
@@ -24856,7 +24856,7 @@ var require_delayed_stream = __commonJS({
   "node_modules/delayed-stream/lib/delayed_stream.js"(exports2, module2) {
     "use strict";
     var Stream = require("stream").Stream;
-    var util5 = require("util");
+    var util3 = require("util");
     module2.exports = DelayedStream;
     function DelayedStream() {
       this.source = null;
@@ -24867,7 +24867,7 @@ var require_delayed_stream = __commonJS({
       this._released = false;
       this._bufferedEvents = [];
     }
-    util5.inherits(DelayedStream, Stream);
+    util3.inherits(DelayedStream, Stream);
     DelayedStream.create = function(source, options) {
       var delayedStream = new this();
       options = options || {};
@@ -24937,8 +24937,8 @@ var require_delayed_stream = __commonJS({
         return;
       }
       this._maxDataSizeExceeded = true;
-      var message2 = "DelayedStream#maxDataSize of " + this.maxDataSize + " bytes exceeded.";
-      this.emit("error", new Error(message2));
+      var message = "DelayedStream#maxDataSize of " + this.maxDataSize + " bytes exceeded.";
+      this.emit("error", new Error(message));
     };
   }
 });
@@ -24947,7 +24947,7 @@ var require_delayed_stream = __commonJS({
 var require_combined_stream = __commonJS({
   "node_modules/combined-stream/lib/combined_stream.js"(exports2, module2) {
     "use strict";
-    var util5 = require("util");
+    var util3 = require("util");
     var Stream = require("stream").Stream;
     var DelayedStream = require_delayed_stream();
     module2.exports = CombinedStream;
@@ -24963,7 +24963,7 @@ var require_combined_stream = __commonJS({
       this._insideLoop = false;
       this._pendingNext = false;
     }
-    util5.inherits(CombinedStream, Stream);
+    util3.inherits(CombinedStream, Stream);
     CombinedStream.create = function(options) {
       var combinedStream = new this();
       options = options || {};
@@ -25090,8 +25090,8 @@ var require_combined_stream = __commonJS({
       if (this.dataSize <= this.maxDataSize) {
         return;
       }
-      var message2 = "DelayedStream#maxDataSize of " + this.maxDataSize + " bytes exceeded.";
-      this._emitError(new Error(message2));
+      var message = "DelayedStream#maxDataSize of " + this.maxDataSize + " bytes exceeded.";
+      this._emitError(new Error(message));
     };
     CombinedStream.prototype._updateDataSize = function() {
       this.dataSize = 0;
@@ -25350,10 +25350,10 @@ var require_form_data = __commonJS({
   "node_modules/axios/node_modules/form-data/lib/form_data.js"(exports2, module2) {
     "use strict";
     var CombinedStream = require_combined_stream();
-    var util5 = require("util");
+    var util3 = require("util");
     var path2 = require("path");
-    var http3 = require("http");
-    var https3 = require("https");
+    var http2 = require("http");
+    var https2 = require("https");
     var parseUrl = require("url").parse;
     var fs = require("fs");
     var Stream = require("stream").Stream;
@@ -25361,7 +25361,7 @@ var require_form_data = __commonJS({
     var asynckit = require_asynckit();
     var populate = require_populate();
     module2.exports = FormData3;
-    util5.inherits(FormData3, CombinedStream);
+    util3.inherits(FormData3, CombinedStream);
     function FormData3(options) {
       if (!(this instanceof FormData3)) {
         return new FormData3(options);
@@ -25620,9 +25620,9 @@ var require_form_data = __commonJS({
       }
       options.headers = this.getHeaders(params.headers);
       if (options.protocol == "https:") {
-        request = https3.request(options);
+        request = https2.request(options);
       } else {
-        request = http3.request(options);
+        request = http2.request(options);
       }
       this.getLength(function(err, length) {
         if (err && err !== "Unknown stream") {
@@ -26151,7 +26151,7 @@ var require_supports_color = __commonJS({
         return 1;
       }
       if ("CI" in env) {
-        if (["TRAVIS", "CIRCLECI", "APPVEYOR", "GITLAB_CI", "GITHUB_ACTIONS", "BUILDKITE"].some((sign3) => sign3 in env) || env.CI_NAME === "codeship") {
+        if (["TRAVIS", "CIRCLECI", "APPVEYOR", "GITLAB_CI", "GITHUB_ACTIONS", "BUILDKITE"].some((sign) => sign in env) || env.CI_NAME === "codeship") {
           return 1;
         }
         return min;
@@ -26163,10 +26163,10 @@ var require_supports_color = __commonJS({
         return 3;
       }
       if ("TERM_PROGRAM" in env) {
-        const version3 = parseInt((env.TERM_PROGRAM_VERSION || "").split(".")[0], 10);
+        const version2 = parseInt((env.TERM_PROGRAM_VERSION || "").split(".")[0], 10);
         switch (env.TERM_PROGRAM) {
           case "iTerm.app":
-            return version3 >= 3 ? 3 : 2;
+            return version2 >= 3 ? 3 : 2;
           case "Apple_Terminal":
             return 2;
         }
@@ -26199,14 +26199,14 @@ var require_node6 = __commonJS({
   "node_modules/debug/src/node.js"(exports2, module2) {
     "use strict";
     var tty = require("tty");
-    var util5 = require("util");
+    var util3 = require("util");
     exports2.init = init;
     exports2.log = log;
     exports2.formatArgs = formatArgs;
     exports2.save = save;
     exports2.load = load;
     exports2.useColors = useColors;
-    exports2.destroy = util5.deprecate(
+    exports2.destroy = util3.deprecate(
       () => {
       },
       "Instance method `debug.destroy()` is deprecated and no longer does anything. It will be removed in the next major version of `debug`."
@@ -26337,7 +26337,7 @@ var require_node6 = __commonJS({
       return (/* @__PURE__ */ new Date()).toISOString() + " ";
     }
     function log(...args) {
-      return process.stderr.write(util5.formatWithOptions(exports2.inspectOpts, ...args) + "\n");
+      return process.stderr.write(util3.formatWithOptions(exports2.inspectOpts, ...args) + "\n");
     }
     function save(namespaces) {
       if (namespaces) {
@@ -26360,11 +26360,11 @@ var require_node6 = __commonJS({
     var { formatters } = module2.exports;
     formatters.o = function(v) {
       this.inspectOpts.colors = this.useColors;
-      return util5.inspect(v, this.inspectOpts).split("\n").map((str) => str.trim()).join(" ");
+      return util3.inspect(v, this.inspectOpts).split("\n").map((str) => str.trim()).join(" ");
     };
     formatters.O = function(v) {
       this.inspectOpts.colors = this.useColors;
-      return util5.inspect(v, this.inspectOpts);
+      return util3.inspect(v, this.inspectOpts);
     };
   }
 });
@@ -26408,8 +26408,8 @@ var require_follow_redirects = __commonJS({
     "use strict";
     var url2 = require("url");
     var URL2 = url2.URL;
-    var http3 = require("http");
-    var https3 = require("https");
+    var http2 = require("http");
+    var https2 = require("https");
     var Writable = require("stream").Writable;
     var assert = require("assert");
     var debug = require_debug6();
@@ -26786,14 +26786,14 @@ var require_follow_redirects = __commonJS({
           debug("options", options);
           return new RedirectableRequest(options, callback);
         }
-        function get3(input, options, callback) {
+        function get(input, options, callback) {
           var wrappedRequest = wrappedProtocol.request(input, options, callback);
           wrappedRequest.end();
           return wrappedRequest;
         }
         Object.defineProperties(wrappedProtocol, {
           request: { value: request, configurable: true, enumerable: true, writable: true },
-          get: { value: get3, configurable: true, enumerable: true, writable: true }
+          get: { value: get, configurable: true, enumerable: true, writable: true }
         });
       });
       return exports3;
@@ -26848,14 +26848,14 @@ var require_follow_redirects = __commonJS({
       }
       return lastValue === null || typeof lastValue === "undefined" ? void 0 : String(lastValue).trim();
     }
-    function createErrorType(code, message2, baseClass) {
+    function createErrorType(code, message, baseClass) {
       function CustomError(properties) {
         if (isFunction2(Error.captureStackTrace)) {
           Error.captureStackTrace(this, this.constructor);
         }
         Object.assign(this, properties || {});
         this.code = code;
-        this.message = this.cause ? message2 + ": " + this.cause.message : message2;
+        this.message = this.cause ? message + ": " + this.cause.message : message;
       }
       CustomError.prototype = new (baseClass || Error)();
       Object.defineProperties(CustomError.prototype, {
@@ -26894,7 +26894,7 @@ var require_follow_redirects = __commonJS({
     function isURL(value) {
       return URL2 && value instanceof URL2;
     }
-    module2.exports = wrap({ http: http3, https: https3 });
+    module2.exports = wrap({ http: http2, https: https2 });
     module2.exports.wrap = wrap;
   }
 });
@@ -26909,12 +26909,12 @@ var import_express = __toESM(require_express2());
 
 // webtask.json
 var name = "auth0";
-var version = "0.1.22";
+var version = "0.1.23";
 var webtask_default = {
   title: "p6m-dev/auth0-extension",
   name,
   version,
-  preVersion: "0.1.21",
+  preVersion: "0.1.22",
   author: "P6m",
   useHashName: false,
   description: "P6m Auth0 Extension",
@@ -27358,14 +27358,14 @@ var utils_default = {
 };
 
 // node_modules/axios/lib/core/AxiosError.js
-function AxiosError(message2, code, config, request, response) {
+function AxiosError(message, code, config, request, response) {
   Error.call(this);
   if (Error.captureStackTrace) {
     Error.captureStackTrace(this, this.constructor);
   } else {
     this.stack = new Error().stack;
   }
-  this.message = message2;
+  this.message = message;
   this.name = "AxiosError";
   code && (this.code = code);
   config && (this.config = config);
@@ -27571,9 +27571,9 @@ var prototype2 = AxiosURLSearchParams.prototype;
 prototype2.append = function append(name2, value) {
   this._pairs.push([name2, value]);
 };
-prototype2.toString = function toString2(encoder2) {
-  const _encode = encoder2 ? function(value) {
-    return encoder2.call(this, value, encode);
+prototype2.toString = function toString2(encoder) {
+  const _encode = encoder ? function(value) {
+    return encoder.call(this, value, encode);
   } : encode;
   return this._pairs.map(function each(pair) {
     return _encode(pair[0]) + "=" + _encode(pair[1]);
@@ -27789,7 +27789,7 @@ function formDataToJSON(formData) {
 var formDataToJSON_default = formDataToJSON;
 
 // node_modules/axios/lib/defaults/index.js
-function stringifySafely(rawValue, parser, encoder2) {
+function stringifySafely(rawValue, parser, encoder) {
   if (utils_default.isString(rawValue)) {
     try {
       (parser || JSON.parse)(rawValue);
@@ -27800,7 +27800,7 @@ function stringifySafely(rawValue, parser, encoder2) {
       }
     }
   }
-  return (encoder2 || JSON.stringify)(rawValue);
+  return (encoder || JSON.stringify)(rawValue);
 }
 var defaults = {
   transitional: transitional_default,
@@ -28182,8 +28182,8 @@ function isCancel(value) {
 }
 
 // node_modules/axios/lib/cancel/CanceledError.js
-function CanceledError(message2, config, request) {
-  AxiosError_default.call(this, message2 == null ? "canceled" : message2, AxiosError_default.ERR_CANCELED, config, request);
+function CanceledError(message, config, request) {
+  AxiosError_default.call(this, message == null ? "canceled" : message, AxiosError_default.ERR_CANCELED, config, request);
   this.name = "CanceledError";
 }
 utils_default.inherits(CanceledError, AxiosError_default, {
@@ -29532,7 +29532,7 @@ var trackStream = (stream4, chunkSize, onProgress, onFinish) => {
 // node_modules/axios/lib/adapters/fetch.js
 var isFetchSupported = typeof fetch === "function" && typeof Request === "function" && typeof Response === "function";
 var isReadableStreamSupported = isFetchSupported && typeof ReadableStream === "function";
-var encodeText = isFetchSupported && (typeof TextEncoder === "function" ? /* @__PURE__ */ ((encoder2) => (str) => encoder2.encode(str))(new TextEncoder()) : async (str) => new Uint8Array(await new Response(str).arrayBuffer()));
+var encodeText = isFetchSupported && (typeof TextEncoder === "function" ? /* @__PURE__ */ ((encoder) => (str) => encoder.encode(str))(new TextEncoder()) : async (str) => new Uint8Array(await new Response(str).arrayBuffer()));
 var test = (fn, ...args) => {
   try {
     return !!fn(...args);
@@ -29800,23 +29800,23 @@ var validators = {};
   };
 });
 var deprecatedWarnings = {};
-validators.transitional = function transitional(validator, version3, message2) {
+validators.transitional = function transitional(validator, version2, message) {
   function formatMessage(opt, desc) {
-    return "[Axios v" + VERSION + "] Transitional option '" + opt + "'" + desc + (message2 ? ". " + message2 : "");
+    return "[Axios v" + VERSION + "] Transitional option '" + opt + "'" + desc + (message ? ". " + message : "");
   }
   return (value, opt, opts) => {
     if (validator === false) {
       throw new AxiosError_default(
-        formatMessage(opt, " has been removed" + (version3 ? " in " + version3 : "")),
+        formatMessage(opt, " has been removed" + (version2 ? " in " + version2 : "")),
         AxiosError_default.ERR_DEPRECATED
       );
     }
-    if (version3 && !deprecatedWarnings[opt]) {
+    if (version2 && !deprecatedWarnings[opt]) {
       deprecatedWarnings[opt] = true;
       console.warn(
         formatMessage(
           opt,
-          " has been deprecated since v" + version3 + " and will be removed in the near future"
+          " has been deprecated since v" + version2 + " and will be removed in the near future"
         )
       );
     }
@@ -30053,11 +30053,11 @@ var CancelToken = class _CancelToken {
       };
       return promise;
     };
-    executor(function cancel(message2, config, request) {
+    executor(function cancel(message, config, request) {
       if (token.reason) {
         return;
       }
-      token.reason = new CanceledError_default(message2, config, request);
+      token.reason = new CanceledError_default(message, config, request);
       resolvePromise(token.reason);
     });
   }
@@ -30312,8504 +30312,6 @@ var errorHandler = (ctx) => {
   };
 };
 
-// node_modules/auth0/dist/esm/lib/runtime.js
-var runtime_exports = {};
-__export(runtime_exports, {
-  BaseAPI: () => BaseAPI,
-  COLLECTION_FORMATS: () => COLLECTION_FORMATS,
-  JSONApiResponse: () => JSONApiResponse,
-  TextApiResponse: () => TextApiResponse,
-  VoidApiResponse: () => VoidApiResponse,
-  applyQueryParams: () => applyQueryParams,
-  parseFormParam: () => parseFormParam,
-  validateRequiredRequestParams: () => validateRequiredRequestParams
-});
-
-// node_modules/auth0/dist/esm/lib/retry.js
-var MAX_REQUEST_RETRY_JITTER = 250;
-var MAX_REQUEST_RETRY_DELAY = 1e4;
-var DEFAULT_NUMBER_RETRIES = 3;
-var MAX_NUMBER_RETRIES = 10;
-var BASE_DELAY = 500;
-function getRandomInt(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min) + min);
-}
-async function pause(delay) {
-  return new Promise((resolve) => setTimeout(resolve, delay));
-}
-function retry(action, { maxRetries, retryWhen }) {
-  const nrOfTriesToAttempt = Math.min(MAX_NUMBER_RETRIES, maxRetries !== null && maxRetries !== void 0 ? maxRetries : DEFAULT_NUMBER_RETRIES);
-  let nrOfTries = 0;
-  const retryAndWait = async () => {
-    let result;
-    result = await action();
-    if ((retryWhen || [429]).includes(result.status) && nrOfTries < nrOfTriesToAttempt) {
-      nrOfTries++;
-      let wait = BASE_DELAY * Math.pow(2, nrOfTries - 1);
-      wait = getRandomInt(wait + 1, wait + MAX_REQUEST_RETRY_JITTER);
-      wait = Math.min(wait, MAX_REQUEST_RETRY_DELAY);
-      await pause(wait);
-      result = await retryAndWait();
-    }
-    return result;
-  };
-  return retryAndWait();
-}
-
-// node_modules/auth0/dist/esm/lib/errors.js
-var ResponseError = class extends Error {
-  constructor(statusCode, body, headers, msg) {
-    super(msg);
-    this.statusCode = statusCode;
-    this.body = body;
-    this.headers = headers;
-    this.name = "ResponseError";
-  }
-};
-var TimeoutError = class extends Error {
-  constructor() {
-    super("The request was timed out.");
-    this.name = "TimeoutError";
-  }
-};
-var FetchError = class extends Error {
-  constructor(cause, msg) {
-    super(msg);
-    this.cause = cause;
-    this.name = "FetchError";
-  }
-};
-var RequiredError = class extends Error {
-  constructor(field, msg) {
-    super(msg);
-    this.field = field;
-    this.name = "RequiredError";
-  }
-};
-
-// node_modules/auth0/dist/esm/lib/models.js
-var JSONApiResponse = class _JSONApiResponse {
-  constructor(data, headers, status, statusText) {
-    this.data = data;
-    this.headers = headers;
-    this.status = status;
-    this.statusText = statusText;
-  }
-  static async fromResponse(raw) {
-    const value = await raw.json();
-    return new _JSONApiResponse(value, raw.headers, raw.status, raw.statusText);
-  }
-};
-var VoidApiResponse = class _VoidApiResponse {
-  constructor(headers, status, statusText) {
-    this.headers = headers;
-    this.status = status;
-    this.statusText = statusText;
-  }
-  static async fromResponse(raw) {
-    return new _VoidApiResponse(raw.headers, raw.status, raw.statusText);
-  }
-};
-var TextApiResponse = class _TextApiResponse {
-  constructor(data, headers, status, statusText) {
-    this.data = data;
-    this.headers = headers;
-    this.status = status;
-    this.statusText = statusText;
-  }
-  static async fromResponse(raw) {
-    const value = await raw.text();
-    return new _TextApiResponse(value, raw.headers, raw.status, raw.statusText);
-  }
-};
-
-// node_modules/auth0/dist/esm/lib/runtime.js
-var BaseAPI = class {
-  constructor(configuration) {
-    this.configuration = configuration;
-    this.fetchWithTimeout = async (url2, init) => {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => {
-        controller.abort();
-      }, this.timeoutDuration);
-      try {
-        return await this.fetchApi(url2, { signal: controller.signal, ...init });
-      } catch (e) {
-        if (e.name === "AbortError") {
-          throw new TimeoutError();
-        }
-        throw e;
-      } finally {
-        clearTimeout(timeout);
-      }
-    };
-    this.fetch = async (url2, init) => {
-      var _a;
-      let fetchParams = { url: url2, init };
-      for (const middleware of this.middleware) {
-        if (middleware.pre) {
-          fetchParams = await middleware.pre({
-            fetch: this.fetchWithTimeout,
-            ...fetchParams
-          }) || fetchParams;
-        }
-      }
-      let response = void 0;
-      let error = void 0;
-      try {
-        response = ((_a = this.configuration.retry) === null || _a === void 0 ? void 0 : _a.enabled) !== false ? await retry(() => this.fetchWithTimeout(fetchParams.url, fetchParams.init), {
-          ...this.configuration.retry
-        }) : await this.fetchWithTimeout(fetchParams.url, fetchParams.init);
-      } catch (e) {
-        error = e;
-      }
-      if (error || !response.ok) {
-        for (const middleware of this.middleware) {
-          if (middleware.onError) {
-            response = await middleware.onError({
-              fetch: this.fetchWithTimeout,
-              ...fetchParams,
-              error,
-              response: response ? response.clone() : void 0
-            }) || response;
-          }
-        }
-        if (response === void 0) {
-          throw new FetchError(error, "The request failed and the interceptors did not return an alternative response");
-        }
-      } else {
-        for (const middleware of this.middleware) {
-          if (middleware.post) {
-            response = await middleware.post({
-              fetch: this.fetchApi,
-              ...fetchParams,
-              response: response.clone()
-            }) || response;
-          }
-        }
-      }
-      return response;
-    };
-    if (configuration.baseUrl === null || configuration.baseUrl === void 0) {
-      throw new Error("Must provide a base URL for the API");
-    }
-    if ("string" !== typeof configuration.baseUrl || configuration.baseUrl.length === 0) {
-      throw new Error("The provided base URL is invalid");
-    }
-    this.middleware = configuration.middleware || [];
-    this.fetchApi = configuration.fetch || fetch;
-    this.parseError = configuration.parseError;
-    this.timeoutDuration = typeof configuration.timeoutDuration === "number" ? configuration.timeoutDuration : 1e4;
-  }
-  async request(context, initOverrides) {
-    const { url: url2, init } = await this.createFetchParams(context, initOverrides);
-    const response = await this.fetch(url2, init);
-    if (response && response.status >= 200 && response.status < 300) {
-      return response;
-    }
-    const error = await this.parseError(response);
-    throw error;
-  }
-  async createFetchParams(context, initOverrides) {
-    let url2 = this.configuration.baseUrl + context.path;
-    if (context.query !== void 0 && Object.keys(context.query).length !== 0) {
-      url2 += `?${querystring(context.query)}`;
-    }
-    const headers = Object.assign({}, this.configuration.headers, context.headers);
-    Object.keys(headers).forEach((key) => headers[key] === void 0 ? delete headers[key] : {});
-    const initOverrideFn = typeof initOverrides === "function" ? initOverrides : async () => initOverrides;
-    const initParams = {
-      method: context.method,
-      headers,
-      body: context.body,
-      dispatcher: this.configuration.agent
-    };
-    const overriddenInit = {
-      ...initParams,
-      ...await initOverrideFn({
-        init: initParams,
-        context
-      })
-    };
-    const init = {
-      ...overriddenInit,
-      body: overriddenInit.body instanceof FormData || overriddenInit.body instanceof URLSearchParams || overriddenInit.body instanceof Blob ? overriddenInit.body : JSON.stringify(overriddenInit.body)
-    };
-    return { url: url2, init };
-  }
-};
-var COLLECTION_FORMATS = {
-  csv: ",",
-  ssv: " ",
-  tsv: "	",
-  pipes: "|"
-};
-function querystring(params) {
-  return Object.keys(params).map((key) => querystringSingleKey(key, params[key])).filter((part) => part.length > 0).join("&");
-}
-function querystringSingleKey(key, value) {
-  if (value instanceof Array) {
-    const multiValue = value.map((singleValue) => encodeURIComponent(String(singleValue))).join(`&${encodeURIComponent(key)}=`);
-    return `${encodeURIComponent(key)}=${multiValue}`;
-  }
-  return `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`;
-}
-function validateRequiredRequestParams(requestParameters, keys) {
-  keys.forEach((key) => {
-    if (requestParameters[key] === null || requestParameters[key] === void 0) {
-      throw new RequiredError(key, `Required parameter requestParameters.${key} was null or undefined.`);
-    }
-  });
-}
-function applyQueryParams(requestParameters, keys) {
-  return keys.reduce((acc, { key, config }) => {
-    let value;
-    if (config.isArray) {
-      if (config.isCollectionFormatMulti) {
-        value = requestParameters[key];
-      } else {
-        value = requestParameters[key].join(COLLECTION_FORMATS[config.collectionFormat]);
-      }
-    } else {
-      if (requestParameters[key] !== void 0) {
-        value = requestParameters[key];
-      }
-    }
-    return value !== void 0 ? { ...acc, [key]: value } : acc;
-  }, {});
-}
-async function parseFormParam(originalValue) {
-  let value = originalValue;
-  value = typeof value == "number" || typeof value == "boolean" ? "" + value : value;
-  return value;
-}
-
-// node_modules/auth0/dist/esm/management/__generated/managers/actions-manager.js
-var { BaseAPI: BaseAPI2 } = runtime_exports;
-var ActionsManager = class extends BaseAPI2 {
-  /**
-   * Deletes an action and all of its associated versions. An action must be unbound from all triggers
-   * before it can be deleted.
-   *
-   * Delete an action
-   *
-   * @throws {RequiredError}
-   */
-  async delete(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "force",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/actions/actions/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "DELETE",
-      query: queryParameters
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve an action by its ID.
-   *
-   * Get an action
-   *
-   * @throws {RequiredError}
-   */
-  async get(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/actions/actions/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve a specific version of an action. An action version is created whenever
-   * an action is deployed. An action version is immutable, once created.
-   *
-   * Get a specific version of an action
-   *
-   * @throws {RequiredError}
-   */
-  async getVersion(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["actionId", "id"]);
-    const response = await this.request({
-      path: `/actions/actions/{actionId}/versions/{id}`.replace("{actionId}", encodeURIComponent(String(requestParameters.actionId))).replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve all of an action's versions. An action version is created whenever
-   * an action is deployed. An action version is immutable, once created.
-   *
-   * Get an action's versions
-   *
-   * @throws {RequiredError}
-   */
-  async getVersions(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["actionId"]);
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "page",
-        config: {}
-      },
-      {
-        key: "per_page",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/actions/actions/{actionId}/versions`.replace("{actionId}", encodeURIComponent(String(requestParameters.actionId))),
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve all actions.
-   *
-   * Get actions
-   *
-   * @throws {RequiredError}
-   */
-  async getAll(requestParameters = {}, initOverrides) {
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "triggerId",
-        config: {}
-      },
-      {
-        key: "actionName",
-        config: {}
-      },
-      {
-        key: "deployed",
-        config: {}
-      },
-      {
-        key: "page",
-        config: {}
-      },
-      {
-        key: "per_page",
-        config: {}
-      },
-      {
-        key: "installed",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/actions/actions`,
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve the actions that are bound to a trigger. Once an action is created and deployed, it must be
-   * attached (i.e. bound) to a trigger so that it will be executed as part of a flow. The list of actions returned
-   * reflects the order in which they will be executed during the appropriate flow.
-   *
-   * Get trigger bindings
-   *
-   * @throws {RequiredError}
-   */
-  async getTriggerBindings(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["triggerId"]);
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "page",
-        config: {}
-      },
-      {
-        key: "per_page",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/actions/triggers/{triggerId}/bindings`.replace("{triggerId}", encodeURIComponent(String(requestParameters.triggerId))),
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve information about a specific execution of a trigger. Relevant execution IDs will be included in tenant logs
-   * generated as part of that authentication flow. Executions will only be stored for 10 days after their creation.
-   *
-   * Get an execution
-   *
-   * @throws {RequiredError}
-   */
-  async getExecution(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/actions/executions/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve the set of triggers currently available within actions. A trigger is an extensibility point to which actions
-   * can be bound.
-   *
-   * Get triggers
-   *
-   * @throws {RequiredError}
-   */
-  async getAllTriggers(initOverrides) {
-    const response = await this.request({
-      path: `/actions/triggers`,
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Update an existing action. If this action is currently bound to a trigger, updating it will <strong>not</strong> affect
-   * any user flows until the action is deployed.
-   *
-   * Update an action
-   *
-   * @throws {RequiredError}
-   */
-  async update(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/actions/actions/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "PATCH",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Update the actions that are bound (i.e. attached) to a trigger. Once an action is created and deployed, it must be
-   * attached (i.e. bound) to a trigger so that it will be executed as part of a flow. The order in which the actions are
-   * provided will determine the order in which they are executed.
-   *
-   * Update trigger bindings
-   *
-   * @throws {RequiredError}
-   */
-  async updateTriggerBindings(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["triggerId"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/actions/triggers/{triggerId}/bindings`.replace("{triggerId}", encodeURIComponent(String(requestParameters.triggerId))),
-      method: "PATCH",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Create an action. Once an action is created, it must be deployed, and then
-   * bound to a trigger before it will be executed as part of a flow.
-   *
-   * Create an action
-   *
-   * @throws {RequiredError}
-   */
-  async create(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/actions/actions`,
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Deploy an action. Deploying an action will create a new immutable version of the action. If the action is
-   * currently bound to a trigger, then the system will begin executing the newly deployed version of the action immediately. Otherwise, the action will only be executed as a part of a flow once it is bound to that flow.
-   *
-   * Deploy an action
-   *
-   * @throws {RequiredError}
-   */
-  async deploy(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/actions/actions/{id}/deploy`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "POST"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Performs the equivalent of a roll-back of an action to an earlier, specified version. Creates a new, deployed
-   * action version that is identical to the specified version. If this action is currently bound to a trigger, the
-   * system will begin executing the newly-created version immediately.
-   *
-   * Roll back to a previous action version
-   *
-   * @throws {RequiredError}
-   */
-  async deployVersion(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id", "actionId"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/actions/actions/{actionId}/versions/{id}/deploy`.replace("{id}", encodeURIComponent(String(requestParameters.id))).replace("{actionId}", encodeURIComponent(String(requestParameters.actionId))),
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Test an action. After updating an action, it can be tested prior to being deployed to ensure it behaves as expected.
-   *
-   * Test an Action
-   *
-   * @throws {RequiredError}
-   */
-  async test(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/actions/actions/{id}/test`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-};
-
-// node_modules/auth0/dist/esm/management/__generated/managers/anomaly-manager.js
-var { BaseAPI: BaseAPI3 } = runtime_exports;
-var AnomalyManager = class extends BaseAPI3 {
-  /**
-   * Unblock an IP address currently blocked by the <a href="https://auth0.com/docs/configure/attack-protection/suspicious-ip-throttling">Suspicious IP Throttling</a> due to multiple suspicious attempts.
-   * Remove the blocked IP address
-   *
-   * @throws {RequiredError}
-   */
-  async deleteBlockedIp(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/anomaly/blocks/ips/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "DELETE"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Check if a given IP address is blocked via the <a href="https://auth0.com/docs/configure/attack-protection/suspicious-ip-throttling">Suspicious IP Throttling</a> due to multiple suspicious attempts.
-   * Check if an IP address is blocked
-   *
-   * @throws {RequiredError}
-   */
-  async checkIfIpIsBlocked(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/anomaly/blocks/ips/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-};
-
-// node_modules/auth0/dist/esm/management/__generated/managers/attack-protection-manager.js
-var { BaseAPI: BaseAPI4 } = runtime_exports;
-var AttackProtectionManager = class extends BaseAPI4 {
-  /**
-   * Get breached password detection settings
-   *
-   * @throws {RequiredError}
-   */
-  async getBreachedPasswordDetectionConfig(initOverrides) {
-    const response = await this.request({
-      path: `/attack-protection/breached-password-detection`,
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Get the brute force configuration
-   *
-   * @throws {RequiredError}
-   */
-  async getBruteForceConfig(initOverrides) {
-    const response = await this.request({
-      path: `/attack-protection/brute-force-protection`,
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Get the suspicious IP throttling configuration
-   *
-   * @throws {RequiredError}
-   */
-  async getSuspiciousIpThrottlingConfig(initOverrides) {
-    const response = await this.request({
-      path: `/attack-protection/suspicious-ip-throttling`,
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Update breached password detection settings
-   *
-   * @throws {RequiredError}
-   */
-  async updateBreachedPasswordDetectionConfig(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/attack-protection/breached-password-detection`,
-      method: "PATCH",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Update the brute force configuration
-   *
-   * @throws {RequiredError}
-   */
-  async updateBruteForceConfig(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/attack-protection/brute-force-protection`,
-      method: "PATCH",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Update the suspicious IP throttling configuration
-   *
-   * @throws {RequiredError}
-   */
-  async updateSuspiciousIpThrottlingConfig(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/attack-protection/suspicious-ip-throttling`,
-      method: "PATCH",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-};
-
-// node_modules/auth0/dist/esm/management/__generated/managers/blacklists-manager.js
-var { BaseAPI: BaseAPI5 } = runtime_exports;
-var BlacklistsManager = class extends BaseAPI5 {
-  /**
-   * Retrieve the `jti` and `aud` of all tokens that are blacklisted.
-   *
-   * Note: The <a href="https://auth0.com/docs/jwt">JWT specification</a> states that the `jti` field can be used to prevent replay attacks. Though Auth0 tokens do not include a `jti`, you can nevertheless blacklist a `jti` to prevent a token being used more than a predetermined number of times. This behavior is similar to implementing a nonce (where the token's signature can be thought of as the nonce). If a token gets stolen, it (or the tokens issued after it) should be blacklisted and let expire.
-   *
-   * Get blacklisted tokens
-   *
-   * @throws {RequiredError}
-   */
-  async getAll(requestParameters = {}, initOverrides) {
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "aud",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/blacklists/tokens`,
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Add the token identified by the `jti` to a blacklist for the tenant.
-   *
-   * Blacklist a token
-   *
-   * @throws {RequiredError}
-   */
-  async add(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/blacklists/tokens`,
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-};
-
-// node_modules/auth0/dist/esm/management/__generated/managers/branding-manager.js
-var { BaseAPI: BaseAPI6 } = runtime_exports;
-var BrandingManager = class extends BaseAPI6 {
-  /**
-   * Delete branding theme.
-   * Delete branding theme
-   *
-   * @throws {RequiredError}
-   */
-  async deleteTheme(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["themeId"]);
-    const response = await this.request({
-      path: `/branding/themes/{themeId}`.replace("{themeId}", encodeURIComponent(String(requestParameters.themeId))),
-      method: "DELETE"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Delete template for New Universal Login Experience
-   *
-   * @throws {RequiredError}
-   */
-  async deleteUniversalLoginTemplate(initOverrides) {
-    const response = await this.request({
-      path: `/branding/templates/universal-login`,
-      method: "DELETE"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve branding settings.
-   * Get branding settings
-   *
-   * @throws {RequiredError}
-   */
-  async getSettings(initOverrides) {
-    const response = await this.request({
-      path: `/branding`,
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve branding theme.
-   * Get branding theme
-   *
-   * @throws {RequiredError}
-   */
-  async getTheme(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["themeId"]);
-    const response = await this.request({
-      path: `/branding/themes/{themeId}`.replace("{themeId}", encodeURIComponent(String(requestParameters.themeId))),
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve default branding theme.
-   * Get default branding theme
-   *
-   * @throws {RequiredError}
-   */
-  async getDefaultTheme(initOverrides) {
-    const response = await this.request({
-      path: `/branding/themes/default`,
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Get template for New Universal Login Experience
-   *
-   * @throws {RequiredError}
-   */
-  async getUniversalLoginTemplate(initOverrides) {
-    const response = await this.request({
-      path: `/branding/templates/universal-login`,
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Update branding settings.
-   * Update branding settings
-   *
-   * @throws {RequiredError}
-   */
-  async updateSettings(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/branding`,
-      method: "PATCH",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Update branding theme.
-   * Update branding theme
-   *
-   * @throws {RequiredError}
-   */
-  async updateTheme(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["themeId"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/branding/themes/{themeId}`.replace("{themeId}", encodeURIComponent(String(requestParameters.themeId))),
-      method: "PATCH",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Create branding theme.
-   * Create branding theme
-   *
-   * @throws {RequiredError}
-   */
-  async createTheme(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/branding/themes`,
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Update the Universal Login branding template.
-   *
-   * <p>When <code>content-type</code> header is set to <code>application/json</code>, the expected body must be JSON:</p>
-   * <pre>
-   * {
-   *   "template": "&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;head&gt;{%- auth0:head -%}&lt;/head&gt;&lt;body&gt;{%- auth0:widget -%}&lt;/body&gt;&lt;/html&gt;"
-   * }
-   * </pre>
-   *
-   * <p>
-   *   When <code>content-type</code> header is set to <code>text/html</code>, the expected body must be the HTML template:
-   * </p>
-   * <pre>
-   * &lt!DOCTYPE html&gt;
-   * &lt;code&gt;
-   *   &lt;html&gt;
-   *     &lt;head&gt;
-   *      {%- auth0:head -%}
-   *     &lt;/head&gt;
-   *     &lt;body&gt;
-   *       {%- auth0:widget -%}
-   *     &lt;/body&gt;
-   *   &lt;/html&gt;
-   * &lt;/code&gt;
-   * </pre>
-   *
-   * Set template for New Universal Login Experience
-   *
-   * @throws {RequiredError}
-   */
-  async setUniversalLoginTemplate(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/branding/templates/universal-login`,
-      method: "PUT",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-};
-
-// node_modules/auth0/dist/esm/management/__generated/managers/client-grants-manager.js
-var { BaseAPI: BaseAPI7 } = runtime_exports;
-var ClientGrantsManager = class extends BaseAPI7 {
-  /**
-   * Delete a client grant.
-   * Delete client grant
-   *
-   * @throws {RequiredError}
-   */
-  async delete(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/client-grants/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "DELETE"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  async getAll(requestParameters = {}, initOverrides) {
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "per_page",
-        config: {}
-      },
-      {
-        key: "page",
-        config: {}
-      },
-      {
-        key: "include_totals",
-        config: {}
-      },
-      {
-        key: "audience",
-        config: {}
-      },
-      {
-        key: "client_id",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/client-grants`,
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Update a client grant.
-   * Update client grant
-   *
-   * @throws {RequiredError}
-   */
-  async update(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/client-grants/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "PATCH",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Create a client grant.
-   * Create client grant
-   *
-   * @throws {RequiredError}
-   */
-  async create(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/client-grants`,
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-};
-
-// node_modules/auth0/dist/esm/management/__generated/managers/clients-manager.js
-var { BaseAPI: BaseAPI8 } = runtime_exports;
-var ClientsManager = class extends BaseAPI8 {
-  /**
-   * Delete a client and related configuration (rules, connections, etc).
-   * Delete a client
-   *
-   * @throws {RequiredError}
-   */
-  async delete(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["client_id"]);
-    const response = await this.request({
-      path: `/clients/{client_id}`.replace("{client_id}", encodeURIComponent(String(requestParameters.client_id))),
-      method: "DELETE"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Delete a client credential you previously created. May be enabled or disabled. For more information, read <a href="https://www.auth0.com/docs/get-started/authentication-and-authorization-flow/client-credentials-flow">Client Credential Flow</a>.
-   * Delete a client credential
-   *
-   * @throws {RequiredError}
-   */
-  async deleteCredential(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["client_id", "credential_id"]);
-    const response = await this.request({
-      path: `/clients/{client_id}/credentials/{credential_id}`.replace("{client_id}", encodeURIComponent(String(requestParameters.client_id))).replace("{credential_id}", encodeURIComponent(String(requestParameters.credential_id))),
-      method: "DELETE"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  async getAll(requestParameters = {}, initOverrides) {
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "fields",
-        config: {}
-      },
-      {
-        key: "include_fields",
-        config: {}
-      },
-      {
-        key: "page",
-        config: {}
-      },
-      {
-        key: "per_page",
-        config: {}
-      },
-      {
-        key: "include_totals",
-        config: {}
-      },
-      {
-        key: "from",
-        config: {}
-      },
-      {
-        key: "take",
-        config: {}
-      },
-      {
-        key: "is_global",
-        config: {}
-      },
-      {
-        key: "is_first_party",
-        config: {}
-      },
-      {
-        key: "app_type",
-        config: {}
-      },
-      {
-        key: "client_ids",
-        config: {}
-      },
-      {
-        key: "q",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/clients`,
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve client details by ID. Clients are SSO connections or Applications linked with your Auth0 tenant. A list of fields to include or exclude may also be specified.
-   * For more information, read <a href="https://www.auth0.com/docs/get-started/applications"> Applications in Auth0</a> and <a href="https://www.auth0.com/docs/authenticate/single-sign-on"> Single Sign-On</a>.
-   * <ul>
-   *   <li>
-   *     The following properties can be retrieved with any of the scopes:
-   *     <code>client_id</code>, <code>app_type</code>, <code>name</code>, and <code>description</code>.
-   *   </li>
-   *   <li>
-   *     The following properties can only be retrieved with the <code>read:clients</code> or
-   *     <code>read:client_keys</code> scopes:
-   *     <code>callbacks</code>, <code>oidc_logout</code>, <code>allowed_origins</code>,
-   *     <code>web_origins</code>, <code>tenant</code>, <code>global</code>, <code>config_route</code>,
-   *     <code>callback_url_template</code>, <code>jwt_configuration</code>,
-   *     <code>jwt_configuration.lifetime_in_seconds</code>, <code>jwt_configuration.secret_encoded</code>,
-   *     <code>jwt_configuration.scopes</code>, <code>jwt_configuration.alg</code>, <code>api_type</code>,
-   *     <code>logo_uri</code>, <code>allowed_clients</code>, <code>owners</code>, <code>custom_login_page</code>,
-   *     <code>custom_login_page_off</code>, <code>sso</code>, <code>addons</code>, <code>form_template</code>,
-   *     <code>custom_login_page_codeview</code>, <code>resource_servers</code>, <code>client_metadata</code>,
-   *     <code>mobile</code>, <code>mobile.android</code>, <code>mobile.ios</code>, <code>allowed_logout_urls</code>,
-   *     <code>token_endpoint_auth_method</code>, <code>is_first_party</code>, <code>oidc_conformant</code>,
-   *     <code>is_token_endpoint_ip_header_trusted</code>, <code>initiate_login_uri</code>, <code>grant_types</code>,
-   *     <code>refresh_token</code>, <code>refresh_token.rotation_type</code>, <code>refresh_token.expiration_type</code>,
-   *     <code>refresh_token.leeway</code>, <code>refresh_token.token_lifetime</code>, <code>organization_usage</code>,
-   *     <code>organization_require_behavior</code>.
-   *   </li>
-   *   <li>
-   *     The following properties can only be retrieved with the <code>read:client_keys</code> or <code>read:client_credentials</code> scopes:
-   *     <code>encryption_key</code>, <code>encryption_key.pub</code>, <code>encryption_key.cert</code>,
-   *     <code>client_secret</code>, <code>client_authentication_methods</code> and <code>signing_key</code>.
-   *   </li>
-   * </ul>
-   *
-   * Get client by ID
-   *
-   * @throws {RequiredError}
-   */
-  async get(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["client_id"]);
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "fields",
-        config: {}
-      },
-      {
-        key: "include_fields",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/clients/{client_id}`.replace("{client_id}", encodeURIComponent(String(requestParameters.client_id))),
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Get the details of a client credential.
-   *
-   * <b>Important</b>: To enable credentials to be used for Private Key JWT authentication method, set the <code>client_authentication_methods</code> property on the client.
-   * Get client credentials
-   *
-   * @throws {RequiredError}
-   */
-  async getCredentials(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["client_id"]);
-    const response = await this.request({
-      path: `/clients/{client_id}/credentials`.replace("{client_id}", encodeURIComponent(String(requestParameters.client_id))),
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Get the details of a client credential.
-   *
-   * <b>Important</b>: To enable credentials to be used for Private Key JWT authentication method, set the <code>client_authentication_methods</code> property on the client.
-   * Get client credential details
-   *
-   * @throws {RequiredError}
-   */
-  async getCredential(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["client_id", "credential_id"]);
-    const response = await this.request({
-      path: `/clients/{client_id}/credentials/{credential_id}`.replace("{client_id}", encodeURIComponent(String(requestParameters.client_id))).replace("{credential_id}", encodeURIComponent(String(requestParameters.credential_id))),
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Updates a client's settings. For more information, read <a href="https://www.auth0.com/docs/get-started/applications"> Applications in Auth0</a> and <a href="https://www.auth0.com/docs/authenticate/single-sign-on"> Single Sign-On</a>.
-   *
-   * Notes:
-   * - The `client_secret` and `signing_key` attributes can only be updated with the `update:client_keys` scope.
-   * - The <code>client_authentication_methods</code> and <code>token_endpoint_auth_method</code> properties are mutually exclusive. Use
-   * <code>client_authentication_methods</code> to configure the client with Private Key JWT authentication method. Otherwise, use <code>token_endpoint_auth_method</code>
-   * to configure the client with client secret (basic or post) or with no authentication method (none).
-   * - When using <code>client_authentication_methods</code> to configure the client with Private Key JWT authentication method, only specify the credential IDs
-   * that were generated when creating the credentials on the client.
-   * - To configure <code>client_authentication_methods</code>, the <code>update:client_credentials</code> scope is required.
-   * - To configure <code>client_authentication_methods</code>, the property <code>jwt_configuration.alg</code> must be set to RS256.
-   * Update a client
-   *
-   * @throws {RequiredError}
-   */
-  async update(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["client_id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/clients/{client_id}`.replace("{client_id}", encodeURIComponent(String(requestParameters.client_id))),
-      method: "PATCH",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Change a client credential you previously created. May be enabled or disabled. For more information, read <a href="https://www.auth0.com/docs/get-started/authentication-and-authorization-flow/client-credentials-flow">Client Credential Flow</a>.
-   * Update a client credential
-   *
-   * @throws {RequiredError}
-   */
-  async updateCredential(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["client_id", "credential_id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/clients/{client_id}/credentials/{credential_id}`.replace("{client_id}", encodeURIComponent(String(requestParameters.client_id))).replace("{credential_id}", encodeURIComponent(String(requestParameters.credential_id))),
-      method: "PATCH",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Create a new client (application or SSO integration). For more information, read <a href="https://www.auth0.com/docs/get-started/auth0-overview/create-applications">Create Applications</a>
-   * <a href="https://www.auth0.com/docs/authenticate/single-sign-on/api-endpoints-for-single-sign-on>">API Endpoints for Single Sign-On</a>.
-   *
-   * Notes:
-   * - We recommend leaving the `client_secret` parameter unspecified to allow the generation of a safe secret.
-   * - The <code>client_authentication_methods</code> and <code>token_endpoint_auth_method</code> properties are mutually exclusive. Use
-   * <code>client_authentication_methods</code> to configure the client with Private Key JWT authentication method. Otherwise, use <code>token_endpoint_auth_method</code>
-   * to configure the client with client secret (basic or post) or with no authentication method (none).
-   * - When using <code>client_authentication_methods</code> to configure the client with Private Key JWT authentication method, specify fully defined credentials.
-   * These credentials will be automatically enabled for Private Key JWT authentication on the client.
-   * - To configure <code>client_authentication_methods</code>, the <code>create:client_credentials</code> scope is required.
-   * - To configure <code>client_authentication_methods</code>, the property <code>jwt_configuration.alg</code> must be set to RS256.
-   *
-   * <div class="alert alert-warning">SSO Integrations created via this endpoint will accept login requests and share user profile information.</div>
-   *
-   * Create a client
-   *
-   * @throws {RequiredError}
-   */
-  async create(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/clients`,
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Create a client credential associated to your application. The credential will be created but not yet enabled for use with Private Key JWT authentication method. To enable the credential, set the <code>client_authentication_methods</code> property on the client.
-   * For more information, read <a href="https://www.auth0.com//docs/get-started/applications/configure-private-key-jwt">Configure Private Key JWT Authentication</a>.
-   * Create a client credential
-   *
-   * @throws {RequiredError}
-   */
-  async createCredential(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["client_id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/clients/{client_id}/credentials`.replace("{client_id}", encodeURIComponent(String(requestParameters.client_id))),
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Rotate a client secret.
-   *
-   * This endpoint cannot be used with clients configured with Private Key JWT authentication method (client_authentication_methods configured with private_key_jwt).
-   *
-   * Note: The generated secret is NOT base64 encoded.
-   *
-   * Rotate a client secret
-   *
-   * @throws {RequiredError}
-   */
-  async rotateClientSecret(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["client_id"]);
-    const response = await this.request({
-      path: `/clients/{client_id}/rotate-secret`.replace("{client_id}", encodeURIComponent(String(requestParameters.client_id))),
-      method: "POST"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-};
-
-// node_modules/auth0/dist/esm/management/__generated/managers/connections-manager.js
-var { BaseAPI: BaseAPI9 } = runtime_exports;
-var ConnectionsManager = class extends BaseAPI9 {
-  /**
-   * Deletes a connection and all its users.
-   *
-   * Delete a connection
-   *
-   * @throws {RequiredError}
-   */
-  async delete(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/connections/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "DELETE"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Deletes a scim configuration by its <code>connectionId</code>.
-   *
-   * Delete a connection's SCIM configuration
-   *
-   * @throws {RequiredError}
-   */
-  async deleteScimConfiguration(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/connections/{id}/scim-configuration`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "DELETE"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Deletes a scim token by its connection <code>id</code> and <code>tokenId</code>.
-   *
-   * Delete a connection's SCIM token
-   *
-   * @throws {RequiredError}
-   */
-  async deleteScimToken(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id", "tokenId"]);
-    const response = await this.request({
-      path: `/connections/{id}/scim-configuration/tokens/{tokenId}`.replace("{id}", encodeURIComponent(String(requestParameters.id))).replace("{tokenId}", encodeURIComponent(String(requestParameters.tokenId))),
-      method: "DELETE"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Deletes a specified connection user by its email (you cannot delete all users from specific connection). Currently, only Database Connections are supported.
-   *
-   * Delete a connection user
-   *
-   * @throws {RequiredError}
-   */
-  async deleteUserByEmail(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id", "email"]);
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "email",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/connections/{id}/users`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "DELETE",
-      query: queryParameters
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  async getAll(requestParameters = {}, initOverrides) {
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "per_page",
-        config: {}
-      },
-      {
-        key: "page",
-        config: {}
-      },
-      {
-        key: "include_totals",
-        config: {}
-      },
-      {
-        key: "from",
-        config: {}
-      },
-      {
-        key: "take",
-        config: {}
-      },
-      {
-        key: "strategy",
-        config: {
-          isArray: true,
-          isCollectionFormatMulti: true
-        }
-      },
-      {
-        key: "name",
-        config: {}
-      },
-      {
-        key: "fields",
-        config: {}
-      },
-      {
-        key: "include_fields",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/connections`,
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieves a connection by its <code>ID</code>.
-   *
-   * Get a connection
-   *
-   * @throws {RequiredError}
-   */
-  async get(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "fields",
-        config: {}
-      },
-      {
-        key: "include_fields",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/connections/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieves a scim configuration's default mapping by its <code>connectionId</code>.
-   *
-   * Get a connection's default SCIM mapping
-   *
-   * @throws {RequiredError}
-   */
-  async getDefaultScimMapping(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/connections/{id}/scim-configuration/default-mapping`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieves a scim configuration by its <code>connectionId</code>.
-   *
-   * Get a connection's SCIM configuration
-   *
-   * @throws {RequiredError}
-   */
-  async getScimConfiguration(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/connections/{id}/scim-configuration`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieves all scim tokens by its connection <code>id</code>.
-   *
-   * Get a connection's SCIM tokens
-   *
-   * @throws {RequiredError}
-   */
-  async getScimTokens(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/connections/{id}/scim-configuration/tokens`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieves the status of an ad/ldap connection referenced by its <code>ID</code>. <code>200 OK</code> http status code response is returned  when the connection is online, otherwise a <code>404</code> status code is returned along with an error message
-   * Check connection status
-   *
-   * @throws {RequiredError}
-   */
-  async checkStatus(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/connections/{id}/status`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * <b>Note:</b> if you use the options parameter, the whole options object will be overridden, so ensure that all parameters are present
-   *
-   * Update a connection
-   *
-   * @throws {RequiredError}
-   */
-  async update(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/connections/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "PATCH",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Update a scim configuration by its <code>connectionId</code>.
-   *
-   * Patch a connection's SCIM configuration
-   *
-   * @throws {RequiredError}
-   */
-  async updateScimConfiguration(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/connections/{id}/scim-configuration`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "PATCH",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Creates a new connection according to the JSON object received in <code>body</code>.
-   *
-   * Create a connection
-   *
-   * @throws {RequiredError}
-   */
-  async create(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/connections`,
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Create a scim configuration for a connection.
-   *
-   * Create a SCIM configuration
-   *
-   * @throws {RequiredError}
-   */
-  async createScimConfiguration(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/connections/{id}/scim-configuration`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Create a scim token for a scim client.
-   *
-   * Create a SCIM Token
-   *
-   * @throws {RequiredError}
-   */
-  async createScimToken(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/connections/{id}/scim-configuration/tokens`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-};
-
-// node_modules/auth0/dist/esm/management/__generated/managers/custom-domains-manager.js
-var { BaseAPI: BaseAPI10 } = runtime_exports;
-var CustomDomainsManager = class extends BaseAPI10 {
-  /**
-   * Delete a custom domain and stop serving requests for it.
-   * Delete custom domain configuration
-   *
-   * @throws {RequiredError}
-   */
-  async delete(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/custom-domains/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "DELETE"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve details on <a href="https://auth0.com/docs/custom-domains">custom domains</a>.
-   * Get custom domains configurations
-   *
-   * @throws {RequiredError}
-   */
-  async getAll(initOverrides) {
-    const response = await this.request({
-      path: `/custom-domains`,
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve a custom domain configuration and status.
-   * Get custom domain configuration
-   *
-   * @throws {RequiredError}
-   */
-  async get(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/custom-domains/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Update a custom domain.
-   *
-   * These are the attributes that can be updated:
-   *
-   * - custom_client_ip_header
-   * - tls_policy
-   *
-   * <h5>Updating CUSTOM_CLIENT_IP_HEADER for a custom domain</h5>To update the <code>custom_client_ip_header</code> for a domain, the body to
-   * send should be:
-   * <pre><code>{ "custom_client_ip_header": "cf-connecting-ip" }</code></pre>
-   *
-   * <h5>Updating TLS_POLICY for a custom domain</h5>To update the <code>tls_policy</code> for a domain, the body to send should be:
-   * <pre><code>{ "tls_policy": "compatible" }</code></pre>
-   *
-   *
-   * TLS Policies:
-   *
-   * - recommended - for modern usage this includes TLS 1.2 only
-   * - compatible - compatible with older browsers this policy includes TLS 1.0, 1.1, 1.2
-   *
-   *
-   * Some considerations:
-   *
-   * - The TLS ciphers and protocols available in each TLS policy follow industry recommendations, and may be updated occasionally.
-   * - Do not use the <code>compatible</code> TLS policy unless you have clients that require TLS 1.0.
-   *
-   * Update custom domain configuration
-   *
-   * @throws {RequiredError}
-   */
-  async update(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/custom-domains/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "PATCH",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Create a new custom domain.
-   *
-   * Note: The custom domain will need to be verified before it will accept
-   * requests.
-   *
-   * Optional attributes that can be updated:
-   *
-   * - custom_client_ip_header
-   * - tls_policy
-   *
-   *
-   * TLS Policies:
-   *
-   * - recommended - for modern usage this includes TLS 1.2 only
-   * - compatible - compatible with older browsers this policy includes TLS 1.0, 1.1, 1.2
-   *
-   *
-   * Some considerations:
-   *
-   * - The TLS ciphers and protocols available in each TLS policy follow industry recommendations, and may be updated occasionally.
-   * - Do not use the <code>compatible</code> TLS policy unless you have clients that require TLS 1.0.
-   *
-   * Configure a new custom domain
-   *
-   * @throws {RequiredError}
-   */
-  async create(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/custom-domains`,
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Run the verification process on a custom domain.
-   *
-   * Note: Check the <code>status</code> field to see its verification status. Once verification is complete, it may take up to 10 minutes before the custom domain can start accepting requests.
-   *
-   * For <code>self_managed_certs</code>, when the custom domain is verified for the first time, the response will also include the <code>cname_api_key</code> which you will need to configure your proxy. This key must be kept secret, and is used to validate the proxy requests.
-   *
-   * <a href="https://auth0.com/docs/custom-domains#step-2-verify-ownership">Learn more</a> about verifying custom domains that use Auth0 Managed certificates.
-   * <a href="https://auth0.com/docs/custom-domains/self-managed-certificates#step-2-verify-ownership">Learn more</a> about verifying custom domains that use Self Managed certificates.
-   *
-   * Verify a custom domain
-   *
-   * @throws {RequiredError}
-   */
-  async verify(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/custom-domains/{id}/verify`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "POST"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-};
-
-// node_modules/auth0/dist/esm/management/__generated/managers/device-credentials-manager.js
-var { BaseAPI: BaseAPI11 } = runtime_exports;
-var DeviceCredentialsManager = class extends BaseAPI11 {
-  /**
-   * Delete a device credential.
-   * Delete a device credential
-   *
-   * @throws {RequiredError}
-   */
-  async delete(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/device-credentials/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "DELETE"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  async getAll(requestParameters = {}, initOverrides) {
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "page",
-        config: {}
-      },
-      {
-        key: "per_page",
-        config: {}
-      },
-      {
-        key: "include_totals",
-        config: {}
-      },
-      {
-        key: "fields",
-        config: {}
-      },
-      {
-        key: "include_fields",
-        config: {}
-      },
-      {
-        key: "user_id",
-        config: {}
-      },
-      {
-        key: "client_id",
-        config: {}
-      },
-      {
-        key: "type",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/device-credentials`,
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Device Credentials relate to refresh tokens and rotating refresh tokens for a given user_id.
-   *
-   * Note: Device Credentials APIs are designed for ad-hoc administrative use only, and paging is by default enabled for GET requests.
-   * Note: When Refresh Token Rotation is enabled, the endpoint becomes eventual consistent.
-   *
-   * Create a device public key credential
-   *
-   * @throws {RequiredError}
-   */
-  async createPublicKey(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/device-credentials`,
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-};
-
-// node_modules/auth0/dist/esm/management/__generated/managers/email-templates-manager.js
-var { BaseAPI: BaseAPI12 } = runtime_exports;
-var EmailTemplatesManager = class extends BaseAPI12 {
-  /**
-   * Retrieve an email template by pre-defined name. These names are `verify_email`, `verify_email_by_code`, `reset_email`, `welcome_email`, `blocked_account`, `stolen_credentials`, `enrollment_email`, `mfa_oob_code`, and `user_invitation`. The names `change_password`, and `password_reset` are also supported for legacy scenarios.
-   * Get an email template
-   *
-   * @throws {RequiredError}
-   */
-  async get(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["templateName"]);
-    const response = await this.request({
-      path: `/email-templates/{templateName}`.replace("{templateName}", encodeURIComponent(String(requestParameters.templateName))),
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Modify an email template.
-   * Patch an email template
-   *
-   * @throws {RequiredError}
-   */
-  async update(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["templateName"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/email-templates/{templateName}`.replace("{templateName}", encodeURIComponent(String(requestParameters.templateName))),
-      method: "PATCH",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Create an email template.
-   * Create an email template
-   *
-   * @throws {RequiredError}
-   */
-  async create(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/email-templates`,
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Update an email template.
-   * Update an email template
-   *
-   * @throws {RequiredError}
-   */
-  async put(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["templateName"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/email-templates/{templateName}`.replace("{templateName}", encodeURIComponent(String(requestParameters.templateName))),
-      method: "PUT",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-};
-
-// node_modules/auth0/dist/esm/management/__generated/managers/emails-manager.js
-var { BaseAPI: BaseAPI13 } = runtime_exports;
-var EmailsManager = class extends BaseAPI13 {
-  /**
-   * Retrieve <a href="https://auth0.com/docs/email/providers">email provider</a> details. A list of fields to include or exclude may also be specified.
-   *
-   * Get the email provider
-   *
-   * @throws {RequiredError}
-   */
-  async get(requestParameters = {}, initOverrides) {
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "fields",
-        config: {}
-      },
-      {
-        key: "include_fields",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/emails/provider`,
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Update an <a href="https://auth0.com/docs/email/providers">email provider</a>.
-   * The <code>credentials</code> object requires different properties depending on the email provider (which is specified using the <code>name</code> property):
-   * <ul><li><code>mandrill</code> requires <code>api_key</code></li><li><code>sendgrid</code> requires <code>api_key</code></li><li><code>sparkpost</code> requires <code>api_key</code>. Optionally, set <code>region</code> to <code>eu</code> to use the SparkPost service hosted in Western Europe; set to <code>null</code> to use the SparkPost service hosted in North America. <code>eu</code> or <code>null</code> are the only valid values for <code>region</code>.</li><li><code>mailgun</code> requires <code>api_key</code> and <code>domain</code>. Optionally, set <code>region</code> to <code>eu</code> to use the Mailgun service hosted in Europe; set to <code>null</code> otherwise. <code>eu</code> or <code>null</code> are the only valid values for <code>region</code>.</li><li><code>ses</code> requires <code>accessKeyId</code>, <code>secretAccessKey</code>, and <code>region</code></li><li><code>smtp</code> requires <code>smtp_host</code>, <code>smtp_port</code>, <code>smtp_user</code>, and <code>smtp_pass</code></li></ul>Depending on the type of provider it is possible to specify <code>settings</code> object with different configuration options, which will be used when sending an email:
-   * <ul><li><code>smtp</code> provider, <code>settings</code> may contain <code>headers</code> object. When using AWS SES SMTP host, you may provide a name of configuration set in <code>X-SES-Configuration-Set</code> header. Value must be a string.</li><li>for <code>ses</code> provider, <code>settings</code> may contain <code>message</code> object, where you can provide a name of configuration set in <code>configuration_set_name</code> property. Value must be a string.</li></ul>
-   *
-   * Update the email provider
-   *
-   * @throws {RequiredError}
-   */
-  async update(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/emails/provider`,
-      method: "PATCH",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Create an <a href="https://auth0.com/docs/email/providers">email provider</a>.
-   * The <code>credentials</code> object requires different properties depending on the email provider (which is specified using the <code>name</code> property):
-   * <ul><li><code>mandrill</code> requires <code>api_key</code></li><li><code>sendgrid</code> requires <code>api_key</code></li><li><code>sparkpost</code> requires <code>api_key</code>. Optionally, set <code>region</code> to <code>eu</code> to use the SparkPost service hosted in Western Europe; set to <code>null</code> to use the SparkPost service hosted in North America. <code>eu</code> or <code>null</code> are the only valid values for <code>region</code>.</li><li><code>mailgun</code> requires <code>api_key</code> and <code>domain</code>. Optionally, set <code>region</code> to <code>eu</code> to use the Mailgun service hosted in Europe; set to <code>null</code> otherwise. <code>eu</code> or <code>null</code> are the only valid values for <code>region</code>.</li><li><code>ses</code> requires <code>accessKeyId</code>, <code>secretAccessKey</code>, and <code>region</code></li><li><code>smtp</code> requires <code>smtp_host</code>, <code>smtp_port</code>, <code>smtp_user</code>, and <code>smtp_pass</code></li></ul>Depending on the type of provider it is possible to specify <code>settings</code> object with different configuration options, which will be used when sending an email:
-   * <ul><li><code>smtp</code> provider, <code>settings</code> may contain <code>headers</code> object. When using AWS SES SMTP host, you may provide a name of configuration set in <code>X-SES-Configuration-Set</code> header. Value must be a string.</li><li>for <code>ses</code> provider, <code>settings</code> may contain <code>message</code> object, where you can provide a name of configuration set in <code>configuration_set_name</code> property. Value must be a string.</li></ul>
-   *
-   * Configure the email provider
-   *
-   * @throws {RequiredError}
-   */
-  async configure(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/emails/provider`,
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-};
-
-// node_modules/auth0/dist/esm/management/__generated/managers/flows-manager.js
-var { BaseAPI: BaseAPI14 } = runtime_exports;
-var FlowsManager = class extends BaseAPI14 {
-  /**
-   * Delete a flow
-   *
-   * @throws {RequiredError}
-   */
-  async delete(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/flows/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "DELETE"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Delete a flow execution
-   *
-   * @throws {RequiredError}
-   */
-  async deleteExecution(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["flow_id", "execution_id"]);
-    const response = await this.request({
-      path: `/flows/{flow_id}/executions/{execution_id}`.replace("{flow_id}", encodeURIComponent(String(requestParameters.flow_id))).replace("{execution_id}", encodeURIComponent(String(requestParameters.execution_id))),
-      method: "DELETE"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Delete a Flows Vault connection
-   *
-   * @throws {RequiredError}
-   */
-  async deleteConnection(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/flows/vault/connections/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "DELETE"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  async getAll(requestParameters = {}, initOverrides) {
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "page",
-        config: {}
-      },
-      {
-        key: "per_page",
-        config: {}
-      },
-      {
-        key: "include_totals",
-        config: {}
-      },
-      {
-        key: "hydrate",
-        config: {
-          isArray: true,
-          isCollectionFormatMulti: true
-        }
-      },
-      {
-        key: "synchronous",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/flows`,
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Get a flow
-   *
-   * @throws {RequiredError}
-   */
-  async get(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "hydrate",
-        config: {
-          isArray: true,
-          isCollectionFormatMulti: true
-        }
-      }
-    ]);
-    const response = await this.request({
-      path: `/flows/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  async getAllExecutions(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["flow_id"]);
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "page",
-        config: {}
-      },
-      {
-        key: "per_page",
-        config: {}
-      },
-      {
-        key: "include_totals",
-        config: {}
-      },
-      {
-        key: "from",
-        config: {}
-      },
-      {
-        key: "take",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/flows/{flow_id}/executions`.replace("{flow_id}", encodeURIComponent(String(requestParameters.flow_id))),
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Get a flow execution
-   *
-   * @throws {RequiredError}
-   */
-  async getExecution(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["flow_id", "execution_id"]);
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "hydrate",
-        config: {
-          isArray: true,
-          isCollectionFormatMulti: true
-        }
-      }
-    ]);
-    const response = await this.request({
-      path: `/flows/{flow_id}/executions/{execution_id}`.replace("{flow_id}", encodeURIComponent(String(requestParameters.flow_id))).replace("{execution_id}", encodeURIComponent(String(requestParameters.execution_id))),
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  async getAllConnections(requestParameters = {}, initOverrides) {
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "page",
-        config: {}
-      },
-      {
-        key: "per_page",
-        config: {}
-      },
-      {
-        key: "include_totals",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/flows/vault/connections`,
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Get a Flows Vault connection
-   *
-   * @throws {RequiredError}
-   */
-  async getConnection(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/flows/vault/connections/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Update a flow
-   *
-   * @throws {RequiredError}
-   */
-  async update(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/flows/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "PATCH",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Update a Flows Vault connection
-   *
-   * @throws {RequiredError}
-   */
-  async updateConnection(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/flows/vault/connections/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "PATCH",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Create a flow
-   *
-   * @throws {RequiredError}
-   */
-  async create(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/flows`,
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Create a Flows Vault connection
-   *
-   * @throws {RequiredError}
-   */
-  async createConnection(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/flows/vault/connections`,
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-};
-
-// node_modules/auth0/dist/esm/management/__generated/managers/forms-manager.js
-var { BaseAPI: BaseAPI15 } = runtime_exports;
-var FormsManager = class extends BaseAPI15 {
-  /**
-   * Delete a form
-   *
-   * @throws {RequiredError}
-   */
-  async delete(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/forms/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "DELETE"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  async getAll(requestParameters = {}, initOverrides) {
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "page",
-        config: {}
-      },
-      {
-        key: "per_page",
-        config: {}
-      },
-      {
-        key: "include_totals",
-        config: {}
-      },
-      {
-        key: "hydrate",
-        config: {
-          isArray: true,
-          isCollectionFormatMulti: true
-        }
-      }
-    ]);
-    const response = await this.request({
-      path: `/forms`,
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Get a form
-   *
-   * @throws {RequiredError}
-   */
-  async get(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "hydrate",
-        config: {
-          isArray: true,
-          isCollectionFormatMulti: true
-        }
-      }
-    ]);
-    const response = await this.request({
-      path: `/forms/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Update a form
-   *
-   * @throws {RequiredError}
-   */
-  async update(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/forms/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "PATCH",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Create a form
-   *
-   * @throws {RequiredError}
-   */
-  async create(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/forms`,
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-};
-
-// node_modules/auth0/dist/esm/management/__generated/managers/grants-manager.js
-var { BaseAPI: BaseAPI16 } = runtime_exports;
-var GrantsManager = class extends BaseAPI16 {
-  /**
-   * Delete a grant associated with your account.
-   * Delete a grant by id
-   *
-   * @throws {RequiredError}
-   */
-  async delete(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/grants/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "DELETE"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Delete a grant associated with your account.
-   * Delete a grant by user_id
-   *
-   * @throws {RequiredError}
-   */
-  async deleteByUserId(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["user_id"]);
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "user_id",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/grants`,
-      method: "DELETE",
-      query: queryParameters
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  async getAll(requestParameters = {}, initOverrides) {
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "per_page",
-        config: {}
-      },
-      {
-        key: "page",
-        config: {}
-      },
-      {
-        key: "include_totals",
-        config: {}
-      },
-      {
-        key: "user_id",
-        config: {}
-      },
-      {
-        key: "client_id",
-        config: {}
-      },
-      {
-        key: "audience",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/grants`,
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-};
-
-// node_modules/auth0/dist/esm/management/__generated/managers/guardian-manager.js
-var { BaseAPI: BaseAPI17 } = runtime_exports;
-var GuardianManager = class extends BaseAPI17 {
-  /**
-   * Delete an enrollment to allow the user to enroll with multi-factor authentication again.
-   * Delete a multi-factor authentication enrollment
-   *
-   * @throws {RequiredError}
-   */
-  async deleteGuardianEnrollment(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/guardian/enrollments/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "DELETE"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve APNS push notification configuration
-   *
-   * @throws {RequiredError}
-   */
-  async getPushNotificationProviderAPNS(initOverrides) {
-    const response = await this.request({
-      path: `/guardian/factors/push-notification/providers/apns`,
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve an enrollment (including its status and type).
-   *
-   * Note: Phone numbers are partially obfuscated.
-   * Retrieve a multi-factor authentication enrollment
-   *
-   * @throws {RequiredError}
-   */
-  async getGuardianEnrollment(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/guardian/enrollments/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve phone enrollment and verification templates (subscription required).
-   * Retrieve Enrollment and Verification Phone Templates
-   *
-   * @throws {RequiredError}
-   */
-  async getPhoneFactorTemplates(initOverrides) {
-    const response = await this.request({
-      path: `/guardian/factors/phone/templates`,
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve SMS enrollment and verification templates (subscription required).
-   *
-   *     A new endpoint is available to retrieve enrollment and verification templates related to phone factors (<a href='https://manage.local.dev.auth0.com/docs/api/management/v2/#!/Guardian/get_templates'>phone templates</a>). It has the same payload as this one. Please use it instead.
-   * Retrieve SMS Enrollment and Verification Templates
-   *
-   * @throws {RequiredError}
-   */
-  async getSmsFactorTemplates(initOverrides) {
-    const response = await this.request({
-      path: `/guardian/factors/sms/templates`,
-      method: "GET"
-    }, initOverrides);
-    return response.status === 204 ? VoidApiResponse.fromResponse(response) : JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve all <a href="https://auth0.com/docs/multifactor-authentication">multi-factor authentication</a> configurations.
-   * Retrieve Factors and their Status
-   *
-   * @throws {RequiredError}
-   */
-  async getFactors(initOverrides) {
-    const response = await this.request({
-      path: `/guardian/factors`,
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve the Enabled Phone Factors
-   *
-   * @throws {RequiredError}
-   */
-  async getPhoneFactorMessageTypes(initOverrides) {
-    const response = await this.request({
-      path: `/guardian/factors/phone/message-types`,
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve phone configuration (one of auth0|twilio|phone-message-hook)
-   *
-   * @throws {RequiredError}
-   */
-  async getPhoneFactorSelectedProvider(initOverrides) {
-    const response = await this.request({
-      path: `/guardian/factors/phone/selected-provider`,
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve the <a href="https://auth0.com/docs/multifactor-authentication/twilio-configuration">Twilio phone provider configuration</a> (subscription required).
-   * Retrieve Twilio phone configuration
-   *
-   * @throws {RequiredError}
-   */
-  async getPhoneFactorProviderTwilio(initOverrides) {
-    const response = await this.request({
-      path: `/guardian/factors/phone/providers/twilio`,
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve push notification provider
-   *
-   * @throws {RequiredError}
-   */
-  async getPushNotificationSelectedProvider(initOverrides) {
-    const response = await this.request({
-      path: `/guardian/factors/push-notification/selected-provider`,
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Gets the MFA policies for the tenant.
-   *
-   * The following policies are supported: <ul><li><code>all-applications</code> policy - will prompt with MFA for all logins.</li><li><code>confidence-score</code> policy - will prompt with MFA only for low confidence logins.</li></ul>
-   * Use of the Adaptive MFA feature requires an add-on for the Enterprise plan. Please contact sales with any questions. For more information about Adaptive MFA, read our <a href="https://auth0.com/docs/mfa/adaptive-mfa">full documentation</a>.
-   *
-   * Get the Multi-factor Authentication policies
-   *
-   * @throws {RequiredError}
-   */
-  async getPolicies(initOverrides) {
-    const response = await this.request({
-      path: `/guardian/policies`,
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * A new endpoint is available to retrieve the configuration related to phone factors (<a href='https://manage.local.dev.auth0.com/docs/api/management/v2/#!/Guardian/get_selected_provider'>phone configuration</a>). It has the same payload as this one. Please use it instead.
-   * Retrieve SMS configuration (one of auth0|twilio|phone-message-hook)
-   *
-   * @throws {RequiredError}
-   */
-  async getSmsSelectedProvider(initOverrides) {
-    const response = await this.request({
-      path: `/guardian/factors/sms/selected-provider`,
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve the <a href="https://auth0.com/docs/multifactor-authentication/twilio-configuration">Twilio SMS provider configuration</a> (subscription required).
-   *
-   *     A new endpoint is available to retrieve the Twilio configuration related to phone factors (<a href='https://manage.local.dev.auth0.com/docs/api/management/v2/#!/Guardian/get_twilio'>phone Twilio configuration</a>). It has the same payload as this one. Please use it instead.
-   * Retrieve Twilio SMS configuration
-   *
-   * @throws {RequiredError}
-   */
-  async getSmsFactorProviderTwilio(initOverrides) {
-    const response = await this.request({
-      path: `/guardian/factors/sms/providers/twilio`,
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve the <a href="https://auth0.com/docs/multifactor-authentication/developer/sns-configuration">AWS SNS push notification provider configuration</a> (subscription required).
-   * Retrieve AWS SNS push notification configuration
-   *
-   * @throws {RequiredError}
-   */
-  async getPushNotificationProviderSNS(initOverrides) {
-    const response = await this.request({
-      path: `/guardian/factors/push-notification/providers/sns`,
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Updates APNs provider configuration
-   *
-   * @throws {RequiredError}
-   */
-  async updatePushNotificationProviderAPNS(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/guardian/factors/push-notification/providers/apns`,
-      method: "PATCH",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Updates FCM provider configuration
-   *
-   * @throws {RequiredError}
-   */
-  async updatePushNotificationProviderFCM(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/guardian/factors/push-notification/providers/fcm`,
-      method: "PATCH",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Configure the <a href="https://auth0.com/docs/multifactor-authentication/developer/sns-configuration">AWS SNS push notification provider configuration</a> (subscription required).
-   * Update SNS configuration for push notifications
-   *
-   * @throws {RequiredError}
-   */
-  async updatePushNotificationProviderSNS(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/guardian/factors/push-notification/providers/sns`,
-      method: "PATCH",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Generate an email with a link to start the multi-factor authentication enrollment process (subscription required).
-   * Create a multi-factor authentication enrollment ticket
-   *
-   * @throws {RequiredError}
-   */
-  async createEnrollmentTicket(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/guardian/enrollments/ticket`,
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Updates APNs provider configuration
-   *
-   * @throws {RequiredError}
-   */
-  async setPushNotificationProviderAPNS(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/guardian/factors/push-notification/providers/apns`,
-      method: "PUT",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Customize the messages sent to complete phone enrollment and verification (subscription required).
-   * Update Enrollment and Verification Phone Templates
-   *
-   * @throws {RequiredError}
-   */
-  async setPhoneFactorTemplates(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/guardian/factors/phone/templates`,
-      method: "PUT",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Customize the messages sent to complete SMS enrollment and verification (subscription required).
-   *
-   *     A new endpoint is available to update enrollment and verification templates related to phone factors (<a href='https://manage.local.dev.auth0.com/docs/api/management/v2/#!/Guardian/put_templates'>phone templates</a>). It has the same payload as this one. Please use it instead.
-   * Update SMS Enrollment and Verification Templates
-   *
-   * @throws {RequiredError}
-   */
-  async setSmsFactorTemplates(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/guardian/factors/sms/templates`,
-      method: "PUT",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Update a multi-factor authentication factor (subscription required).
-   * Update a Multi-factor Authentication Factor
-   *
-   * @throws {RequiredError}
-   */
-  async updateFactor(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["name"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/guardian/factors/{name}`.replace("{name}", encodeURIComponent(String(requestParameters.name))),
-      method: "PUT",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Updates FCM provider configuration
-   *
-   * @throws {RequiredError}
-   */
-  async setPushNotificationProviderFCM(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/guardian/factors/push-notification/providers/fcm`,
-      method: "PUT",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Update enabled phone factors for multi-factor authentication
-   * Update the Enabled Phone Factors
-   *
-   * @throws {RequiredError}
-   */
-  async updatePhoneFactorMessageTypes(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/guardian/factors/phone/message-types`,
-      method: "PUT",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Update phone configuration (one of auth0|twilio|phone-message-hook)
-   *
-   * @throws {RequiredError}
-   */
-  async updatePhoneFactorSelectedProvider(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/guardian/factors/phone/selected-provider`,
-      method: "PUT",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Update Push Notification configuration (one of direct|sns|guardian)
-   *
-   * @throws {RequiredError}
-   */
-  async setPushNotificationSelectedProvider(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/guardian/factors/push-notification/selected-provider`,
-      method: "PUT",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Sets the MFA policies for the tenant.
-   *
-   * The following policies are supported: <ul><li><code>all-applications</code> policy - will prompt with MFA for all logins.</li><li><code>confidence-score</code> policy - will prompt with MFA only for low confidence logins.</li></ul> Pass an empty array to remove all MFA policies.
-   * Use of the Adaptive MFA feature requires an add-on for the Enterprise plan. Please contact sales with any questions. For more information about Adaptive MFA, read our <a href="https://auth0.com/docs/mfa/adaptive-mfa">full documentation</a>.
-   *
-   *
-   * Set the Multi-factor Authentication policies
-   *
-   * @throws {RequiredError}
-   */
-  async updatePolicies(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/guardian/policies`,
-      method: "PUT",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * A new endpoint is available to update the configuration related to phone factors (<a href='https://manage.local.dev.auth0.com/docs/api/management/v2/#!/Guardian/put_selected_provider'>phone configuration</a>). It has the same payload as this one. Please use it instead.
-   * Update SMS configuration (one of auth0|twilio|phone-message-hook)
-   *
-   * @throws {RequiredError}
-   */
-  async setSmsSelectedProvider(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/guardian/factors/sms/selected-provider`,
-      method: "PUT",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Configure the <a href="https://auth0.com/docs/multifactor-authentication/twilio-configuration">Twilio SMS provider configuration</a> (subscription required).
-   *
-   *     A new endpoint is available to update the Twilio configuration related to phone factors (<a href='https://manage.local.dev.auth0.com/docs/api/management/v2/#!/Guardian/put_twilio'>phone Twilio configuration</a>). It has the same payload as this one. Please use it instead.
-   * Update Twilio SMS configuration
-   *
-   * @throws {RequiredError}
-   */
-  async setSmsFactorProviderTwilio(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/guardian/factors/sms/providers/twilio`,
-      method: "PUT",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Configure the <a href="https://auth0.com/docs/multifactor-authentication/developer/sns-configuration">AWS SNS push notification provider configuration</a> (subscription required).
-   * Update AWS SNS push notification configuration
-   *
-   * @throws {RequiredError}
-   */
-  async setPushNotificationProviderSNS(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/guardian/factors/push-notification/providers/sns`,
-      method: "PUT",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Configure the <a href="https://auth0.com/docs/multifactor-authentication/twilio-configuration">Twilio phone provider configuration</a> (subscription required).
-   * Update Twilio phone configuration
-   *
-   * @throws {RequiredError}
-   */
-  async updatePhoneFactorProviderTwilio(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/guardian/factors/phone/providers/twilio`,
-      method: "PUT",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-};
-
-// node_modules/auth0/dist/esm/management/__generated/managers/hooks-manager.js
-var { BaseAPI: BaseAPI18 } = runtime_exports;
-var HooksManager = class extends BaseAPI18 {
-  /**
-   * Delete a hook.
-   *
-   * Delete a hook
-   *
-   * @throws {RequiredError}
-   */
-  async delete(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/hooks/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "DELETE"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Delete one or more existing secrets for a given hook. Accepts an array of secret names to delete.
-   * Delete hook secrets
-   *
-   * @throws {RequiredError}
-   */
-  async deleteSecrets(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/hooks/{id}/secrets`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "DELETE",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  async getAll(requestParameters = {}, initOverrides) {
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "page",
-        config: {}
-      },
-      {
-        key: "per_page",
-        config: {}
-      },
-      {
-        key: "include_totals",
-        config: {}
-      },
-      {
-        key: "enabled",
-        config: {}
-      },
-      {
-        key: "fields",
-        config: {}
-      },
-      {
-        key: "triggerId",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/hooks`,
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve <a href="https://auth0.com/docs/hooks">a hook</a> by its ID. Accepts a list of fields to include in the result.
-   *
-   * Get a hook
-   *
-   * @throws {RequiredError}
-   */
-  async get(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "fields",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/hooks/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve a hook's secrets by the ID of the hook.
-   *
-   * Get hook secrets
-   *
-   * @throws {RequiredError}
-   */
-  async getSecrets(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/hooks/{id}/secrets`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Update an existing hook.
-   *
-   * Update a hook
-   *
-   * @throws {RequiredError}
-   */
-  async update(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/hooks/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "PATCH",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Update one or more existing secrets for an existing hook. Accepts an object of key-value pairs, where the key is the name of the existing secret.
-   *
-   * Update hook secrets
-   *
-   * @throws {RequiredError}
-   */
-  async updateSecrets(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/hooks/{id}/secrets`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "PATCH",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Create a new hook.
-   *
-   * Create a hook
-   *
-   * @throws {RequiredError}
-   */
-  async create(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/hooks`,
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Add one or more secrets to an existing hook. Accepts an object of key-value pairs, where the key is the name of the secret. A hook can have a maximum of 20 secrets.
-   *
-   * Add hook secrets
-   *
-   * @throws {RequiredError}
-   */
-  async addSecrets(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/hooks/{id}/secrets`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-};
-
-// node_modules/auth0/dist/esm/management/__generated/managers/jobs-manager.js
-var { BaseAPI: BaseAPI19 } = runtime_exports;
-var JobsManager = class extends BaseAPI19 {
-  /**
-   * Retrieve error details of a failed job.
-   * Get job error details
-   *
-   * @throws {RequiredError}
-   */
-  async getErrors(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/jobs/{id}/errors`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET"
-    }, initOverrides);
-    return response.status === 204 ? VoidApiResponse.fromResponse(response) : JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieves a job. Useful to check its status.
-   * Get a job
-   *
-   * @throws {RequiredError}
-   */
-  async get(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/jobs/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Export all users to a file via a long-running job.
-   * Create export users job
-   *
-   * @throws {RequiredError}
-   */
-  async exportUsers(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/jobs/users-exports`,
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Import users from a <a href="https://manage.local.dev.auth0.com/docs/users/references/bulk-import-database-schema-examples">formatted file</a> into a connection via a long-running job.
-   * Create import users job
-   *
-   * @throws {RequiredError}
-   */
-  async importUsers(bodyParameters, initOverrides) {
-    const formParams = new FormData();
-    if (bodyParameters.users !== void 0) {
-      formParams.append("users", await parseFormParam(bodyParameters.users));
-    }
-    if (bodyParameters.connection_id !== void 0) {
-      formParams.append("connection_id", await parseFormParam(bodyParameters.connection_id));
-    }
-    if (bodyParameters.upsert !== void 0) {
-      formParams.append("upsert", await parseFormParam(bodyParameters.upsert));
-    }
-    if (bodyParameters.external_id !== void 0) {
-      formParams.append("external_id", await parseFormParam(bodyParameters.external_id));
-    }
-    if (bodyParameters.send_completion_email !== void 0) {
-      formParams.append("send_completion_email", await parseFormParam(bodyParameters.send_completion_email));
-    }
-    const response = await this.request({
-      path: `/jobs/users-imports`,
-      method: "POST",
-      body: formParams
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Send an email to the specified user that asks them to click a link to <a href="https://auth0.com/docs/email/custom#verification-email">verify their email address</a>.
-   *
-   * Note: You must have the `Status` toggle enabled for the verification email template for the email to be sent.
-   * Send an email address verification email
-   *
-   * @throws {RequiredError}
-   */
-  async verifyEmail(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/jobs/verification-email`,
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-};
-
-// node_modules/auth0/dist/esm/management/__generated/managers/keys-manager.js
-var { BaseAPI: BaseAPI20 } = runtime_exports;
-var KeysManager = class extends BaseAPI20 {
-  /**
-   * Get an Application Signing Key by its key id
-   *
-   * @throws {RequiredError}
-   */
-  async get(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["kid"]);
-    const response = await this.request({
-      path: `/keys/signing/{kid}`.replace("{kid}", encodeURIComponent(String(requestParameters.kid))),
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Get all Application Signing Keys
-   *
-   * @throws {RequiredError}
-   */
-  async getAll(initOverrides) {
-    const response = await this.request({
-      path: `/keys/signing`,
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Perform rekeying operation on the key hierarchy.
-   * Rekey the key hierarchy
-   *
-   * @throws {RequiredError}
-   */
-  async postEncryptionRekey(initOverrides) {
-    const response = await this.request({
-      path: `/keys/encryption/rekey`,
-      method: "POST"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Rotate the Application Signing Key
-   *
-   * @throws {RequiredError}
-   */
-  async rotate(initOverrides) {
-    const response = await this.request({
-      path: `/keys/signing/rotate`,
-      method: "POST"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Revoke an Application Signing Key by its key id
-   *
-   * @throws {RequiredError}
-   */
-  async revoke(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["kid"]);
-    const response = await this.request({
-      path: `/keys/signing/{kid}/revoke`.replace("{kid}", encodeURIComponent(String(requestParameters.kid))),
-      method: "PUT"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-};
-
-// node_modules/auth0/dist/esm/management/__generated/managers/log-streams-manager.js
-var { BaseAPI: BaseAPI21 } = runtime_exports;
-var LogStreamsManager = class extends BaseAPI21 {
-  /**
-   * Delete a log stream.
-   *
-   * Delete log stream
-   *
-   * @throws {RequiredError}
-   */
-  async delete(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/log-streams/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "DELETE"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve details on <a href="https://auth0.com/docs/logs/streams">log streams</a>.
-   * <h5>Sample Response</h5><pre><code>[{
-   * 	"id": "string",
-   * 	"name": "string",
-   * 	"type": "eventbridge",
-   * 	"status": "active|paused|suspended",
-   * 	"sink": {
-   * 		"awsAccountId": "string",
-   * 		"awsRegion": "string",
-   * 		"awsPartnerEventSource": "string"
-   * 	}
-   * }, {
-   * 	"id": "string",
-   * 	"name": "string",
-   * 	"type": "http",
-   * 	"status": "active|paused|suspended",
-   * 	"sink": {
-   * 		"httpContentFormat": "JSONLINES|JSONARRAY",
-   * 		"httpContentType": "string",
-   * 		"httpEndpoint": "string",
-   * 		"httpAuthorization": "string"
-   * 	}
-   * },
-   * {
-   * 	"id": "string",
-   * 	"name": "string",
-   * 	"type": "eventgrid",
-   * 	"status": "active|paused|suspended",
-   * 	"sink": {
-   * 		"azureSubscriptionId": "string",
-   * 		"azureResourceGroup": "string",
-   * 		"azureRegion": "string",
-   * 		"azurePartnerTopic": "string"
-   * 	}
-   * },
-   * {
-   * 	"id": "string",
-   * 	"name": "string",
-   * 	"type": "splunk",
-   * 	"status": "active|paused|suspended",
-   * 	"sink": {
-   * 		"splunkDomain": "string",
-   * 		"splunkToken": "string",
-   * 		"splunkPort": "string",
-   * 		"splunkSecure": "boolean"
-   * 	}
-   * },
-   * {
-   * 	"id": "string",
-   * 	"name": "string",
-   * 	"type": "sumo",
-   * 	"status": "active|paused|suspended",
-   * 	"sink": {
-   * 		"sumoSourceAddress": "string",
-   * 	}
-   * },
-   * {
-   * 	"id": "string",
-   * 	"name": "string",
-   * 	"type": "datadog",
-   * 	"status": "active|paused|suspended",
-   * 	"sink": {
-   * 		"datadogRegion": "string",
-   * 		"datadogApiKey": "string"
-   * 	}
-   * }]</code></pre>
-   *
-   * Get log streams
-   *
-   * @throws {RequiredError}
-   */
-  async getAll(initOverrides) {
-    const response = await this.request({
-      path: `/log-streams`,
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve a log stream configuration and status.
-   * <h5>Sample responses</h5><h5>Amazon EventBridge Log Stream</h5><pre><code>{
-   * 	"id": "string",
-   * 	"name": "string",
-   * 	"type": "eventbridge",
-   * 	"status": "active|paused|suspended",
-   * 	"sink": {
-   * 		"awsAccountId": "string",
-   * 		"awsRegion": "string",
-   * 		"awsPartnerEventSource": "string"
-   * 	}
-   * }</code></pre> <h5>HTTP Log Stream</h5><pre><code>{
-   * 	"id": "string",
-   * 	"name": "string",
-   * 	"type": "http",
-   * 	"status": "active|paused|suspended",
-   * 	"sink": {
-   * 		"httpContentFormat": "JSONLINES|JSONARRAY",
-   * 		"httpContentType": "string",
-   * 		"httpEndpoint": "string",
-   * 		"httpAuthorization": "string"
-   * 	}
-   * }</code></pre> <h5>Datadog Log Stream</h5><pre><code>{
-   * 	"id": "string",
-   * 	"name": "string",
-   * 	"type": "datadog",
-   * 	"status": "active|paused|suspended",
-   * 	"sink": {
-   * 		"datadogRegion": "string",
-   * 		"datadogApiKey": "string"
-   * 	}
-   * }</code></pre> <h5>Splunk Log Stream</h5><pre><code>{
-   * 	"id": "string",
-   * 	"name": "string",
-   * 	"type": "splunk",
-   * 	"status": "active|paused|suspended",
-   * 	"sink": {
-   * 		"splunkDomain": "string",
-   * 		"splunkToken": "string",
-   * 		"splunkPort": "string",
-   * 		"splunkSecure": "boolean"
-   * 	}
-   * }</code></pre> <h5>Sumo Logic Log Stream</h5><pre><code>{
-   * 	"id": "string",
-   * 	"name": "string",
-   * 	"type": "sumo",
-   * 	"status": "active|paused|suspended",
-   * 	"sink": {
-   * 		"sumoSourceAddress": "string",
-   * 	}
-   * }</code></pre> <h5>Status</h5> The <code>status</code> of a log stream maybe any of the following:
-   * 1. <code>active</code> - Stream is currently enabled.
-   * 2. <code>paused</code> - Stream is currently user disabled and will not attempt log delivery.
-   * 3. <code>suspended</code> - Stream is currently disabled because of errors and will not attempt log delivery.
-   *
-   * Get log stream by ID
-   *
-   * @throws {RequiredError}
-   */
-  async get(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/log-streams/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Update a log stream.
-   * <h4>Examples of how to use the PATCH endpoint.</h4> The following fields may be updated in a PATCH operation: <ul><li>name</li><li>status</li><li>sink</li></ul> Note: For log streams of type <code>eventbridge</code> and <code>eventgrid</code>, updating the <code>sink</code> is not permitted.
-   * <h5>Update the status of a log stream</h5><pre><code>{
-   * 	"status": "active|paused"
-   * }</code></pre>
-   * <h5>Update the name of a log stream</h5><pre><code>{
-   * 	"name": "string"
-   * }</code></pre>
-   * <h5>Update the sink properties of a stream of type <code>http</code></h5><pre><code>{
-   *   "sink": {
-   *     "httpEndpoint": "string",
-   *     "httpContentType": "string",
-   *     "httpContentFormat": "JSONARRAY|JSONLINES",
-   *     "httpAuthorization": "string"
-   *   }
-   * }</code></pre>
-   * <h5>Update the sink properties of a stream of type <code>datadog</code></h5><pre><code>{
-   *   "sink": {
-   * 		"datadogRegion": "string",
-   * 		"datadogApiKey": "string"
-   *   }
-   * }</code></pre>
-   * <h5>Update the sink properties of a stream of type <code>splunk</code></h5><pre><code>{
-   *   "sink": {
-   *     "splunkDomain": "string",
-   *     "splunkToken": "string",
-   *     "splunkPort": "string",
-   *     "splunkSecure": "boolean"
-   *   }
-   * }</code></pre>
-   * <h5>Update the sink properties of a stream of type <code>sumo</code></h5><pre><code>{
-   *   "sink": {
-   *     "sumoSourceAddress": "string"
-   *   }
-   * }</code></pre>
-   * Update a log stream
-   *
-   * @throws {RequiredError}
-   */
-  async update(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/log-streams/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "PATCH",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Create a log stream.
-   * <h5>Log Stream Types</h5> The <code>type</code> of log stream being created determines the properties required in the <code>sink</code> payload.
-   * <h5>HTTP Stream</h5> For an <code>http</code> Stream, the <code>sink</code> properties are listed in the payload below
-   * Request: <pre><code>{
-   * 	"name": "string",
-   * 	"type": "http",
-   * 	"sink": {
-   * 		"httpEndpoint": "string",
-   * 		"httpContentType": "string",
-   * 		"httpContentFormat": "JSONLINES|JSONARRAY",
-   * 		"httpAuthorization": "string"
-   * 	}
-   * }</code></pre>
-   * Response: <pre><code>{
-   * 	"id": "string",
-   * 	"name": "string",
-   * 	"type": "http",
-   * 	"status": "active",
-   * 	"sink": {
-   * 		"httpEndpoint": "string",
-   * 		"httpContentType": "string",
-   * 		"httpContentFormat": "JSONLINES|JSONARRAY",
-   * 		"httpAuthorization": "string"
-   * 	}
-   * }</code></pre>
-   * <h5>Amazon EventBridge Stream</h5> For an <code>eventbridge</code> Stream, the <code>sink</code> properties are listed in the payload below
-   * Request: <pre><code>{
-   * 	"name": "string",
-   * 	"type": "eventbridge",
-   * 	"sink": {
-   * 		"awsRegion": "string",
-   * 		"awsAccountId": "string"
-   * 	}
-   * }</code></pre>
-   * The response will include an additional field <code>awsPartnerEventSource</code> in the <code>sink</code>: <pre><code>{
-   * 	"id": "string",
-   * 	"name": "string",
-   * 	"type": "eventbridge",
-   * 	"status": "active",
-   * 	"sink": {
-   * 		"awsAccountId": "string",
-   * 		"awsRegion": "string",
-   * 		"awsPartnerEventSource": "string"
-   * 	}
-   * }</code></pre>
-   * <h5>Azure Event Grid Stream</h5> For an <code>Azure Event Grid</code> Stream, the <code>sink</code> properties are listed in the payload below
-   * Request: <pre><code>{
-   * 	"name": "string",
-   * 	"type": "eventgrid",
-   * 	"sink": {
-   * 		"azureSubscriptionId": "string",
-   * 		"azureResourceGroup": "string",
-   * 		"azureRegion": "string"
-   * 	}
-   * }</code></pre>
-   * Response: <pre><code>{
-   * 	"id": "string",
-   * 	"name": "string",
-   * 	"type": "http",
-   * 	"status": "active",
-   * 	"sink": {
-   * 		"azureSubscriptionId": "string",
-   * 		"azureResourceGroup": "string",
-   * 		"azureRegion": "string",
-   * 		"azurePartnerTopic": "string"
-   * 	}
-   * }</code></pre>
-   * <h5>Datadog Stream</h5> For a <code>Datadog</code> Stream, the <code>sink</code> properties are listed in the payload below
-   * Request: <pre><code>{
-   * 	"name": "string",
-   * 	"type": "datadog",
-   * 	"sink": {
-   * 		"datadogRegion": "string",
-   * 		"datadogApiKey": "string"
-   * 	}
-   * }</code></pre>
-   * Response: <pre><code>{
-   * 	"id": "string",
-   * 	"name": "string",
-   * 	"type": "datadog",
-   * 	"status": "active",
-   * 	"sink": {
-   * 		"datadogRegion": "string",
-   * 		"datadogApiKey": "string"
-   * 	}
-   * }</code></pre>
-   * <h5>Splunk Stream</h5> For a <code>Splunk</code> Stream, the <code>sink</code> properties are listed in the payload below
-   * Request: <pre><code>{
-   * 	"name": "string",
-   * 	"type": "splunk",
-   * 	"sink": {
-   * 		"splunkDomain": "string",
-   * 		"splunkToken": "string",
-   * 		"splunkPort": "string",
-   * 		"splunkSecure": "boolean"
-   * 	}
-   * }</code></pre>
-   * Response: <pre><code>{
-   * 	"id": "string",
-   * 	"name": "string",
-   * 	"type": "splunk",
-   * 	"status": "active",
-   * 	"sink": {
-   * 		"splunkDomain": "string",
-   * 		"splunkToken": "string",
-   * 		"splunkPort": "string",
-   * 		"splunkSecure": "boolean"
-   * 	}
-   * }</code></pre>
-   * <h5>Sumo Logic Stream</h5> For a <code>Sumo Logic</code> Stream, the <code>sink</code> properties are listed in the payload below
-   * Request: <pre><code>{
-   * 	"name": "string",
-   * 	"type": "sumo",
-   * 	"sink": {
-   * 		"sumoSourceAddress": "string",
-   * 	}
-   * }</code></pre>
-   * Response: <pre><code>{
-   * 	"id": "string",
-   * 	"name": "string",
-   * 	"type": "sumo",
-   * 	"status": "active",
-   * 	"sink": {
-   * 		"sumoSourceAddress": "string",
-   * 	}
-   * }</code></pre>
-   *
-   * Create a log stream
-   *
-   * @throws {RequiredError}
-   */
-  async create(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/log-streams`,
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-};
-
-// node_modules/auth0/dist/esm/management/__generated/managers/logs-manager.js
-var { BaseAPI: BaseAPI22 } = runtime_exports;
-var LogsManager = class extends BaseAPI22 {
-  async getAll(requestParameters = {}, initOverrides) {
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "page",
-        config: {}
-      },
-      {
-        key: "per_page",
-        config: {}
-      },
-      {
-        key: "sort",
-        config: {}
-      },
-      {
-        key: "fields",
-        config: {}
-      },
-      {
-        key: "include_fields",
-        config: {}
-      },
-      {
-        key: "include_totals",
-        config: {}
-      },
-      {
-        key: "from",
-        config: {}
-      },
-      {
-        key: "take",
-        config: {}
-      },
-      {
-        key: "q",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/logs`,
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve an individual log event.
-   * Get a log event by id
-   *
-   * @throws {RequiredError}
-   */
-  async get(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/logs/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-};
-
-// node_modules/auth0/dist/esm/management/__generated/managers/organizations-manager.js
-var { BaseAPI: BaseAPI23 } = runtime_exports;
-var OrganizationsManager = class extends BaseAPI23 {
-  /**
-   * Remove a client grant from an organization
-   *
-   * @throws {RequiredError}
-   */
-  async deleteClientGrantsByGrantId(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id", "grant_id"]);
-    const response = await this.request({
-      path: `/organizations/{id}/client-grants/{grant_id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))).replace("{grant_id}", encodeURIComponent(String(requestParameters.grant_id))),
-      method: "DELETE"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Delete connections from an organization
-   *
-   * @throws {RequiredError}
-   */
-  async deleteEnabledConnection(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id", "connectionId"]);
-    const response = await this.request({
-      path: `/organizations/{id}/enabled_connections/{connectionId}`.replace("{id}", encodeURIComponent(String(requestParameters.id))).replace("{connectionId}", encodeURIComponent(String(requestParameters.connectionId))),
-      method: "DELETE"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Delete an invitation to organization
-   *
-   * @throws {RequiredError}
-   */
-  async deleteInvitation(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id", "invitation_id"]);
-    const response = await this.request({
-      path: `/organizations/{id}/invitations/{invitation_id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))).replace("{invitation_id}", encodeURIComponent(String(requestParameters.invitation_id))),
-      method: "DELETE"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Delete members from an organization
-   *
-   * @throws {RequiredError}
-   */
-  async deleteMembers(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/organizations/{id}/members`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "DELETE",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Remove one or more roles from a given user in the context of the provided organization
-   *
-   * @throws {RequiredError}
-   */
-  async deleteMemberRoles(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id", "user_id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/organizations/{id}/members/{user_id}/roles`.replace("{id}", encodeURIComponent(String(requestParameters.id))).replace("{user_id}", encodeURIComponent(String(requestParameters.user_id))),
-      method: "DELETE",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Delete a specific organization
-   *
-   * Delete organization
-   *
-   * @throws {RequiredError}
-   */
-  async delete(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/organizations/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "DELETE"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  async getEnabledConnections(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "page",
-        config: {}
-      },
-      {
-        key: "per_page",
-        config: {}
-      },
-      {
-        key: "include_totals",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/organizations/{id}/enabled_connections`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Get an enabled connection for an organization
-   *
-   * @throws {RequiredError}
-   */
-  async getEnabledConnection(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id", "connectionId"]);
-    const response = await this.request({
-      path: `/organizations/{id}/enabled_connections/{connectionId}`.replace("{id}", encodeURIComponent(String(requestParameters.id))).replace("{connectionId}", encodeURIComponent(String(requestParameters.connectionId))),
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  async getInvitations(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "page",
-        config: {}
-      },
-      {
-        key: "per_page",
-        config: {}
-      },
-      {
-        key: "include_totals",
-        config: {}
-      },
-      {
-        key: "fields",
-        config: {}
-      },
-      {
-        key: "include_fields",
-        config: {}
-      },
-      {
-        key: "sort",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/organizations/{id}/invitations`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Get an invitation to organization
-   *
-   * @throws {RequiredError}
-   */
-  async getInvitation(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id", "invitation_id"]);
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "fields",
-        config: {}
-      },
-      {
-        key: "include_fields",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/organizations/{id}/invitations/{invitation_id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))).replace("{invitation_id}", encodeURIComponent(String(requestParameters.invitation_id))),
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  async getMembers(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "page",
-        config: {}
-      },
-      {
-        key: "per_page",
-        config: {}
-      },
-      {
-        key: "include_totals",
-        config: {}
-      },
-      {
-        key: "from",
-        config: {}
-      },
-      {
-        key: "take",
-        config: {}
-      },
-      {
-        key: "fields",
-        config: {}
-      },
-      {
-        key: "include_fields",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/organizations/{id}/members`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Get a specific organization by name
-   *
-   * Get organization by name
-   *
-   * @throws {RequiredError}
-   */
-  async getByName(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["name"]);
-    const response = await this.request({
-      path: `/organizations/name/{name}`.replace("{name}", encodeURIComponent(String(requestParameters.name))),
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  async getOrganizationClientGrants(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "audience",
-        config: {}
-      },
-      {
-        key: "client_id",
-        config: {}
-      },
-      {
-        key: "grant_ids",
-        config: {
-          isArray: true,
-          isCollectionFormatMulti: true
-        }
-      },
-      {
-        key: "page",
-        config: {}
-      },
-      {
-        key: "per_page",
-        config: {}
-      },
-      {
-        key: "include_totals",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/organizations/{id}/client-grants`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  async getMemberRoles(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id", "user_id"]);
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "page",
-        config: {}
-      },
-      {
-        key: "per_page",
-        config: {}
-      },
-      {
-        key: "include_totals",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/organizations/{id}/members/{user_id}/roles`.replace("{id}", encodeURIComponent(String(requestParameters.id))).replace("{user_id}", encodeURIComponent(String(requestParameters.user_id))),
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  async getAll(requestParameters = {}, initOverrides) {
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "page",
-        config: {}
-      },
-      {
-        key: "per_page",
-        config: {}
-      },
-      {
-        key: "include_totals",
-        config: {}
-      },
-      {
-        key: "from",
-        config: {}
-      },
-      {
-        key: "take",
-        config: {}
-      },
-      {
-        key: "sort",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/organizations`,
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Get a specific organization
-   *
-   * Get organization
-   *
-   * @throws {RequiredError}
-   */
-  async get(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/organizations/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Modify an enabled_connection belonging to an Organization.
-   *
-   * Modify an Organizations Connection
-   *
-   * @throws {RequiredError}
-   */
-  async updateEnabledConnection(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id", "connectionId"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/organizations/{id}/enabled_connections/{connectionId}`.replace("{id}", encodeURIComponent(String(requestParameters.id))).replace("{connectionId}", encodeURIComponent(String(requestParameters.connectionId))),
-      method: "PATCH",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Modify an organization
-   *
-   * Modify an Organization
-   *
-   * @throws {RequiredError}
-   */
-  async update(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/organizations/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "PATCH",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Add connections to an organization
-   *
-   * @throws {RequiredError}
-   */
-  async addEnabledConnection(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/organizations/{id}/enabled_connections`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Create invitations to organization
-   *
-   * @throws {RequiredError}
-   */
-  async createInvitation(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/organizations/{id}/invitations`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Add members to an organization
-   *
-   * @throws {RequiredError}
-   */
-  async addMembers(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/organizations/{id}/members`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Associate a client grant with an organization
-   *
-   * @throws {RequiredError}
-   */
-  async postOrganizationClientGrants(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/organizations/{id}/client-grants`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Assign one or more roles to a given user that will be applied in the context of the provided organization
-   *
-   * @throws {RequiredError}
-   */
-  async addMemberRoles(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id", "user_id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/organizations/{id}/members/{user_id}/roles`.replace("{id}", encodeURIComponent(String(requestParameters.id))).replace("{user_id}", encodeURIComponent(String(requestParameters.user_id))),
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Create an organization
-   *
-   * Create an Organization
-   *
-   * @throws {RequiredError}
-   */
-  async create(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/organizations`,
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-};
-
-// node_modules/auth0/dist/esm/management/__generated/managers/prompts-manager.js
-var { BaseAPI: BaseAPI24 } = runtime_exports;
-var PromptsManager = class extends BaseAPI24 {
-  /**
-   * Retrieve custom text for a specific prompt and language.
-   * Get custom text for a prompt
-   *
-   * @throws {RequiredError}
-   */
-  async getCustomTextByLanguage(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["prompt", "language"]);
-    const response = await this.request({
-      path: `/prompts/{prompt}/custom-text/{language}`.replace("{prompt}", encodeURIComponent(String(requestParameters.prompt))).replace("{language}", encodeURIComponent(String(requestParameters.language))),
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Get template partials for a prompt
-   * Get partials for a prompt
-   *
-   * @throws {RequiredError}
-   */
-  async getPartials(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["prompt"]);
-    const response = await this.request({
-      path: `/prompts/{prompt}/partials`.replace("{prompt}", encodeURIComponent(String(requestParameters.prompt))),
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve details of the Universal Login configuration of your tenant. This includes the <a href="https://auth0.com/docs/authenticate/login/auth0-universal-login/identifier-first">Identifier First Authentication</a> and <a href="https://auth0.com/docs/secure/multi-factor-authentication/fido-authentication-with-webauthn/configure-webauthn-device-biometrics-for-mfa">WebAuthn with Device Biometrics for MFA</a> features.
-   * Get prompt settings
-   *
-   * @throws {RequiredError}
-   */
-  async get(initOverrides) {
-    const response = await this.request({
-      path: `/prompts`,
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * View the render settings for a specific screen
-   * Get render settings for a prompt
-   *
-   * @throws {RequiredError}
-   */
-  async getRendering(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["prompt", "screen"]);
-    const response = await this.request({
-      path: `/prompts/{prompt}/screen/{screen}/rendering`.replace("{prompt}", encodeURIComponent(String(requestParameters.prompt))).replace("{screen}", encodeURIComponent(String(requestParameters.screen))),
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Update the Universal Login configuration of your tenant. This includes the <a href="https://auth0.com/docs/authenticate/login/auth0-universal-login/identifier-first">Identifier First Authentication</a> and <a href="https://auth0.com/docs/secure/multi-factor-authentication/fido-authentication-with-webauthn/configure-webauthn-device-biometrics-for-mfa">WebAuthn with Device Biometrics for MFA</a> features.
-   * Update prompt settings
-   *
-   * @throws {RequiredError}
-   */
-  async update(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/prompts`,
-      method: "PATCH",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Configure the render settings for a specific screen
-   * Configure render settings for a prompt
-   *
-   * @throws {RequiredError}
-   */
-  async updateRendering(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["prompt", "screen"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/prompts/{prompt}/screen/{screen}/rendering`.replace("{prompt}", encodeURIComponent(String(requestParameters.prompt))).replace("{screen}", encodeURIComponent(String(requestParameters.screen))),
-      method: "PATCH",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Set custom text for a specific prompt. Existing texts will be overwritten.
-   * Set custom text for a specific prompt
-   *
-   * @throws {RequiredError}
-   */
-  async updateCustomTextByLanguage(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["prompt", "language"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/prompts/{prompt}/custom-text/{language}`.replace("{prompt}", encodeURIComponent(String(requestParameters.prompt))).replace("{language}", encodeURIComponent(String(requestParameters.language))),
-      method: "PUT",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Set template partials for a prompt
-   * Set partials for a prompt
-   *
-   * @throws {RequiredError}
-   */
-  async updatePartials(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["prompt"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/prompts/{prompt}/partials`.replace("{prompt}", encodeURIComponent(String(requestParameters.prompt))),
-      method: "PUT",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-};
-
-// node_modules/auth0/dist/esm/management/__generated/managers/refresh-tokens-manager.js
-var { BaseAPI: BaseAPI25 } = runtime_exports;
-var RefreshTokensManager = class extends BaseAPI25 {
-  /**
-   * Delete a refresh token by its ID.
-   * Delete a refresh tokens
-   *
-   * @throws {RequiredError}
-   */
-  async delete(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/refresh-tokens/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "DELETE"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve refresh token information.
-   * Get a refresh token
-   *
-   * @throws {RequiredError}
-   */
-  async get(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/refresh-tokens/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-};
-
-// node_modules/auth0/dist/esm/management/__generated/managers/resource-servers-manager.js
-var { BaseAPI: BaseAPI26 } = runtime_exports;
-var ResourceServersManager = class extends BaseAPI26 {
-  /**
-   * Delete an existing API (also known as a resource server).
-   * Delete a resource server
-   *
-   * @throws {RequiredError}
-   */
-  async delete(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/resource-servers/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "DELETE"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  async getAll(requestParameters = {}, initOverrides) {
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "identifiers",
-        config: {
-          isArray: true,
-          isCollectionFormatMulti: true
-        }
-      },
-      {
-        key: "page",
-        config: {}
-      },
-      {
-        key: "per_page",
-        config: {}
-      },
-      {
-        key: "include_totals",
-        config: {}
-      },
-      {
-        key: "include_fields",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/resource-servers`,
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve an <a href="https://auth0.com/docs/apis">API</a> (also known as resource server).
-   * Get a resource server
-   *
-   * @throws {RequiredError}
-   */
-  async get(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "include_fields",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/resource-servers/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Update an existing API (also known as a resource server).
-   * Update a resource server
-   *
-   * @throws {RequiredError}
-   */
-  async update(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/resource-servers/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "PATCH",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Create a new API (also known as a resource server).
-   * Create a resource server
-   *
-   * @throws {RequiredError}
-   */
-  async create(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/resource-servers`,
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-};
-
-// node_modules/auth0/dist/esm/management/__generated/managers/roles-manager.js
-var { BaseAPI: BaseAPI27 } = runtime_exports;
-var RolesManager = class extends BaseAPI27 {
-  /**
-   * Remove permissions associated with a role.
-   *
-   * Remove permissions from a role
-   *
-   * @throws {RequiredError}
-   */
-  async deletePermissions(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/roles/{id}/permissions`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "DELETE",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Delete a role.
-   *
-   * Delete a role
-   *
-   * @throws {RequiredError}
-   */
-  async delete(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/roles/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "DELETE"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  async getPermissions(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "per_page",
-        config: {}
-      },
-      {
-        key: "page",
-        config: {}
-      },
-      {
-        key: "include_totals",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/roles/{id}/permissions`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  async getUsers(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "per_page",
-        config: {}
-      },
-      {
-        key: "page",
-        config: {}
-      },
-      {
-        key: "include_totals",
-        config: {}
-      },
-      {
-        key: "from",
-        config: {}
-      },
-      {
-        key: "take",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/roles/{id}/users`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  async getAll(requestParameters = {}, initOverrides) {
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "per_page",
-        config: {}
-      },
-      {
-        key: "page",
-        config: {}
-      },
-      {
-        key: "include_totals",
-        config: {}
-      },
-      {
-        key: "name_filter",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/roles`,
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve a role.
-   *
-   * Get a role
-   *
-   * @throws {RequiredError}
-   */
-  async get(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/roles/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Update a role.
-   *
-   * Update a role
-   *
-   * @throws {RequiredError}
-   */
-  async update(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/roles/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "PATCH",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Associate permissions with a role.
-   *
-   * Associate permissions with a role
-   *
-   * @throws {RequiredError}
-   */
-  async addPermissions(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/roles/{id}/permissions`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Assign users to a role.
-   * Assign users to a role
-   *
-   * @throws {RequiredError}
-   */
-  async assignUsers(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/roles/{id}/users`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Create a new role.
-   *
-   * Create a role
-   *
-   * @throws {RequiredError}
-   */
-  async create(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/roles`,
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-};
-
-// node_modules/auth0/dist/esm/management/__generated/managers/rules-manager.js
-var { BaseAPI: BaseAPI28 } = runtime_exports;
-var RulesManager = class extends BaseAPI28 {
-  /**
-   * Delete a rule.
-   *
-   * Delete a rule
-   *
-   * @throws {RequiredError}
-   */
-  async delete(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/rules/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "DELETE"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  async getAll(requestParameters = {}, initOverrides) {
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "page",
-        config: {}
-      },
-      {
-        key: "per_page",
-        config: {}
-      },
-      {
-        key: "include_totals",
-        config: {}
-      },
-      {
-        key: "enabled",
-        config: {}
-      },
-      {
-        key: "fields",
-        config: {}
-      },
-      {
-        key: "include_fields",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/rules`,
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve <a href="https://auth0.com/docs/rules">rule</a> details. Accepts a list of fields to include or exclude in the result.
-   *
-   * Get a rule
-   *
-   * @throws {RequiredError}
-   */
-  async get(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "fields",
-        config: {}
-      },
-      {
-        key: "include_fields",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/rules/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Update an existing rule.
-   *
-   * Update a rule
-   *
-   * @throws {RequiredError}
-   */
-  async update(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/rules/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "PATCH",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Create a <a href="https://auth0.com/docs/rules#create-a-new-rule-using-the-management-api">new rule</a>.
-   *
-   * Note: Changing a rule's stage of execution from the default <code>login_success</code> can change the rule's function signature to have user omitted.
-   *
-   * Create a rule
-   *
-   * @throws {RequiredError}
-   */
-  async create(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/rules`,
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-};
-
-// node_modules/auth0/dist/esm/management/__generated/managers/rules-configs-manager.js
-var { BaseAPI: BaseAPI29 } = runtime_exports;
-var RulesConfigsManager = class extends BaseAPI29 {
-  /**
-   * Delete a rules config variable identified by its key.
-   * Delete rules config for a given key
-   *
-   * @throws {RequiredError}
-   */
-  async delete(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["key"]);
-    const response = await this.request({
-      path: `/rules-configs/{key}`.replace("{key}", encodeURIComponent(String(requestParameters.key))),
-      method: "DELETE"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve rules config variable keys.
-   *
-   *     Note: For security, config variable values cannot be retrieved outside rule execution.
-   * Retrieve config variable keys for rules (get_rules-configs)
-   *
-   * @throws {RequiredError}
-   */
-  async getAll(initOverrides) {
-    const response = await this.request({
-      path: `/rules-configs`,
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Sets a rules config variable.
-   * Set rules config for a given key
-   *
-   * @throws {RequiredError}
-   */
-  async set(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["key"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/rules-configs/{key}`.replace("{key}", encodeURIComponent(String(requestParameters.key))),
-      method: "PUT",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-};
-
-// node_modules/auth0/dist/esm/management/__generated/managers/self-service-profiles-manager.js
-var { BaseAPI: BaseAPI30 } = runtime_exports;
-var SelfServiceProfilesManager = class extends BaseAPI30 {
-  /**
-   * Deletes a self-service profile by Id.
-   * Delete a self-service profile by Id
-   *
-   * @throws {RequiredError}
-   */
-  async delete(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/self-service-profiles/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "DELETE"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieves text customizations for a given self-service profile, language and Self Service SSO Flow page.
-   *
-   * Get custom text for a self-service profile
-   *
-   * @throws {RequiredError}
-   */
-  async getCustomText(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id", "language", "page"]);
-    const response = await this.request({
-      path: `/self-service-profiles/{id}/custom-text/{language}/{page}`.replace("{id}", encodeURIComponent(String(requestParameters.id))).replace("{language}", encodeURIComponent(String(requestParameters.language))).replace("{page}", encodeURIComponent(String(requestParameters.page))),
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  async getAll(requestParameters = {}, initOverrides) {
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "page",
-        config: {}
-      },
-      {
-        key: "per_page",
-        config: {}
-      },
-      {
-        key: "include_totals",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/self-service-profiles`,
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieves a self-service profile by Id.
-   * Get a self-service profile by Id
-   *
-   * @throws {RequiredError}
-   */
-  async get(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/self-service-profiles/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Updates a self-service profile.
-   * Update a self-service profile
-   *
-   * @throws {RequiredError}
-   */
-  async update(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/self-service-profiles/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "PATCH",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Revokes an SSO access ticket and invalidates associated sessions. The ticket will no longer be accepted to initiate a Self-Service SSO session. If any users have already started a session through this ticket, their session will be terminated. Clients should expect a `202 Accepted` response upon successful processing, indicating that the request has been acknowledged and that the revocation is underway but may not be fully completed at the time of response. If the specified ticket does not exist, a `202 Accepted` response is also returned, signaling that no further action is required.
-   * Clients should treat these `202` responses as an acknowledgment that the request has been accepted and is in progress, even if the ticket was not found.
-   *
-   * Revoke an SSO access ticket
-   *
-   * @throws {RequiredError}
-   */
-  async revokeSsoTicket(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["profileId", "id"]);
-    const response = await this.request({
-      path: `/self-service-profiles/{profileId}/sso-ticket/{id}/revoke`.replace("{profileId}", encodeURIComponent(String(requestParameters.profileId))).replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "POST"
-    }, initOverrides);
-    return TextApiResponse.fromResponse(response);
-  }
-  /**
-   * Creates a self-service profile. Currently only one profile can be created per tenant.
-   * Create a self-service profile
-   *
-   * @throws {RequiredError}
-   */
-  async create(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/self-service-profiles`,
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Creates an SSO access ticket to initiate the Self Service SSO Flow using a self-service profile.
-   *
-   * Create an SSO access ticket to initiate the Self Service SSO Flow
-   *
-   * @throws {RequiredError}
-   */
-  async createSsoTicket(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/self-service-profiles/{id}/sso-ticket`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Updates text customizations for a given self-service profile, language and Self Service SSO Flow page.
-   *
-   * Set custom text for a self-service profile
-   *
-   * @throws {RequiredError}
-   */
-  async updateCustomText(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id", "language", "page"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/self-service-profiles/{id}/custom-text/{language}/{page}`.replace("{id}", encodeURIComponent(String(requestParameters.id))).replace("{language}", encodeURIComponent(String(requestParameters.language))).replace("{page}", encodeURIComponent(String(requestParameters.page))),
-      method: "PUT",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-};
-
-// node_modules/auth0/dist/esm/management/__generated/managers/sessions-manager.js
-var { BaseAPI: BaseAPI31 } = runtime_exports;
-var SessionsManager = class extends BaseAPI31 {
-  /**
-   * Delete a session by ID.
-   * Delete session
-   *
-   * @throws {RequiredError}
-   */
-  async delete(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/sessions/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "DELETE"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve session information.
-   * Get session
-   *
-   * @throws {RequiredError}
-   */
-  async get(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/sessions/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-};
-
-// node_modules/auth0/dist/esm/management/__generated/managers/stats-manager.js
-var { BaseAPI: BaseAPI32 } = runtime_exports;
-var StatsManager = class extends BaseAPI32 {
-  /**
-   * Retrieve the number of active users that logged in during the last 30 days.
-   * Get active users count
-   *
-   * @throws {RequiredError}
-   */
-  async getActiveUsersCount(initOverrides) {
-    const response = await this.request({
-      path: `/stats/active-users`,
-      method: "GET"
-    }, initOverrides);
-    return TextApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve the number of logins, signups and breached-password detections (subscription required) that occurred each day within a specified date range.
-   * Get daily stats
-   *
-   * @throws {RequiredError}
-   */
-  async getDaily(requestParameters = {}, initOverrides) {
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "from",
-        config: {}
-      },
-      {
-        key: "to",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/stats/daily`,
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-};
-
-// node_modules/auth0/dist/esm/management/__generated/managers/tenants-manager.js
-var { BaseAPI: BaseAPI33 } = runtime_exports;
-var TenantsManager = class extends BaseAPI33 {
-  /**
-   * Update settings for a tenant.
-   * Update tenant settings
-   *
-   * @throws {RequiredError}
-   */
-  async updateSettings(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/tenants/settings`,
-      method: "PATCH",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve tenant settings. A list of fields to include or exclude may also be specified.
-   * Get tenant settings
-   *
-   * @throws {RequiredError}
-   */
-  async getSettings(requestParameters = {}, initOverrides) {
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "fields",
-        config: {}
-      },
-      {
-        key: "include_fields",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/tenants/settings`,
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-};
-
-// node_modules/auth0/dist/esm/management/__generated/managers/tickets-manager.js
-var { BaseAPI: BaseAPI34 } = runtime_exports;
-var TicketsManager = class extends BaseAPI34 {
-  /**
-   * Create a <a href="https://auth0.com/docs/email/custom#verification-email">ticket to verify a user's email address</a>.
-   * Create an email verification ticket
-   *
-   * @throws {RequiredError}
-   */
-  async verifyEmail(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/tickets/email-verification`,
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Create a <a href="https://auth0.com/docs/connections/database/password-change">password change ticket</a> for a user.
-   * Create a password change ticket
-   *
-   * @throws {RequiredError}
-   */
-  async changePassword(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/tickets/password-change`,
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-};
-
-// node_modules/auth0/dist/esm/management/__generated/managers/user-blocks-manager.js
-var { BaseAPI: BaseAPI35 } = runtime_exports;
-var UserBlocksManager = class extends BaseAPI35 {
-  /**
-   * Unblock a user blocked due to an excessive amount of incorrectly-provided credentials.
-   *
-   * Unblock by identifier
-   *
-   * @throws {RequiredError}
-   */
-  async deleteAll(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["identifier"]);
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "identifier",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/user-blocks`,
-      method: "DELETE",
-      query: queryParameters
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Unblock a user that was blocked due to an excessive amount of incorrectly provided credentials.
-   *
-   * Note: This endpoint does not unblock users that were <a href="https://auth0.com/docs/user-profile#block-and-unblock-a-user">blocked by admins</a>.
-   *
-   * Unblock a user
-   *
-   * @throws {RequiredError}
-   */
-  async delete(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/user-blocks/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "DELETE"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve a list of blocked IP addresses for a given identifier (e.g., username, phone number or email).
-   *
-   * Get blocks by identifier
-   *
-   * @throws {RequiredError}
-   */
-  async getAll(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["identifier"]);
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "identifier",
-        config: {}
-      },
-      {
-        key: "consider_brute_force_enablement",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/user-blocks`,
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve a list of blocked IP addresses for the login identifiers (email, username, phone number, etc) associated with the specified user.
-   *
-   *
-   * Get a user's blocks
-   *
-   * @throws {RequiredError}
-   */
-  async get(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "consider_brute_force_enablement",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/user-blocks/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-};
-
-// node_modules/auth0/dist/esm/management/__generated/managers/users-manager.js
-var { BaseAPI: BaseAPI36 } = runtime_exports;
-var UsersManager = class extends BaseAPI36 {
-  /**
-   * Deletes all authentication methods for the given user
-   *
-   * @throws {RequiredError}
-   */
-  async deleteAuthenticationMethods(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/users/{id}/authentication-methods`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "DELETE"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Deletes an authentication method by ID
-   *
-   * @throws {RequiredError}
-   */
-  async deleteAuthenticationMethod(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id", "authentication_method_id"]);
-    const response = await this.request({
-      path: `/users/{id}/authentication-methods/{authentication_method_id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))).replace("{authentication_method_id}", encodeURIComponent(String(requestParameters.authentication_method_id))),
-      method: "DELETE"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Delete All Authenticators
-   *
-   * @throws {RequiredError}
-   */
-  async deleteAllAuthenticators(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/users/{id}/authenticators`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "DELETE"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Delete a <a href="https://auth0.com/docs/multifactor-authentication">multifactor</a> configuration for a user. This forces the user to re-configure the multi-factor provider.
-   * Delete a User's Multi-factor Provider
-   *
-   * @throws {RequiredError}
-   */
-  async deleteMultifactorProvider(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id", "provider"]);
-    const response = await this.request({
-      path: `/users/{id}/multifactor/{provider}`.replace("{id}", encodeURIComponent(String(requestParameters.id))).replace("{provider}", encodeURIComponent(String(requestParameters.provider))),
-      method: "DELETE"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Remove permissions from a user.
-   *
-   * Remove Permissions from a User
-   *
-   * @throws {RequiredError}
-   */
-  async deletePermissions(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/users/{id}/permissions`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "DELETE",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Delete all refresh tokens for a user.
-   * Delete refresh tokens for a user
-   *
-   * @throws {RequiredError}
-   */
-  async deleteRefreshTokens(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["user_id"]);
-    const response = await this.request({
-      path: `/users/{user_id}/refresh-tokens`.replace("{user_id}", encodeURIComponent(String(requestParameters.user_id))),
-      method: "DELETE"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Delete all sessions for a user.
-   * Delete sessions for user
-   *
-   * @throws {RequiredError}
-   */
-  async deleteSessions(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["user_id"]);
-    const response = await this.request({
-      path: `/users/{user_id}/sessions`.replace("{user_id}", encodeURIComponent(String(requestParameters.user_id))),
-      method: "DELETE"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Unlink an identity from the target user making it a separate user account again.
-   * Unlink a User Identity
-   *
-   * @throws {RequiredError}
-   */
-  async unlink(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id", "provider", "user_id"]);
-    const response = await this.request({
-      path: `/users/{id}/identities/{provider}/{user_id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))).replace("{provider}", encodeURIComponent(String(requestParameters.provider))).replace("{user_id}", encodeURIComponent(String(requestParameters.user_id))),
-      method: "DELETE"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Remove roles from a user.
-   * Removes roles from a user
-   *
-   * @throws {RequiredError}
-   */
-  async deleteRoles(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/users/{id}/roles`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "DELETE",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Delete a user.
-   * Delete a User
-   *
-   * @throws {RequiredError}
-   */
-  async delete(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/users/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "DELETE"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  async getAuthenticationMethods(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "page",
-        config: {}
-      },
-      {
-        key: "per_page",
-        config: {}
-      },
-      {
-        key: "include_totals",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/users/{id}/authentication-methods`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Gets an authentication method by ID.
-   *
-   * @throws {RequiredError}
-   */
-  async getAuthenticationMethod(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id", "authentication_method_id"]);
-    const response = await this.request({
-      path: `/users/{id}/authentication-methods/{authentication_method_id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))).replace("{authentication_method_id}", encodeURIComponent(String(requestParameters.authentication_method_id))),
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve the first confirmed <a href="https://auth0.com/docs/multifactor-authentication/guardian">Guardian</a> enrollment for a user.
-   * Get the First Confirmed Multi-factor Authentication Enrollment
-   *
-   * @throws {RequiredError}
-   */
-  async getEnrollments(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/users/{id}/enrollments`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  async getLogs(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "page",
-        config: {}
-      },
-      {
-        key: "per_page",
-        config: {}
-      },
-      {
-        key: "sort",
-        config: {}
-      },
-      {
-        key: "include_totals",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/users/{id}/logs`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  async getPermissions(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "per_page",
-        config: {}
-      },
-      {
-        key: "page",
-        config: {}
-      },
-      {
-        key: "include_totals",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/users/{id}/permissions`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve details for a user's refresh tokens.
-   * Get refresh tokens for a user
-   *
-   * @throws {RequiredError}
-   */
-  async getRefreshTokens(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["user_id"]);
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "include_totals",
-        config: {}
-      },
-      {
-        key: "from",
-        config: {}
-      },
-      {
-        key: "take",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/users/{user_id}/refresh-tokens`.replace("{user_id}", encodeURIComponent(String(requestParameters.user_id))),
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve details for a user's sessions.
-   * Get sessions for user
-   *
-   * @throws {RequiredError}
-   */
-  async getSessions(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["user_id"]);
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "include_totals",
-        config: {}
-      },
-      {
-        key: "from",
-        config: {}
-      },
-      {
-        key: "take",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/users/{user_id}/sessions`.replace("{user_id}", encodeURIComponent(String(requestParameters.user_id))),
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  async getUserOrganizations(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "page",
-        config: {}
-      },
-      {
-        key: "per_page",
-        config: {}
-      },
-      {
-        key: "include_totals",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/users/{id}/organizations`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  async getRoles(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "per_page",
-        config: {}
-      },
-      {
-        key: "page",
-        config: {}
-      },
-      {
-        key: "include_totals",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/users/{id}/roles`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  async getAll(requestParameters = {}, initOverrides) {
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "page",
-        config: {}
-      },
-      {
-        key: "per_page",
-        config: {}
-      },
-      {
-        key: "include_totals",
-        config: {}
-      },
-      {
-        key: "sort",
-        config: {}
-      },
-      {
-        key: "connection",
-        config: {}
-      },
-      {
-        key: "fields",
-        config: {}
-      },
-      {
-        key: "include_fields",
-        config: {}
-      },
-      {
-        key: "q",
-        config: {}
-      },
-      {
-        key: "search_engine",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/users`,
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Retrieve user details. A list of fields to include or exclude may also be specified.
-   * Get a User
-   *
-   * @throws {RequiredError}
-   */
-  async get(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "fields",
-        config: {}
-      },
-      {
-        key: "include_fields",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/users/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Updates an authentication method.
-   *
-   * @throws {RequiredError}
-   */
-  async updateAuthenticationMethod(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id", "authentication_method_id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/users/{id}/authentication-methods/{authentication_method_id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))).replace("{authentication_method_id}", encodeURIComponent(String(requestParameters.authentication_method_id))),
-      method: "PATCH",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Update a user.
-   *
-   * These are the attributes that can be updated at the root level:
-   *
-   * <ul>
-   *     <li>app_metadata</li>
-   *     <li>blocked</li>
-   *     <li>email</li>
-   *     <li>email_verified</li>
-   *     <li>family_name</li>
-   *     <li>given_name</li>
-   *     <li>name</li>
-   *     <li>nickname</li>
-   *     <li>password</li>
-   *     <li>phone_number</li>
-   *     <li>phone_verified</li>
-   *     <li>picture</li>
-   *     <li>username</li>
-   *     <li>user_metadata</li>
-   *     <li>verify_email</li>
-   * </ul>
-   *
-   * Some considerations:
-   * <ul>
-   *     <li>The properties of the new object will replace the old ones.</li>
-   *     <li>The metadata fields are an exception to this rule (<code>user_metadata</code> and <code>app_metadata</code>). These properties are merged instead of being replaced but be careful, the merge only occurs on the first level.</li>
-   *     <li>If you are updating <code>email</code>, <code>email_verified</code>, <code>phone_number</code>, <code>phone_verified</code>, <code>username</code> or <code>password</code> of a secondary identity, you need to specify the <code>connection</code> property too.</li>
-   *     <li>If you are updating <code>email</code> or <code>phone_number</code> you can specify, optionally, the <code>client_id</code> property.</li>
-   *     <li>Updating <code>email_verified</code> is not supported for enterprise and passwordless sms connections.</li>
-   *     <li>Updating the <code>blocked</code> to <code>false</code> does not affect the user's blocked state from an excessive amount of incorrectly provided credentials. Use the "Unblock a user" endpoint from the "User Blocks" API to change the user's state.</li>
-   * </ul>
-   *
-   * <h5>Updating a field (non-metadata property)</h5>
-   * To mark the email address of a user as verified, the body to send should be:
-   * <pre><code>{ "email_verified": true }</code></pre>
-   *
-   * <h5>Updating a user metadata root property</h5>Let's assume that our test user has the following <code>user_metadata</code>:
-   * <pre><code>{ "user_metadata" : { "profileCode": 1479 } }</code></pre>
-   *
-   * To add the field <code>addresses</code> the body to send should be:
-   * <pre><code>{ "user_metadata" : { "addresses": {"work_address": "100 Industrial Way"} }}</code></pre>
-   *
-   * The modified object ends up with the following <code>user_metadata</code> property:<pre><code>{
-   *   "user_metadata": {
-   *     "profileCode": 1479,
-   *     "addresses": { "work_address": "100 Industrial Way" }
-   *   }
-   * }</code></pre>
-   *
-   * <h5>Updating an inner user metadata property</h5>If there's existing user metadata to which we want to add  <code>"home_address": "742 Evergreen Terrace"</code> (using the <code>addresses</code> property) we should send the whole <code>addresses</code> object. Since this is a first-level object, the object will be merged in, but its own properties will not be. The body to send should be:
-   * <pre><code>{
-   *   "user_metadata": {
-   *     "addresses": {
-   *       "work_address": "100 Industrial Way",
-   *       "home_address": "742 Evergreen Terrace"
-   *     }
-   *   }
-   * }</code></pre>
-   *
-   * The modified object ends up with the following <code>user_metadata</code> property:
-   * <pre><code>{
-   *   "user_metadata": {
-   *     "profileCode": 1479,
-   *     "addresses": {
-   *       "work_address": "100 Industrial Way",
-   *       "home_address": "742 Evergreen Terrace"
-   *     }
-   *   }
-   * }</code></pre>
-   *
-   * Update a User
-   *
-   * @throws {RequiredError}
-   */
-  async update(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/users/{id}`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "PATCH",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Creates an authentication method for a given user. Authentication methods created via this endpoint will be auto confirmed and should already have verification completed.
-   *
-   * @throws {RequiredError}
-   */
-  async createAuthenticationMethod(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/users/{id}/authentication-methods`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Link two user accounts together forming a primary and secondary relationship. On successful linking, the endpoint returns the new array of the primary account identities.
-   *
-   * Note: There are two ways of invoking the endpoint:
-   *
-   * <ul>
-   *   <li>With the authenticated primary account's JWT in the Authorization header, which has the <code>update:current_user_identities</code> scope:
-   *     <pre>
-   *       POST /api/v2/users/PRIMARY_ACCOUNT_USER_ID/identities
-   *       Authorization: "Bearer PRIMARY_ACCOUNT_JWT"
-   *       {
-   *         "link_with": "SECONDARY_ACCOUNT_JWT"
-   *       }
-   *     </pre>
-   *     In this case, only the <code>link_with</code> param is required in the body, which also contains the JWT obtained upon the secondary account's authentication.
-   *   </li>
-   *   <li>With a token generated by the API V2 containing the <code>update:users</code> scope:
-   *     <pre>
-   *     POST /api/v2/users/PRIMARY_ACCOUNT_USER_ID/identities
-   *     Authorization: "Bearer YOUR_API_V2_TOKEN"
-   *     {
-   *       "provider": "SECONDARY_ACCOUNT_PROVIDER",
-   *       "connection_id": "SECONDARY_ACCOUNT_CONNECTION_ID(OPTIONAL)",
-   *       "user_id": "SECONDARY_ACCOUNT_USER_ID"
-   *     }
-   *     </pre>
-   *     In this case you need to send <code>provider</code> and <code>user_id</code> in the body. Optionally you can also send the <code>connection_id</code> param which is suitable for identifying a particular database connection for the 'auth0' provider.
-   *   </li>
-   * </ul>
-   * Link a User Account
-   *
-   * @throws {RequiredError}
-   */
-  async link(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/users/{id}/identities`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Invalidate all remembered browsers across all <a href="https://auth0.com/docs/multifactor-authentication">authentication factors</a> for a user.
-   * Invalidate All Remembered Browsers for Multi-factor Authentication
-   *
-   * @throws {RequiredError}
-   */
-  async invalidateRememberBrowser(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/users/{id}/multifactor/actions/invalidate-remember-browser`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "POST"
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Assign permissions to a user.
-   * Assign Permissions to a User
-   *
-   * @throws {RequiredError}
-   */
-  async assignPermissions(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/users/{id}/permissions`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Remove the current <a href="https://auth0.com/docs/multifactor-authentication/guardian">multi-factor authentication</a> recovery code and generate a new one.
-   * Generate New Multi-factor Authentication Recovery Code
-   *
-   * @throws {RequiredError}
-   */
-  async regenerateRecoveryCode(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const response = await this.request({
-      path: `/users/{id}/recovery-code-regeneration`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "POST"
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Associate roles with a user.
-   * Assign roles to a user
-   *
-   * @throws {RequiredError}
-   */
-  async assignRoles(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/users/{id}/roles`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Create a new user for a given <a href="https://auth0.com/docs/connections/database">database</a> or <a href="https://auth0.com/docs/connections/passwordless">passwordless</a> connection.
-   *
-   * Note: <code>connection</code> is required but other parameters such as <code>email</code> and <code>password</code> are dependent upon the type of connection.
-   * Create a User
-   *
-   * @throws {RequiredError}
-   */
-  async create(bodyParameters, initOverrides) {
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/users`,
-      method: "POST",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Updates all authentication methods by replacing them with the given ones.
-   *
-   * @throws {RequiredError}
-   */
-  async updateAuthenticationMethods(requestParameters, bodyParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["id"]);
-    const headerParameters = {};
-    headerParameters["Content-Type"] = "application/json";
-    const response = await this.request({
-      path: `/users/{id}/authentication-methods`.replace("{id}", encodeURIComponent(String(requestParameters.id))),
-      method: "PUT",
-      headers: headerParameters,
-      body: bodyParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-};
-
-// node_modules/auth0/dist/esm/management/__generated/managers/users-by-email-manager.js
-var { BaseAPI: BaseAPI37 } = runtime_exports;
-var UsersByEmailManager = class extends BaseAPI37 {
-  /**
-   * If Auth0 is the identify provider (idP), the email address associated with a user is saved in lower case, regardless of how you initially provided it. For example, if you register a user as <b>JohnSmith@example.com</b>, Auth0 saves the user's email as <b>johnsmith@example.com</b>.
-   *
-   * In cases where Auth0 is not the idP, the `email` is stored based on the rules of idP, so make sure the search is made using the correct capitalization.
-   *
-   * When using this endpoint, make sure that you are searching for users via email addresses using the correct case.
-   *
-   * Search Users by Email
-   *
-   * @throws {RequiredError}
-   */
-  async getByEmail(requestParameters, initOverrides) {
-    validateRequiredRequestParams(requestParameters, ["email"]);
-    const queryParameters = applyQueryParams(requestParameters, [
-      {
-        key: "fields",
-        config: {}
-      },
-      {
-        key: "include_fields",
-        config: {}
-      },
-      {
-        key: "email",
-        config: {}
-      }
-    ]);
-    const response = await this.request({
-      path: `/users-by-email`,
-      method: "GET",
-      query: queryParameters
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-};
-
-// node_modules/auth0/dist/esm/management/__generated/index.js
-var ManagementClientBase = class {
-  constructor(configuration) {
-    this.configuration = configuration;
-    this.actions = new ActionsManager(this.configuration);
-    this.anomaly = new AnomalyManager(this.configuration);
-    this.attackProtection = new AttackProtectionManager(this.configuration);
-    this.blacklists = new BlacklistsManager(this.configuration);
-    this.branding = new BrandingManager(this.configuration);
-    this.clientGrants = new ClientGrantsManager(this.configuration);
-    this.clients = new ClientsManager(this.configuration);
-    this.connections = new ConnectionsManager(this.configuration);
-    this.customDomains = new CustomDomainsManager(this.configuration);
-    this.deviceCredentials = new DeviceCredentialsManager(this.configuration);
-    this.emailTemplates = new EmailTemplatesManager(this.configuration);
-    this.emails = new EmailsManager(this.configuration);
-    this.flows = new FlowsManager(this.configuration);
-    this.forms = new FormsManager(this.configuration);
-    this.grants = new GrantsManager(this.configuration);
-    this.guardian = new GuardianManager(this.configuration);
-    this.hooks = new HooksManager(this.configuration);
-    this.jobs = new JobsManager(this.configuration);
-    this.keys = new KeysManager(this.configuration);
-    this.logStreams = new LogStreamsManager(this.configuration);
-    this.logs = new LogsManager(this.configuration);
-    this.organizations = new OrganizationsManager(this.configuration);
-    this.prompts = new PromptsManager(this.configuration);
-    this.refreshTokens = new RefreshTokensManager(this.configuration);
-    this.resourceServers = new ResourceServersManager(this.configuration);
-    this.roles = new RolesManager(this.configuration);
-    this.rules = new RulesManager(this.configuration);
-    this.rulesConfigs = new RulesConfigsManager(this.configuration);
-    this.selfServiceProfiles = new SelfServiceProfilesManager(this.configuration);
-    this.sessions = new SessionsManager(this.configuration);
-    this.stats = new StatsManager(this.configuration);
-    this.tenants = new TenantsManager(this.configuration);
-    this.tickets = new TicketsManager(this.configuration);
-    this.userBlocks = new UserBlocksManager(this.configuration);
-    this.users = new UsersManager(this.configuration);
-    this.usersByEmail = new UsersByEmailManager(this.configuration);
-  }
-};
-
-// node_modules/jose/dist/node/esm/runtime/base64url.js
-var import_buffer = require("buffer");
-
-// node_modules/jose/dist/node/esm/lib/buffer_utils.js
-var encoder = new TextEncoder();
-var decoder = new TextDecoder();
-var MAX_INT32 = 2 ** 32;
-function concat(...buffers) {
-  const size = buffers.reduce((acc, { length }) => acc + length, 0);
-  const buf = new Uint8Array(size);
-  let i = 0;
-  buffers.forEach((buffer) => {
-    buf.set(buffer, i);
-    i += buffer.length;
-  });
-  return buf;
-}
-
-// node_modules/jose/dist/node/esm/runtime/base64url.js
-var encode3;
-function normalize(input) {
-  let encoded = input;
-  if (encoded instanceof Uint8Array) {
-    encoded = decoder.decode(encoded);
-  }
-  return encoded;
-}
-if (import_buffer.Buffer.isEncoding("base64url")) {
-  encode3 = (input) => import_buffer.Buffer.from(input).toString("base64url");
-} else {
-  encode3 = (input) => import_buffer.Buffer.from(input).toString("base64").replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
-}
-var decode = (input) => import_buffer.Buffer.from(normalize(input), "base64");
-
-// node_modules/jose/dist/node/esm/util/errors.js
-var JOSEError = class extends Error {
-  static get code() {
-    return "ERR_JOSE_GENERIC";
-  }
-  constructor(message2) {
-    var _a;
-    super(message2);
-    this.code = "ERR_JOSE_GENERIC";
-    this.name = this.constructor.name;
-    (_a = Error.captureStackTrace) === null || _a === void 0 ? void 0 : _a.call(Error, this, this.constructor);
-  }
-};
-var JWTClaimValidationFailed = class extends JOSEError {
-  static get code() {
-    return "ERR_JWT_CLAIM_VALIDATION_FAILED";
-  }
-  constructor(message2, claim = "unspecified", reason = "unspecified") {
-    super(message2);
-    this.code = "ERR_JWT_CLAIM_VALIDATION_FAILED";
-    this.claim = claim;
-    this.reason = reason;
-  }
-};
-var JWTExpired = class extends JOSEError {
-  static get code() {
-    return "ERR_JWT_EXPIRED";
-  }
-  constructor(message2, claim = "unspecified", reason = "unspecified") {
-    super(message2);
-    this.code = "ERR_JWT_EXPIRED";
-    this.claim = claim;
-    this.reason = reason;
-  }
-};
-var JOSEAlgNotAllowed = class extends JOSEError {
-  constructor() {
-    super(...arguments);
-    this.code = "ERR_JOSE_ALG_NOT_ALLOWED";
-  }
-  static get code() {
-    return "ERR_JOSE_ALG_NOT_ALLOWED";
-  }
-};
-var JOSENotSupported = class extends JOSEError {
-  constructor() {
-    super(...arguments);
-    this.code = "ERR_JOSE_NOT_SUPPORTED";
-  }
-  static get code() {
-    return "ERR_JOSE_NOT_SUPPORTED";
-  }
-};
-var JWSInvalid = class extends JOSEError {
-  constructor() {
-    super(...arguments);
-    this.code = "ERR_JWS_INVALID";
-  }
-  static get code() {
-    return "ERR_JWS_INVALID";
-  }
-};
-var JWTInvalid = class extends JOSEError {
-  constructor() {
-    super(...arguments);
-    this.code = "ERR_JWT_INVALID";
-  }
-  static get code() {
-    return "ERR_JWT_INVALID";
-  }
-};
-var JWKSInvalid = class extends JOSEError {
-  constructor() {
-    super(...arguments);
-    this.code = "ERR_JWKS_INVALID";
-  }
-  static get code() {
-    return "ERR_JWKS_INVALID";
-  }
-};
-var JWKSNoMatchingKey = class extends JOSEError {
-  constructor() {
-    super(...arguments);
-    this.code = "ERR_JWKS_NO_MATCHING_KEY";
-    this.message = "no applicable key found in the JSON Web Key Set";
-  }
-  static get code() {
-    return "ERR_JWKS_NO_MATCHING_KEY";
-  }
-};
-var JWKSMultipleMatchingKeys = class extends JOSEError {
-  constructor() {
-    super(...arguments);
-    this.code = "ERR_JWKS_MULTIPLE_MATCHING_KEYS";
-    this.message = "multiple matching keys found in the JSON Web Key Set";
-  }
-  static get code() {
-    return "ERR_JWKS_MULTIPLE_MATCHING_KEYS";
-  }
-};
-var JWKSTimeout = class extends JOSEError {
-  constructor() {
-    super(...arguments);
-    this.code = "ERR_JWKS_TIMEOUT";
-    this.message = "request timed out";
-  }
-  static get code() {
-    return "ERR_JWKS_TIMEOUT";
-  }
-};
-var JWSSignatureVerificationFailed = class extends JOSEError {
-  constructor() {
-    super(...arguments);
-    this.code = "ERR_JWS_SIGNATURE_VERIFICATION_FAILED";
-    this.message = "signature verification failed";
-  }
-  static get code() {
-    return "ERR_JWS_SIGNATURE_VERIFICATION_FAILED";
-  }
-};
-
-// node_modules/jose/dist/node/esm/runtime/is_key_object.js
-var import_crypto = require("crypto");
-var util3 = __toESM(require("util"), 1);
-var is_key_object_default = util3.types.isKeyObject ? (obj) => util3.types.isKeyObject(obj) : (obj) => obj != null && obj instanceof import_crypto.KeyObject;
-
-// node_modules/jose/dist/node/esm/runtime/webcrypto.js
-var crypto = __toESM(require("crypto"), 1);
-var util4 = __toESM(require("util"), 1);
-var webcrypto2 = crypto.webcrypto;
-var webcrypto_default = webcrypto2;
-var isCryptoKey = util4.types.isCryptoKey ? (key) => util4.types.isCryptoKey(key) : (key) => false;
-
-// node_modules/jose/dist/node/esm/lib/crypto_key.js
-function unusable(name2, prop = "algorithm.name") {
-  return new TypeError(`CryptoKey does not support this operation, its ${prop} must be ${name2}`);
-}
-function isAlgorithm(algorithm, name2) {
-  return algorithm.name === name2;
-}
-function getHashLength(hash) {
-  return parseInt(hash.name.slice(4), 10);
-}
-function getNamedCurve(alg) {
-  switch (alg) {
-    case "ES256":
-      return "P-256";
-    case "ES384":
-      return "P-384";
-    case "ES512":
-      return "P-521";
-    default:
-      throw new Error("unreachable");
-  }
-}
-function checkUsage(key, usages) {
-  if (usages.length && !usages.some((expected) => key.usages.includes(expected))) {
-    let msg = "CryptoKey does not support this operation, its usages must include ";
-    if (usages.length > 2) {
-      const last = usages.pop();
-      msg += `one of ${usages.join(", ")}, or ${last}.`;
-    } else if (usages.length === 2) {
-      msg += `one of ${usages[0]} or ${usages[1]}.`;
-    } else {
-      msg += `${usages[0]}.`;
-    }
-    throw new TypeError(msg);
-  }
-}
-function checkSigCryptoKey(key, alg, ...usages) {
-  switch (alg) {
-    case "HS256":
-    case "HS384":
-    case "HS512": {
-      if (!isAlgorithm(key.algorithm, "HMAC"))
-        throw unusable("HMAC");
-      const expected = parseInt(alg.slice(2), 10);
-      const actual = getHashLength(key.algorithm.hash);
-      if (actual !== expected)
-        throw unusable(`SHA-${expected}`, "algorithm.hash");
-      break;
-    }
-    case "RS256":
-    case "RS384":
-    case "RS512": {
-      if (!isAlgorithm(key.algorithm, "RSASSA-PKCS1-v1_5"))
-        throw unusable("RSASSA-PKCS1-v1_5");
-      const expected = parseInt(alg.slice(2), 10);
-      const actual = getHashLength(key.algorithm.hash);
-      if (actual !== expected)
-        throw unusable(`SHA-${expected}`, "algorithm.hash");
-      break;
-    }
-    case "PS256":
-    case "PS384":
-    case "PS512": {
-      if (!isAlgorithm(key.algorithm, "RSA-PSS"))
-        throw unusable("RSA-PSS");
-      const expected = parseInt(alg.slice(2), 10);
-      const actual = getHashLength(key.algorithm.hash);
-      if (actual !== expected)
-        throw unusable(`SHA-${expected}`, "algorithm.hash");
-      break;
-    }
-    case "EdDSA": {
-      if (key.algorithm.name !== "Ed25519" && key.algorithm.name !== "Ed448") {
-        throw unusable("Ed25519 or Ed448");
-      }
-      break;
-    }
-    case "ES256":
-    case "ES384":
-    case "ES512": {
-      if (!isAlgorithm(key.algorithm, "ECDSA"))
-        throw unusable("ECDSA");
-      const expected = getNamedCurve(alg);
-      const actual = key.algorithm.namedCurve;
-      if (actual !== expected)
-        throw unusable(expected, "algorithm.namedCurve");
-      break;
-    }
-    default:
-      throw new TypeError("CryptoKey does not support this operation");
-  }
-  checkUsage(key, usages);
-}
-
-// node_modules/jose/dist/node/esm/lib/invalid_key_input.js
-function message(msg, actual, ...types4) {
-  if (types4.length > 2) {
-    const last = types4.pop();
-    msg += `one of type ${types4.join(", ")}, or ${last}.`;
-  } else if (types4.length === 2) {
-    msg += `one of type ${types4[0]} or ${types4[1]}.`;
-  } else {
-    msg += `of type ${types4[0]}.`;
-  }
-  if (actual == null) {
-    msg += ` Received ${actual}`;
-  } else if (typeof actual === "function" && actual.name) {
-    msg += ` Received function ${actual.name}`;
-  } else if (typeof actual === "object" && actual != null) {
-    if (actual.constructor && actual.constructor.name) {
-      msg += ` Received an instance of ${actual.constructor.name}`;
-    }
-  }
-  return msg;
-}
-var invalid_key_input_default = (actual, ...types4) => {
-  return message("Key must be ", actual, ...types4);
-};
-function withAlg(alg, actual, ...types4) {
-  return message(`Key for the ${alg} algorithm must be `, actual, ...types4);
-}
-
-// node_modules/jose/dist/node/esm/runtime/is_key_like.js
-var is_key_like_default = (key) => is_key_object_default(key) || isCryptoKey(key);
-var types3 = ["KeyObject"];
-if (globalThis.CryptoKey || (webcrypto_default === null || webcrypto_default === void 0 ? void 0 : webcrypto_default.CryptoKey)) {
-  types3.push("CryptoKey");
-}
-
-// node_modules/jose/dist/node/esm/lib/is_disjoint.js
-var isDisjoint = (...headers) => {
-  const sources = headers.filter(Boolean);
-  if (sources.length === 0 || sources.length === 1) {
-    return true;
-  }
-  let acc;
-  for (const header of sources) {
-    const parameters = Object.keys(header);
-    if (!acc || acc.size === 0) {
-      acc = new Set(parameters);
-      continue;
-    }
-    for (const parameter of parameters) {
-      if (acc.has(parameter)) {
-        return false;
-      }
-      acc.add(parameter);
-    }
-  }
-  return true;
-};
-var is_disjoint_default = isDisjoint;
-
-// node_modules/jose/dist/node/esm/lib/is_object.js
-function isObjectLike(value) {
-  return typeof value === "object" && value !== null;
-}
-function isObject2(input) {
-  if (!isObjectLike(input) || Object.prototype.toString.call(input) !== "[object Object]") {
-    return false;
-  }
-  if (Object.getPrototypeOf(input) === null) {
-    return true;
-  }
-  let proto = input;
-  while (Object.getPrototypeOf(proto) !== null) {
-    proto = Object.getPrototypeOf(proto);
-  }
-  return Object.getPrototypeOf(input) === proto;
-}
-
-// node_modules/jose/dist/node/esm/runtime/get_named_curve.js
-var import_buffer2 = require("buffer");
-var import_crypto2 = require("crypto");
-var p256 = import_buffer2.Buffer.from([42, 134, 72, 206, 61, 3, 1, 7]);
-var p384 = import_buffer2.Buffer.from([43, 129, 4, 0, 34]);
-var p521 = import_buffer2.Buffer.from([43, 129, 4, 0, 35]);
-var secp256k1 = import_buffer2.Buffer.from([43, 129, 4, 0, 10]);
-var weakMap = /* @__PURE__ */ new WeakMap();
-var namedCurveToJOSE = (namedCurve) => {
-  switch (namedCurve) {
-    case "prime256v1":
-      return "P-256";
-    case "secp384r1":
-      return "P-384";
-    case "secp521r1":
-      return "P-521";
-    case "secp256k1":
-      return "secp256k1";
-    default:
-      throw new JOSENotSupported("Unsupported key curve for this operation");
-  }
-};
-var getNamedCurve2 = (kee, raw) => {
-  var _a;
-  let key;
-  if (isCryptoKey(kee)) {
-    key = import_crypto2.KeyObject.from(kee);
-  } else if (is_key_object_default(kee)) {
-    key = kee;
-  } else {
-    throw new TypeError(invalid_key_input_default(kee, ...types3));
-  }
-  if (key.type === "secret") {
-    throw new TypeError('only "private" or "public" type keys can be used for this operation');
-  }
-  switch (key.asymmetricKeyType) {
-    case "ed25519":
-    case "ed448":
-      return `Ed${key.asymmetricKeyType.slice(2)}`;
-    case "x25519":
-    case "x448":
-      return `X${key.asymmetricKeyType.slice(1)}`;
-    case "ec": {
-      if (weakMap.has(key)) {
-        return weakMap.get(key);
-      }
-      let namedCurve = (_a = key.asymmetricKeyDetails) === null || _a === void 0 ? void 0 : _a.namedCurve;
-      if (!namedCurve && key.type === "private") {
-        namedCurve = getNamedCurve2((0, import_crypto2.createPublicKey)(key), true);
-      } else if (!namedCurve) {
-        const buf = key.export({ format: "der", type: "spki" });
-        const i = buf[1] < 128 ? 14 : 15;
-        const len = buf[i];
-        const curveOid = buf.slice(i + 1, i + 1 + len);
-        if (curveOid.equals(p256)) {
-          namedCurve = "prime256v1";
-        } else if (curveOid.equals(p384)) {
-          namedCurve = "secp384r1";
-        } else if (curveOid.equals(p521)) {
-          namedCurve = "secp521r1";
-        } else if (curveOid.equals(secp256k1)) {
-          namedCurve = "secp256k1";
-        } else {
-          throw new JOSENotSupported("Unsupported key curve for this operation");
-        }
-      }
-      if (raw)
-        return namedCurve;
-      const curve = namedCurveToJOSE(namedCurve);
-      weakMap.set(key, curve);
-      return curve;
-    }
-    default:
-      throw new TypeError("Invalid asymmetric key type for this operation");
-  }
-};
-function setCurve(keyObject, curve) {
-  weakMap.set(keyObject, curve);
-}
-var get_named_curve_default = getNamedCurve2;
-
-// node_modules/jose/dist/node/esm/runtime/check_modulus_length.js
-var weakMap2 = /* @__PURE__ */ new WeakMap();
-var getLength = (buf, index) => {
-  let len = buf.readUInt8(1);
-  if ((len & 128) === 0) {
-    if (index === 0) {
-      return len;
-    }
-    return getLength(buf.subarray(2 + len), index - 1);
-  }
-  const num = len & 127;
-  len = 0;
-  for (let i = 0; i < num; i++) {
-    len <<= 8;
-    const j = buf.readUInt8(2 + i);
-    len |= j;
-  }
-  if (index === 0) {
-    return len;
-  }
-  return getLength(buf.subarray(2 + len), index - 1);
-};
-var getLengthOfSeqIndex = (sequence, index) => {
-  const len = sequence.readUInt8(1);
-  if ((len & 128) === 0) {
-    return getLength(sequence.subarray(2), index);
-  }
-  const num = len & 127;
-  return getLength(sequence.subarray(2 + num), index);
-};
-var getModulusLength = (key) => {
-  var _a, _b;
-  if (weakMap2.has(key)) {
-    return weakMap2.get(key);
-  }
-  const modulusLength = (_b = (_a = key.asymmetricKeyDetails) === null || _a === void 0 ? void 0 : _a.modulusLength) !== null && _b !== void 0 ? _b : getLengthOfSeqIndex(key.export({ format: "der", type: "pkcs1" }), key.type === "private" ? 1 : 0) - 1 << 3;
-  weakMap2.set(key, modulusLength);
-  return modulusLength;
-};
-var setModulusLength = (keyObject, modulusLength) => {
-  weakMap2.set(keyObject, modulusLength);
-};
-var check_modulus_length_default = (key, alg) => {
-  if (getModulusLength(key) < 2048) {
-    throw new TypeError(`${alg} requires key modulusLength to be 2048 bits or larger`);
-  }
-};
-
-// node_modules/jose/dist/node/esm/runtime/asn1.js
-var import_crypto3 = require("crypto");
-var import_buffer3 = require("buffer");
-var fromPKCS8 = (pem) => (0, import_crypto3.createPrivateKey)({
-  key: import_buffer3.Buffer.from(pem.replace(/(?:-----(?:BEGIN|END) PRIVATE KEY-----|\s)/g, ""), "base64"),
-  type: "pkcs8",
-  format: "der"
-});
-
-// node_modules/jose/dist/node/esm/runtime/jwk_to_key.js
-var import_buffer5 = require("buffer");
-var import_crypto4 = require("crypto");
-
-// node_modules/jose/dist/node/esm/runtime/asn1_sequence_encoder.js
-var import_buffer4 = require("buffer");
-var tagInteger = 2;
-var tagBitStr = 3;
-var tagOctStr = 4;
-var tagSequence = 48;
-var bZero = import_buffer4.Buffer.from([0]);
-var bTagInteger = import_buffer4.Buffer.from([tagInteger]);
-var bTagBitStr = import_buffer4.Buffer.from([tagBitStr]);
-var bTagSequence = import_buffer4.Buffer.from([tagSequence]);
-var bTagOctStr = import_buffer4.Buffer.from([tagOctStr]);
-var encodeLength = (len) => {
-  if (len < 128)
-    return import_buffer4.Buffer.from([len]);
-  const buffer = import_buffer4.Buffer.alloc(5);
-  buffer.writeUInt32BE(len, 1);
-  let offset = 1;
-  while (buffer[offset] === 0)
-    offset++;
-  buffer[offset - 1] = 128 | 5 - offset;
-  return buffer.slice(offset - 1);
-};
-var oids = /* @__PURE__ */ new Map([
-  ["P-256", import_buffer4.Buffer.from("06 08 2A 86 48 CE 3D 03 01 07".replace(/ /g, ""), "hex")],
-  ["secp256k1", import_buffer4.Buffer.from("06 05 2B 81 04 00 0A".replace(/ /g, ""), "hex")],
-  ["P-384", import_buffer4.Buffer.from("06 05 2B 81 04 00 22".replace(/ /g, ""), "hex")],
-  ["P-521", import_buffer4.Buffer.from("06 05 2B 81 04 00 23".replace(/ /g, ""), "hex")],
-  ["ecPublicKey", import_buffer4.Buffer.from("06 07 2A 86 48 CE 3D 02 01".replace(/ /g, ""), "hex")],
-  ["X25519", import_buffer4.Buffer.from("06 03 2B 65 6E".replace(/ /g, ""), "hex")],
-  ["X448", import_buffer4.Buffer.from("06 03 2B 65 6F".replace(/ /g, ""), "hex")],
-  ["Ed25519", import_buffer4.Buffer.from("06 03 2B 65 70".replace(/ /g, ""), "hex")],
-  ["Ed448", import_buffer4.Buffer.from("06 03 2B 65 71".replace(/ /g, ""), "hex")]
-]);
-var DumbAsn1Encoder = class {
-  constructor() {
-    this.length = 0;
-    this.elements = [];
-  }
-  oidFor(oid) {
-    const bOid = oids.get(oid);
-    if (!bOid) {
-      throw new JOSENotSupported("Invalid or unsupported OID");
-    }
-    this.elements.push(bOid);
-    this.length += bOid.length;
-  }
-  zero() {
-    this.elements.push(bTagInteger, import_buffer4.Buffer.from([1]), bZero);
-    this.length += 3;
-  }
-  one() {
-    this.elements.push(bTagInteger, import_buffer4.Buffer.from([1]), import_buffer4.Buffer.from([1]));
-    this.length += 3;
-  }
-  unsignedInteger(integer) {
-    if (integer[0] & 128) {
-      const len = encodeLength(integer.length + 1);
-      this.elements.push(bTagInteger, len, bZero, integer);
-      this.length += 2 + len.length + integer.length;
-    } else {
-      let i = 0;
-      while (integer[i] === 0 && (integer[i + 1] & 128) === 0)
-        i++;
-      const len = encodeLength(integer.length - i);
-      this.elements.push(bTagInteger, encodeLength(integer.length - i), integer.slice(i));
-      this.length += 1 + len.length + integer.length - i;
-    }
-  }
-  octStr(octStr) {
-    const len = encodeLength(octStr.length);
-    this.elements.push(bTagOctStr, encodeLength(octStr.length), octStr);
-    this.length += 1 + len.length + octStr.length;
-  }
-  bitStr(bitS) {
-    const len = encodeLength(bitS.length + 1);
-    this.elements.push(bTagBitStr, encodeLength(bitS.length + 1), bZero, bitS);
-    this.length += 1 + len.length + bitS.length + 1;
-  }
-  add(seq) {
-    this.elements.push(seq);
-    this.length += seq.length;
-  }
-  end(tag = bTagSequence) {
-    const len = encodeLength(this.length);
-    return import_buffer4.Buffer.concat([tag, len, ...this.elements], 1 + len.length + this.length);
-  }
-};
-
-// node_modules/jose/dist/node/esm/runtime/flags.js
-var [major, minor] = process.versions.node.split(".").map((str) => parseInt(str, 10));
-var oneShotCallback = major >= 16 || major === 15 && minor >= 13;
-var rsaPssParams = !("electron" in process.versions) && (major >= 17 || major === 16 && minor >= 9);
-var jwkExport = major >= 16 || major === 15 && minor >= 9;
-var jwkImport = major >= 16 || major === 15 && minor >= 12;
-
-// node_modules/jose/dist/node/esm/runtime/jwk_to_key.js
-var parse = (jwk) => {
-  if (jwkImport && jwk.kty !== "oct") {
-    return jwk.d ? (0, import_crypto4.createPrivateKey)({ format: "jwk", key: jwk }) : (0, import_crypto4.createPublicKey)({ format: "jwk", key: jwk });
-  }
-  switch (jwk.kty) {
-    case "oct": {
-      return (0, import_crypto4.createSecretKey)(decode(jwk.k));
-    }
-    case "RSA": {
-      const enc = new DumbAsn1Encoder();
-      const isPrivate = jwk.d !== void 0;
-      const modulus = import_buffer5.Buffer.from(jwk.n, "base64");
-      const exponent = import_buffer5.Buffer.from(jwk.e, "base64");
-      if (isPrivate) {
-        enc.zero();
-        enc.unsignedInteger(modulus);
-        enc.unsignedInteger(exponent);
-        enc.unsignedInteger(import_buffer5.Buffer.from(jwk.d, "base64"));
-        enc.unsignedInteger(import_buffer5.Buffer.from(jwk.p, "base64"));
-        enc.unsignedInteger(import_buffer5.Buffer.from(jwk.q, "base64"));
-        enc.unsignedInteger(import_buffer5.Buffer.from(jwk.dp, "base64"));
-        enc.unsignedInteger(import_buffer5.Buffer.from(jwk.dq, "base64"));
-        enc.unsignedInteger(import_buffer5.Buffer.from(jwk.qi, "base64"));
-      } else {
-        enc.unsignedInteger(modulus);
-        enc.unsignedInteger(exponent);
-      }
-      const der = enc.end();
-      const createInput = {
-        key: der,
-        format: "der",
-        type: "pkcs1"
-      };
-      const keyObject = isPrivate ? (0, import_crypto4.createPrivateKey)(createInput) : (0, import_crypto4.createPublicKey)(createInput);
-      setModulusLength(keyObject, modulus.length << 3);
-      return keyObject;
-    }
-    case "EC": {
-      const enc = new DumbAsn1Encoder();
-      const isPrivate = jwk.d !== void 0;
-      const pub = import_buffer5.Buffer.concat([
-        import_buffer5.Buffer.alloc(1, 4),
-        import_buffer5.Buffer.from(jwk.x, "base64"),
-        import_buffer5.Buffer.from(jwk.y, "base64")
-      ]);
-      if (isPrivate) {
-        enc.zero();
-        const enc$12 = new DumbAsn1Encoder();
-        enc$12.oidFor("ecPublicKey");
-        enc$12.oidFor(jwk.crv);
-        enc.add(enc$12.end());
-        const enc$2 = new DumbAsn1Encoder();
-        enc$2.one();
-        enc$2.octStr(import_buffer5.Buffer.from(jwk.d, "base64"));
-        const enc$3 = new DumbAsn1Encoder();
-        enc$3.bitStr(pub);
-        const f2 = enc$3.end(import_buffer5.Buffer.from([161]));
-        enc$2.add(f2);
-        const f = enc$2.end();
-        const enc$4 = new DumbAsn1Encoder();
-        enc$4.add(f);
-        const f3 = enc$4.end(import_buffer5.Buffer.from([4]));
-        enc.add(f3);
-        const der2 = enc.end();
-        const keyObject2 = (0, import_crypto4.createPrivateKey)({ key: der2, format: "der", type: "pkcs8" });
-        setCurve(keyObject2, jwk.crv);
-        return keyObject2;
-      }
-      const enc$1 = new DumbAsn1Encoder();
-      enc$1.oidFor("ecPublicKey");
-      enc$1.oidFor(jwk.crv);
-      enc.add(enc$1.end());
-      enc.bitStr(pub);
-      const der = enc.end();
-      const keyObject = (0, import_crypto4.createPublicKey)({ key: der, format: "der", type: "spki" });
-      setCurve(keyObject, jwk.crv);
-      return keyObject;
-    }
-    case "OKP": {
-      const enc = new DumbAsn1Encoder();
-      const isPrivate = jwk.d !== void 0;
-      if (isPrivate) {
-        enc.zero();
-        const enc$12 = new DumbAsn1Encoder();
-        enc$12.oidFor(jwk.crv);
-        enc.add(enc$12.end());
-        const enc$2 = new DumbAsn1Encoder();
-        enc$2.octStr(import_buffer5.Buffer.from(jwk.d, "base64"));
-        const f = enc$2.end(import_buffer5.Buffer.from([4]));
-        enc.add(f);
-        const der2 = enc.end();
-        return (0, import_crypto4.createPrivateKey)({ key: der2, format: "der", type: "pkcs8" });
-      }
-      const enc$1 = new DumbAsn1Encoder();
-      enc$1.oidFor(jwk.crv);
-      enc.add(enc$1.end());
-      enc.bitStr(import_buffer5.Buffer.from(jwk.x, "base64"));
-      const der = enc.end();
-      return (0, import_crypto4.createPublicKey)({ key: der, format: "der", type: "spki" });
-    }
-    default:
-      throw new JOSENotSupported('Invalid or unsupported JWK "kty" (Key Type) Parameter value');
-  }
-};
-var jwk_to_key_default = parse;
-
-// node_modules/jose/dist/node/esm/key/import.js
-async function importPKCS8(pkcs8, alg, options) {
-  if (typeof pkcs8 !== "string" || pkcs8.indexOf("-----BEGIN PRIVATE KEY-----") !== 0) {
-    throw new TypeError('"pkcs8" must be PKCS#8 formatted string');
-  }
-  return fromPKCS8(pkcs8, alg, options);
-}
-async function importJWK(jwk, alg, octAsKeyObject) {
-  var _a;
-  if (!isObject2(jwk)) {
-    throw new TypeError("JWK must be an object");
-  }
-  alg || (alg = jwk.alg);
-  switch (jwk.kty) {
-    case "oct":
-      if (typeof jwk.k !== "string" || !jwk.k) {
-        throw new TypeError('missing "k" (Key Value) Parameter value');
-      }
-      octAsKeyObject !== null && octAsKeyObject !== void 0 ? octAsKeyObject : octAsKeyObject = jwk.ext !== true;
-      if (octAsKeyObject) {
-        return jwk_to_key_default({ ...jwk, alg, ext: (_a = jwk.ext) !== null && _a !== void 0 ? _a : false });
-      }
-      return decode(jwk.k);
-    case "RSA":
-      if (jwk.oth !== void 0) {
-        throw new JOSENotSupported('RSA JWK "oth" (Other Primes Info) Parameter value is not supported');
-      }
-    case "EC":
-    case "OKP":
-      return jwk_to_key_default({ ...jwk, alg });
-    default:
-      throw new JOSENotSupported('Unsupported "kty" (Key Type) Parameter value');
-  }
-}
-
-// node_modules/jose/dist/node/esm/lib/check_key_type.js
-var symmetricTypeCheck = (alg, key) => {
-  if (key instanceof Uint8Array)
-    return;
-  if (!is_key_like_default(key)) {
-    throw new TypeError(withAlg(alg, key, ...types3, "Uint8Array"));
-  }
-  if (key.type !== "secret") {
-    throw new TypeError(`${types3.join(" or ")} instances for symmetric algorithms must be of type "secret"`);
-  }
-};
-var asymmetricTypeCheck = (alg, key, usage) => {
-  if (!is_key_like_default(key)) {
-    throw new TypeError(withAlg(alg, key, ...types3));
-  }
-  if (key.type === "secret") {
-    throw new TypeError(`${types3.join(" or ")} instances for asymmetric algorithms must not be of type "secret"`);
-  }
-  if (usage === "sign" && key.type === "public") {
-    throw new TypeError(`${types3.join(" or ")} instances for asymmetric algorithm signing must be of type "private"`);
-  }
-  if (usage === "decrypt" && key.type === "public") {
-    throw new TypeError(`${types3.join(" or ")} instances for asymmetric algorithm decryption must be of type "private"`);
-  }
-  if (key.algorithm && usage === "verify" && key.type === "private") {
-    throw new TypeError(`${types3.join(" or ")} instances for asymmetric algorithm verifying must be of type "public"`);
-  }
-  if (key.algorithm && usage === "encrypt" && key.type === "private") {
-    throw new TypeError(`${types3.join(" or ")} instances for asymmetric algorithm encryption must be of type "public"`);
-  }
-};
-var checkKeyType = (alg, key, usage) => {
-  const symmetric = alg.startsWith("HS") || alg === "dir" || alg.startsWith("PBES2") || /^A\d{3}(?:GCM)?KW$/.test(alg);
-  if (symmetric) {
-    symmetricTypeCheck(alg, key);
-  } else {
-    asymmetricTypeCheck(alg, key, usage);
-  }
-};
-var check_key_type_default = checkKeyType;
-
-// node_modules/jose/dist/node/esm/lib/validate_crit.js
-function validateCrit(Err, recognizedDefault, recognizedOption, protectedHeader, joseHeader) {
-  if (joseHeader.crit !== void 0 && protectedHeader.crit === void 0) {
-    throw new Err('"crit" (Critical) Header Parameter MUST be integrity protected');
-  }
-  if (!protectedHeader || protectedHeader.crit === void 0) {
-    return /* @__PURE__ */ new Set();
-  }
-  if (!Array.isArray(protectedHeader.crit) || protectedHeader.crit.length === 0 || protectedHeader.crit.some((input) => typeof input !== "string" || input.length === 0)) {
-    throw new Err('"crit" (Critical) Header Parameter MUST be an array of non-empty strings when present');
-  }
-  let recognized;
-  if (recognizedOption !== void 0) {
-    recognized = new Map([...Object.entries(recognizedOption), ...recognizedDefault.entries()]);
-  } else {
-    recognized = recognizedDefault;
-  }
-  for (const parameter of protectedHeader.crit) {
-    if (!recognized.has(parameter)) {
-      throw new JOSENotSupported(`Extension Header Parameter "${parameter}" is not recognized`);
-    }
-    if (joseHeader[parameter] === void 0) {
-      throw new Err(`Extension Header Parameter "${parameter}" is missing`);
-    } else if (recognized.get(parameter) && protectedHeader[parameter] === void 0) {
-      throw new Err(`Extension Header Parameter "${parameter}" MUST be integrity protected`);
-    }
-  }
-  return new Set(protectedHeader.crit);
-}
-var validate_crit_default = validateCrit;
-
-// node_modules/jose/dist/node/esm/lib/validate_algorithms.js
-var validateAlgorithms = (option, algorithms) => {
-  if (algorithms !== void 0 && (!Array.isArray(algorithms) || algorithms.some((s) => typeof s !== "string"))) {
-    throw new TypeError(`"${option}" option must be an array of strings`);
-  }
-  if (!algorithms) {
-    return void 0;
-  }
-  return new Set(algorithms);
-};
-var validate_algorithms_default = validateAlgorithms;
-
-// node_modules/jose/dist/node/esm/runtime/verify.js
-var crypto3 = __toESM(require("crypto"), 1);
-var import_util4 = require("util");
-
-// node_modules/jose/dist/node/esm/runtime/dsa_digest.js
-function dsaDigest(alg) {
-  switch (alg) {
-    case "PS256":
-    case "RS256":
-    case "ES256":
-    case "ES256K":
-      return "sha256";
-    case "PS384":
-    case "RS384":
-    case "ES384":
-      return "sha384";
-    case "PS512":
-    case "RS512":
-    case "ES512":
-      return "sha512";
-    case "EdDSA":
-      return void 0;
-    default:
-      throw new JOSENotSupported(`alg ${alg} is not supported either by JOSE or your javascript runtime`);
-  }
-}
-
-// node_modules/jose/dist/node/esm/runtime/node_key.js
-var import_crypto5 = require("crypto");
-var PSS = {
-  padding: import_crypto5.constants.RSA_PKCS1_PSS_PADDING,
-  saltLength: import_crypto5.constants.RSA_PSS_SALTLEN_DIGEST
-};
-var ecCurveAlgMap = /* @__PURE__ */ new Map([
-  ["ES256", "P-256"],
-  ["ES256K", "secp256k1"],
-  ["ES384", "P-384"],
-  ["ES512", "P-521"]
-]);
-function keyForCrypto(alg, key) {
-  switch (alg) {
-    case "EdDSA":
-      if (!["ed25519", "ed448"].includes(key.asymmetricKeyType)) {
-        throw new TypeError("Invalid key for this operation, its asymmetricKeyType must be ed25519 or ed448");
-      }
-      return key;
-    case "RS256":
-    case "RS384":
-    case "RS512":
-      if (key.asymmetricKeyType !== "rsa") {
-        throw new TypeError("Invalid key for this operation, its asymmetricKeyType must be rsa");
-      }
-      check_modulus_length_default(key, alg);
-      return key;
-    case (rsaPssParams && "PS256"):
-    case (rsaPssParams && "PS384"):
-    case (rsaPssParams && "PS512"):
-      if (key.asymmetricKeyType === "rsa-pss") {
-        const { hashAlgorithm, mgf1HashAlgorithm, saltLength } = key.asymmetricKeyDetails;
-        const length = parseInt(alg.slice(-3), 10);
-        if (hashAlgorithm !== void 0 && (hashAlgorithm !== `sha${length}` || mgf1HashAlgorithm !== hashAlgorithm)) {
-          throw new TypeError(`Invalid key for this operation, its RSA-PSS parameters do not meet the requirements of "alg" ${alg}`);
-        }
-        if (saltLength !== void 0 && saltLength > length >> 3) {
-          throw new TypeError(`Invalid key for this operation, its RSA-PSS parameter saltLength does not meet the requirements of "alg" ${alg}`);
-        }
-      } else if (key.asymmetricKeyType !== "rsa") {
-        throw new TypeError("Invalid key for this operation, its asymmetricKeyType must be rsa or rsa-pss");
-      }
-      check_modulus_length_default(key, alg);
-      return { key, ...PSS };
-    case (!rsaPssParams && "PS256"):
-    case (!rsaPssParams && "PS384"):
-    case (!rsaPssParams && "PS512"):
-      if (key.asymmetricKeyType !== "rsa") {
-        throw new TypeError("Invalid key for this operation, its asymmetricKeyType must be rsa");
-      }
-      check_modulus_length_default(key, alg);
-      return { key, ...PSS };
-    case "ES256":
-    case "ES256K":
-    case "ES384":
-    case "ES512": {
-      if (key.asymmetricKeyType !== "ec") {
-        throw new TypeError("Invalid key for this operation, its asymmetricKeyType must be ec");
-      }
-      const actual = get_named_curve_default(key);
-      const expected = ecCurveAlgMap.get(alg);
-      if (actual !== expected) {
-        throw new TypeError(`Invalid key curve for the algorithm, its curve must be ${expected}, got ${actual}`);
-      }
-      return { dsaEncoding: "ieee-p1363", key };
-    }
-    default:
-      throw new JOSENotSupported(`alg ${alg} is not supported either by JOSE or your javascript runtime`);
-  }
-}
-
-// node_modules/jose/dist/node/esm/runtime/sign.js
-var crypto2 = __toESM(require("crypto"), 1);
-var import_util3 = require("util");
-
-// node_modules/jose/dist/node/esm/runtime/hmac_digest.js
-function hmacDigest(alg) {
-  switch (alg) {
-    case "HS256":
-      return "sha256";
-    case "HS384":
-      return "sha384";
-    case "HS512":
-      return "sha512";
-    default:
-      throw new JOSENotSupported(`alg ${alg} is not supported either by JOSE or your javascript runtime`);
-  }
-}
-
-// node_modules/jose/dist/node/esm/runtime/get_sign_verify_key.js
-var import_crypto6 = require("crypto");
-function getSignVerifyKey(alg, key, usage) {
-  if (key instanceof Uint8Array) {
-    if (!alg.startsWith("HS")) {
-      throw new TypeError(invalid_key_input_default(key, ...types3));
-    }
-    return (0, import_crypto6.createSecretKey)(key);
-  }
-  if (key instanceof import_crypto6.KeyObject) {
-    return key;
-  }
-  if (isCryptoKey(key)) {
-    checkSigCryptoKey(key, alg, usage);
-    return import_crypto6.KeyObject.from(key);
-  }
-  throw new TypeError(invalid_key_input_default(key, ...types3, "Uint8Array"));
-}
-
-// node_modules/jose/dist/node/esm/runtime/sign.js
-var oneShotSign;
-if (crypto2.sign.length > 3) {
-  oneShotSign = (0, import_util3.promisify)(crypto2.sign);
-} else {
-  oneShotSign = crypto2.sign;
-}
-var sign2 = async (alg, key, data) => {
-  const keyObject = getSignVerifyKey(alg, key, "sign");
-  if (alg.startsWith("HS")) {
-    const hmac = crypto2.createHmac(hmacDigest(alg), keyObject);
-    hmac.update(data);
-    return hmac.digest();
-  }
-  return oneShotSign(dsaDigest(alg), data, keyForCrypto(alg, keyObject));
-};
-var sign_default = sign2;
-
-// node_modules/jose/dist/node/esm/runtime/verify.js
-var oneShotVerify;
-if (crypto3.verify.length > 4 && oneShotCallback) {
-  oneShotVerify = (0, import_util4.promisify)(crypto3.verify);
-} else {
-  oneShotVerify = crypto3.verify;
-}
-var verify2 = async (alg, key, signature, data) => {
-  const keyObject = getSignVerifyKey(alg, key, "verify");
-  if (alg.startsWith("HS")) {
-    const expected = await sign_default(alg, keyObject, data);
-    const actual = signature;
-    try {
-      return crypto3.timingSafeEqual(actual, expected);
-    } catch {
-      return false;
-    }
-  }
-  const algorithm = dsaDigest(alg);
-  const keyInput = keyForCrypto(alg, keyObject);
-  try {
-    return await oneShotVerify(algorithm, data, keyInput, signature);
-  } catch {
-    return false;
-  }
-};
-var verify_default = verify2;
-
-// node_modules/jose/dist/node/esm/jws/flattened/verify.js
-async function flattenedVerify(jws, key, options) {
-  var _a;
-  if (!isObject2(jws)) {
-    throw new JWSInvalid("Flattened JWS must be an object");
-  }
-  if (jws.protected === void 0 && jws.header === void 0) {
-    throw new JWSInvalid('Flattened JWS must have either of the "protected" or "header" members');
-  }
-  if (jws.protected !== void 0 && typeof jws.protected !== "string") {
-    throw new JWSInvalid("JWS Protected Header incorrect type");
-  }
-  if (jws.payload === void 0) {
-    throw new JWSInvalid("JWS Payload missing");
-  }
-  if (typeof jws.signature !== "string") {
-    throw new JWSInvalid("JWS Signature missing or incorrect type");
-  }
-  if (jws.header !== void 0 && !isObject2(jws.header)) {
-    throw new JWSInvalid("JWS Unprotected Header incorrect type");
-  }
-  let parsedProt = {};
-  if (jws.protected) {
-    try {
-      const protectedHeader = decode(jws.protected);
-      parsedProt = JSON.parse(decoder.decode(protectedHeader));
-    } catch {
-      throw new JWSInvalid("JWS Protected Header is invalid");
-    }
-  }
-  if (!is_disjoint_default(parsedProt, jws.header)) {
-    throw new JWSInvalid("JWS Protected and JWS Unprotected Header Parameter names must be disjoint");
-  }
-  const joseHeader = {
-    ...parsedProt,
-    ...jws.header
-  };
-  const extensions = validate_crit_default(JWSInvalid, /* @__PURE__ */ new Map([["b64", true]]), options === null || options === void 0 ? void 0 : options.crit, parsedProt, joseHeader);
-  let b64 = true;
-  if (extensions.has("b64")) {
-    b64 = parsedProt.b64;
-    if (typeof b64 !== "boolean") {
-      throw new JWSInvalid('The "b64" (base64url-encode payload) Header Parameter must be a boolean');
-    }
-  }
-  const { alg } = joseHeader;
-  if (typeof alg !== "string" || !alg) {
-    throw new JWSInvalid('JWS "alg" (Algorithm) Header Parameter missing or invalid');
-  }
-  const algorithms = options && validate_algorithms_default("algorithms", options.algorithms);
-  if (algorithms && !algorithms.has(alg)) {
-    throw new JOSEAlgNotAllowed('"alg" (Algorithm) Header Parameter not allowed');
-  }
-  if (b64) {
-    if (typeof jws.payload !== "string") {
-      throw new JWSInvalid("JWS Payload must be a string");
-    }
-  } else if (typeof jws.payload !== "string" && !(jws.payload instanceof Uint8Array)) {
-    throw new JWSInvalid("JWS Payload must be a string or an Uint8Array instance");
-  }
-  let resolvedKey = false;
-  if (typeof key === "function") {
-    key = await key(parsedProt, jws);
-    resolvedKey = true;
-  }
-  check_key_type_default(alg, key, "verify");
-  const data = concat(encoder.encode((_a = jws.protected) !== null && _a !== void 0 ? _a : ""), encoder.encode("."), typeof jws.payload === "string" ? encoder.encode(jws.payload) : jws.payload);
-  let signature;
-  try {
-    signature = decode(jws.signature);
-  } catch {
-    throw new JWSInvalid("Failed to base64url decode the signature");
-  }
-  const verified = await verify_default(alg, key, signature, data);
-  if (!verified) {
-    throw new JWSSignatureVerificationFailed();
-  }
-  let payload;
-  if (b64) {
-    try {
-      payload = decode(jws.payload);
-    } catch {
-      throw new JWSInvalid("Failed to base64url decode the payload");
-    }
-  } else if (typeof jws.payload === "string") {
-    payload = encoder.encode(jws.payload);
-  } else {
-    payload = jws.payload;
-  }
-  const result = { payload };
-  if (jws.protected !== void 0) {
-    result.protectedHeader = parsedProt;
-  }
-  if (jws.header !== void 0) {
-    result.unprotectedHeader = jws.header;
-  }
-  if (resolvedKey) {
-    return { ...result, key };
-  }
-  return result;
-}
-
-// node_modules/jose/dist/node/esm/jws/compact/verify.js
-async function compactVerify(jws, key, options) {
-  if (jws instanceof Uint8Array) {
-    jws = decoder.decode(jws);
-  }
-  if (typeof jws !== "string") {
-    throw new JWSInvalid("Compact JWS must be a string or Uint8Array");
-  }
-  const { 0: protectedHeader, 1: payload, 2: signature, length } = jws.split(".");
-  if (length !== 3) {
-    throw new JWSInvalid("Invalid Compact JWS");
-  }
-  const verified = await flattenedVerify({ payload, protected: protectedHeader, signature }, key, options);
-  const result = { payload: verified.payload, protectedHeader: verified.protectedHeader };
-  if (typeof key === "function") {
-    return { ...result, key: verified.key };
-  }
-  return result;
-}
-
-// node_modules/jose/dist/node/esm/lib/epoch.js
-var epoch_default = (date) => Math.floor(date.getTime() / 1e3);
-
-// node_modules/jose/dist/node/esm/lib/secs.js
-var minute = 60;
-var hour = minute * 60;
-var day = hour * 24;
-var week = day * 7;
-var year = day * 365.25;
-var REGEX = /^(\d+|\d+\.\d+) ?(seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|weeks?|w|years?|yrs?|y)$/i;
-var secs_default = (str) => {
-  const matched = REGEX.exec(str);
-  if (!matched) {
-    throw new TypeError("Invalid time period format");
-  }
-  const value = parseFloat(matched[1]);
-  const unit = matched[2].toLowerCase();
-  switch (unit) {
-    case "sec":
-    case "secs":
-    case "second":
-    case "seconds":
-    case "s":
-      return Math.round(value);
-    case "minute":
-    case "minutes":
-    case "min":
-    case "mins":
-    case "m":
-      return Math.round(value * minute);
-    case "hour":
-    case "hours":
-    case "hr":
-    case "hrs":
-    case "h":
-      return Math.round(value * hour);
-    case "day":
-    case "days":
-    case "d":
-      return Math.round(value * day);
-    case "week":
-    case "weeks":
-    case "w":
-      return Math.round(value * week);
-    default:
-      return Math.round(value * year);
-  }
-};
-
-// node_modules/jose/dist/node/esm/lib/jwt_claims_set.js
-var normalizeTyp = (value) => value.toLowerCase().replace(/^application\//, "");
-var checkAudiencePresence = (audPayload, audOption) => {
-  if (typeof audPayload === "string") {
-    return audOption.includes(audPayload);
-  }
-  if (Array.isArray(audPayload)) {
-    return audOption.some(Set.prototype.has.bind(new Set(audPayload)));
-  }
-  return false;
-};
-var jwt_claims_set_default = (protectedHeader, encodedPayload, options = {}) => {
-  const { typ } = options;
-  if (typ && (typeof protectedHeader.typ !== "string" || normalizeTyp(protectedHeader.typ) !== normalizeTyp(typ))) {
-    throw new JWTClaimValidationFailed('unexpected "typ" JWT header value', "typ", "check_failed");
-  }
-  let payload;
-  try {
-    payload = JSON.parse(decoder.decode(encodedPayload));
-  } catch {
-  }
-  if (!isObject2(payload)) {
-    throw new JWTInvalid("JWT Claims Set must be a top-level JSON object");
-  }
-  const { requiredClaims = [], issuer, subject, audience, maxTokenAge } = options;
-  if (maxTokenAge !== void 0)
-    requiredClaims.push("iat");
-  if (audience !== void 0)
-    requiredClaims.push("aud");
-  if (subject !== void 0)
-    requiredClaims.push("sub");
-  if (issuer !== void 0)
-    requiredClaims.push("iss");
-  for (const claim of new Set(requiredClaims.reverse())) {
-    if (!(claim in payload)) {
-      throw new JWTClaimValidationFailed(`missing required "${claim}" claim`, claim, "missing");
-    }
-  }
-  if (issuer && !(Array.isArray(issuer) ? issuer : [issuer]).includes(payload.iss)) {
-    throw new JWTClaimValidationFailed('unexpected "iss" claim value', "iss", "check_failed");
-  }
-  if (subject && payload.sub !== subject) {
-    throw new JWTClaimValidationFailed('unexpected "sub" claim value', "sub", "check_failed");
-  }
-  if (audience && !checkAudiencePresence(payload.aud, typeof audience === "string" ? [audience] : audience)) {
-    throw new JWTClaimValidationFailed('unexpected "aud" claim value', "aud", "check_failed");
-  }
-  let tolerance;
-  switch (typeof options.clockTolerance) {
-    case "string":
-      tolerance = secs_default(options.clockTolerance);
-      break;
-    case "number":
-      tolerance = options.clockTolerance;
-      break;
-    case "undefined":
-      tolerance = 0;
-      break;
-    default:
-      throw new TypeError("Invalid clockTolerance option type");
-  }
-  const { currentDate } = options;
-  const now = epoch_default(currentDate || /* @__PURE__ */ new Date());
-  if ((payload.iat !== void 0 || maxTokenAge) && typeof payload.iat !== "number") {
-    throw new JWTClaimValidationFailed('"iat" claim must be a number', "iat", "invalid");
-  }
-  if (payload.nbf !== void 0) {
-    if (typeof payload.nbf !== "number") {
-      throw new JWTClaimValidationFailed('"nbf" claim must be a number', "nbf", "invalid");
-    }
-    if (payload.nbf > now + tolerance) {
-      throw new JWTClaimValidationFailed('"nbf" claim timestamp check failed', "nbf", "check_failed");
-    }
-  }
-  if (payload.exp !== void 0) {
-    if (typeof payload.exp !== "number") {
-      throw new JWTClaimValidationFailed('"exp" claim must be a number', "exp", "invalid");
-    }
-    if (payload.exp <= now - tolerance) {
-      throw new JWTExpired('"exp" claim timestamp check failed', "exp", "check_failed");
-    }
-  }
-  if (maxTokenAge) {
-    const age = now - payload.iat;
-    const max = typeof maxTokenAge === "number" ? maxTokenAge : secs_default(maxTokenAge);
-    if (age - tolerance > max) {
-      throw new JWTExpired('"iat" claim timestamp check failed (too far in the past)', "iat", "check_failed");
-    }
-    if (age < 0 - tolerance) {
-      throw new JWTClaimValidationFailed('"iat" claim timestamp check failed (it should be in the past)', "iat", "check_failed");
-    }
-  }
-  return payload;
-};
-
-// node_modules/jose/dist/node/esm/jwt/verify.js
-async function jwtVerify(jwt, key, options) {
-  var _a;
-  const verified = await compactVerify(jwt, key, options);
-  if (((_a = verified.protectedHeader.crit) === null || _a === void 0 ? void 0 : _a.includes("b64")) && verified.protectedHeader.b64 === false) {
-    throw new JWTInvalid("JWTs MUST NOT use unencoded payload");
-  }
-  const payload = jwt_claims_set_default(verified.protectedHeader, verified.payload, options);
-  const result = { payload, protectedHeader: verified.protectedHeader };
-  if (typeof key === "function") {
-    return { ...result, key: verified.key };
-  }
-  return result;
-}
-
-// node_modules/jose/dist/node/esm/jws/flattened/sign.js
-var FlattenedSign = class {
-  constructor(payload) {
-    if (!(payload instanceof Uint8Array)) {
-      throw new TypeError("payload must be an instance of Uint8Array");
-    }
-    this._payload = payload;
-  }
-  setProtectedHeader(protectedHeader) {
-    if (this._protectedHeader) {
-      throw new TypeError("setProtectedHeader can only be called once");
-    }
-    this._protectedHeader = protectedHeader;
-    return this;
-  }
-  setUnprotectedHeader(unprotectedHeader) {
-    if (this._unprotectedHeader) {
-      throw new TypeError("setUnprotectedHeader can only be called once");
-    }
-    this._unprotectedHeader = unprotectedHeader;
-    return this;
-  }
-  async sign(key, options) {
-    if (!this._protectedHeader && !this._unprotectedHeader) {
-      throw new JWSInvalid("either setProtectedHeader or setUnprotectedHeader must be called before #sign()");
-    }
-    if (!is_disjoint_default(this._protectedHeader, this._unprotectedHeader)) {
-      throw new JWSInvalid("JWS Protected and JWS Unprotected Header Parameter names must be disjoint");
-    }
-    const joseHeader = {
-      ...this._protectedHeader,
-      ...this._unprotectedHeader
-    };
-    const extensions = validate_crit_default(JWSInvalid, /* @__PURE__ */ new Map([["b64", true]]), options === null || options === void 0 ? void 0 : options.crit, this._protectedHeader, joseHeader);
-    let b64 = true;
-    if (extensions.has("b64")) {
-      b64 = this._protectedHeader.b64;
-      if (typeof b64 !== "boolean") {
-        throw new JWSInvalid('The "b64" (base64url-encode payload) Header Parameter must be a boolean');
-      }
-    }
-    const { alg } = joseHeader;
-    if (typeof alg !== "string" || !alg) {
-      throw new JWSInvalid('JWS "alg" (Algorithm) Header Parameter missing or invalid');
-    }
-    check_key_type_default(alg, key, "sign");
-    let payload = this._payload;
-    if (b64) {
-      payload = encoder.encode(encode3(payload));
-    }
-    let protectedHeader;
-    if (this._protectedHeader) {
-      protectedHeader = encoder.encode(encode3(JSON.stringify(this._protectedHeader)));
-    } else {
-      protectedHeader = encoder.encode("");
-    }
-    const data = concat(protectedHeader, encoder.encode("."), payload);
-    const signature = await sign_default(alg, key, data);
-    const jws = {
-      signature: encode3(signature),
-      payload: ""
-    };
-    if (b64) {
-      jws.payload = decoder.decode(payload);
-    }
-    if (this._unprotectedHeader) {
-      jws.header = this._unprotectedHeader;
-    }
-    if (this._protectedHeader) {
-      jws.protected = decoder.decode(protectedHeader);
-    }
-    return jws;
-  }
-};
-
-// node_modules/jose/dist/node/esm/jws/compact/sign.js
-var CompactSign = class {
-  constructor(payload) {
-    this._flattened = new FlattenedSign(payload);
-  }
-  setProtectedHeader(protectedHeader) {
-    this._flattened.setProtectedHeader(protectedHeader);
-    return this;
-  }
-  async sign(key, options) {
-    const jws = await this._flattened.sign(key, options);
-    if (jws.payload === void 0) {
-      throw new TypeError("use the flattened module for creating JWS with b64: false");
-    }
-    return `${jws.protected}.${jws.payload}.${jws.signature}`;
-  }
-};
-
-// node_modules/jose/dist/node/esm/jwt/produce.js
-var ProduceJWT = class {
-  constructor(payload) {
-    if (!isObject2(payload)) {
-      throw new TypeError("JWT Claims Set MUST be an object");
-    }
-    this._payload = payload;
-  }
-  setIssuer(issuer) {
-    this._payload = { ...this._payload, iss: issuer };
-    return this;
-  }
-  setSubject(subject) {
-    this._payload = { ...this._payload, sub: subject };
-    return this;
-  }
-  setAudience(audience) {
-    this._payload = { ...this._payload, aud: audience };
-    return this;
-  }
-  setJti(jwtId) {
-    this._payload = { ...this._payload, jti: jwtId };
-    return this;
-  }
-  setNotBefore(input) {
-    if (typeof input === "number") {
-      this._payload = { ...this._payload, nbf: input };
-    } else {
-      this._payload = { ...this._payload, nbf: epoch_default(/* @__PURE__ */ new Date()) + secs_default(input) };
-    }
-    return this;
-  }
-  setExpirationTime(input) {
-    if (typeof input === "number") {
-      this._payload = { ...this._payload, exp: input };
-    } else {
-      this._payload = { ...this._payload, exp: epoch_default(/* @__PURE__ */ new Date()) + secs_default(input) };
-    }
-    return this;
-  }
-  setIssuedAt(input) {
-    if (typeof input === "undefined") {
-      this._payload = { ...this._payload, iat: epoch_default(/* @__PURE__ */ new Date()) };
-    } else {
-      this._payload = { ...this._payload, iat: input };
-    }
-    return this;
-  }
-};
-
-// node_modules/jose/dist/node/esm/jwt/sign.js
-var SignJWT = class extends ProduceJWT {
-  setProtectedHeader(protectedHeader) {
-    this._protectedHeader = protectedHeader;
-    return this;
-  }
-  async sign(key, options) {
-    var _a;
-    const sig = new CompactSign(encoder.encode(JSON.stringify(this._payload)));
-    sig.setProtectedHeader(this._protectedHeader);
-    if (Array.isArray((_a = this._protectedHeader) === null || _a === void 0 ? void 0 : _a.crit) && this._protectedHeader.crit.includes("b64") && this._protectedHeader.b64 === false) {
-      throw new JWTInvalid("JWTs MUST NOT use unencoded payload");
-    }
-    return sig.sign(key, options);
-  }
-};
-
-// node_modules/jose/dist/node/esm/jwks/local.js
-function getKtyFromAlg(alg) {
-  switch (typeof alg === "string" && alg.slice(0, 2)) {
-    case "RS":
-    case "PS":
-      return "RSA";
-    case "ES":
-      return "EC";
-    case "Ed":
-      return "OKP";
-    default:
-      throw new JOSENotSupported('Unsupported "alg" value for a JSON Web Key Set');
-  }
-}
-function isJWKSLike(jwks) {
-  return jwks && typeof jwks === "object" && Array.isArray(jwks.keys) && jwks.keys.every(isJWKLike);
-}
-function isJWKLike(key) {
-  return isObject2(key);
-}
-function clone(obj) {
-  if (typeof structuredClone === "function") {
-    return structuredClone(obj);
-  }
-  return JSON.parse(JSON.stringify(obj));
-}
-var LocalJWKSet = class {
-  constructor(jwks) {
-    this._cached = /* @__PURE__ */ new WeakMap();
-    if (!isJWKSLike(jwks)) {
-      throw new JWKSInvalid("JSON Web Key Set malformed");
-    }
-    this._jwks = clone(jwks);
-  }
-  async getKey(protectedHeader, token) {
-    const { alg, kid } = { ...protectedHeader, ...token === null || token === void 0 ? void 0 : token.header };
-    const kty = getKtyFromAlg(alg);
-    const candidates = this._jwks.keys.filter((jwk2) => {
-      let candidate = kty === jwk2.kty;
-      if (candidate && typeof kid === "string") {
-        candidate = kid === jwk2.kid;
-      }
-      if (candidate && typeof jwk2.alg === "string") {
-        candidate = alg === jwk2.alg;
-      }
-      if (candidate && typeof jwk2.use === "string") {
-        candidate = jwk2.use === "sig";
-      }
-      if (candidate && Array.isArray(jwk2.key_ops)) {
-        candidate = jwk2.key_ops.includes("verify");
-      }
-      if (candidate && alg === "EdDSA") {
-        candidate = jwk2.crv === "Ed25519" || jwk2.crv === "Ed448";
-      }
-      if (candidate) {
-        switch (alg) {
-          case "ES256":
-            candidate = jwk2.crv === "P-256";
-            break;
-          case "ES256K":
-            candidate = jwk2.crv === "secp256k1";
-            break;
-          case "ES384":
-            candidate = jwk2.crv === "P-384";
-            break;
-          case "ES512":
-            candidate = jwk2.crv === "P-521";
-            break;
-        }
-      }
-      return candidate;
-    });
-    const { 0: jwk, length } = candidates;
-    if (length === 0) {
-      throw new JWKSNoMatchingKey();
-    } else if (length !== 1) {
-      const error = new JWKSMultipleMatchingKeys();
-      const { _cached } = this;
-      error[Symbol.asyncIterator] = async function* () {
-        for (const jwk2 of candidates) {
-          try {
-            yield await importWithAlgCache(_cached, jwk2, alg);
-          } catch {
-            continue;
-          }
-        }
-      };
-      throw error;
-    }
-    return importWithAlgCache(this._cached, jwk, alg);
-  }
-};
-async function importWithAlgCache(cache, jwk, alg) {
-  const cached = cache.get(jwk) || cache.set(jwk, {}).get(jwk);
-  if (cached[alg] === void 0) {
-    const key = await importJWK({ ...jwk, ext: true }, alg);
-    if (key instanceof Uint8Array || key.type !== "public") {
-      throw new JWKSInvalid("JSON Web Key Set members must be public keys");
-    }
-    cached[alg] = key;
-  }
-  return cached[alg];
-}
-
-// node_modules/jose/dist/node/esm/runtime/fetch_jwks.js
-var http2 = __toESM(require("http"), 1);
-var https2 = __toESM(require("https"), 1);
-var import_events2 = require("events");
-var fetchJwks = async (url2, timeout, options) => {
-  let get3;
-  switch (url2.protocol) {
-    case "https:":
-      get3 = https2.get;
-      break;
-    case "http:":
-      get3 = http2.get;
-      break;
-    default:
-      throw new TypeError("Unsupported URL protocol.");
-  }
-  const { agent, headers } = options;
-  const req = get3(url2.href, {
-    agent,
-    timeout,
-    headers
-  });
-  const [response] = await Promise.race([(0, import_events2.once)(req, "response"), (0, import_events2.once)(req, "timeout")]);
-  if (!response) {
-    req.destroy();
-    throw new JWKSTimeout();
-  }
-  if (response.statusCode !== 200) {
-    throw new JOSEError("Expected 200 OK from the JSON Web Key Set HTTP response");
-  }
-  const parts = [];
-  for await (const part of response) {
-    parts.push(part);
-  }
-  try {
-    return JSON.parse(decoder.decode(concat(...parts)));
-  } catch {
-    throw new JOSEError("Failed to parse the JSON Web Key Set HTTP response as JSON");
-  }
-};
-var fetch_jwks_default = fetchJwks;
-
-// node_modules/jose/dist/node/esm/jwks/remote.js
-function isCloudflareWorkers() {
-  return typeof WebSocketPair !== "undefined" || typeof navigator !== "undefined" && navigator.userAgent === "Cloudflare-Workers" || typeof EdgeRuntime !== "undefined" && EdgeRuntime === "vercel";
-}
-var RemoteJWKSet = class extends LocalJWKSet {
-  constructor(url2, options) {
-    super({ keys: [] });
-    this._jwks = void 0;
-    if (!(url2 instanceof URL)) {
-      throw new TypeError("url must be an instance of URL");
-    }
-    this._url = new URL(url2.href);
-    this._options = { agent: options === null || options === void 0 ? void 0 : options.agent, headers: options === null || options === void 0 ? void 0 : options.headers };
-    this._timeoutDuration = typeof (options === null || options === void 0 ? void 0 : options.timeoutDuration) === "number" ? options === null || options === void 0 ? void 0 : options.timeoutDuration : 5e3;
-    this._cooldownDuration = typeof (options === null || options === void 0 ? void 0 : options.cooldownDuration) === "number" ? options === null || options === void 0 ? void 0 : options.cooldownDuration : 3e4;
-    this._cacheMaxAge = typeof (options === null || options === void 0 ? void 0 : options.cacheMaxAge) === "number" ? options === null || options === void 0 ? void 0 : options.cacheMaxAge : 6e5;
-  }
-  coolingDown() {
-    return typeof this._jwksTimestamp === "number" ? Date.now() < this._jwksTimestamp + this._cooldownDuration : false;
-  }
-  fresh() {
-    return typeof this._jwksTimestamp === "number" ? Date.now() < this._jwksTimestamp + this._cacheMaxAge : false;
-  }
-  async getKey(protectedHeader, token) {
-    if (!this._jwks || !this.fresh()) {
-      await this.reload();
-    }
-    try {
-      return await super.getKey(protectedHeader, token);
-    } catch (err) {
-      if (err instanceof JWKSNoMatchingKey) {
-        if (this.coolingDown() === false) {
-          await this.reload();
-          return super.getKey(protectedHeader, token);
-        }
-      }
-      throw err;
-    }
-  }
-  async reload() {
-    if (this._pendingFetch && isCloudflareWorkers()) {
-      this._pendingFetch = void 0;
-    }
-    this._pendingFetch || (this._pendingFetch = fetch_jwks_default(this._url, this._timeoutDuration, this._options).then((json) => {
-      if (!isJWKSLike(json)) {
-        throw new JWKSInvalid("JSON Web Key Set malformed");
-      }
-      this._jwks = { keys: json.keys };
-      this._jwksTimestamp = Date.now();
-      this._pendingFetch = void 0;
-    }).catch((err) => {
-      this._pendingFetch = void 0;
-      throw err;
-    }));
-    await this._pendingFetch;
-  }
-};
-function createRemoteJWKSet(url2, options) {
-  const set = new RemoteJWKSet(url2, options);
-  return async function(protectedHeader, token) {
-    return set.getKey(protectedHeader, token);
-  };
-}
-
-// node_modules/jose/dist/node/esm/util/base64url.js
-var base64url_exports = {};
-__export(base64url_exports, {
-  decode: () => decode2,
-  encode: () => encode4
-});
-var encode4 = encode3;
-var decode2 = decode;
-
-// node_modules/jose/dist/node/esm/util/decode_protected_header.js
-function decodeProtectedHeader(token) {
-  let protectedB64u;
-  if (typeof token === "string") {
-    const parts = token.split(".");
-    if (parts.length === 3 || parts.length === 5) {
-      ;
-      [protectedB64u] = parts;
-    }
-  } else if (typeof token === "object" && token) {
-    if ("protected" in token) {
-      protectedB64u = token.protected;
-    } else {
-      throw new TypeError("Token does not contain a Protected Header");
-    }
-  }
-  try {
-    if (typeof protectedB64u !== "string" || !protectedB64u) {
-      throw new Error();
-    }
-    const result = JSON.parse(decoder.decode(decode2(protectedB64u)));
-    if (!isObject2(result)) {
-      throw new Error();
-    }
-    return result;
-  } catch {
-    throw new TypeError("Invalid Token or Protected Header formatting");
-  }
-}
-
-// node_modules/jose/dist/node/esm/util/decode_jwt.js
-function decodeJwt(jwt) {
-  if (typeof jwt !== "string")
-    throw new JWTInvalid("JWTs must use Compact JWS serialization, JWT must be a string");
-  const { 1: payload, length } = jwt.split(".");
-  if (length === 5)
-    throw new JWTInvalid("Only JWTs using Compact JWS serialization can be decoded");
-  if (length !== 3)
-    throw new JWTInvalid("Invalid JWT");
-  if (!payload)
-    throw new JWTInvalid("JWTs must contain a payload");
-  let decoded;
-  try {
-    decoded = decode2(payload);
-  } catch {
-    throw new JWTInvalid("Failed to base64url decode the payload");
-  }
-  let result;
-  try {
-    result = JSON.parse(decoder.decode(decoded));
-  } catch {
-    throw new JWTInvalid("Failed to parse the decoded payload as JSON");
-  }
-  if (!isObject2(result))
-    throw new JWTInvalid("Invalid JWT Claims Set");
-  return result;
-}
-
-// node_modules/uuid/dist/esm-node/rng.js
-var import_crypto7 = __toESM(require("crypto"));
-var rnds8Pool = new Uint8Array(256);
-var poolPtr = rnds8Pool.length;
-function rng() {
-  if (poolPtr > rnds8Pool.length - 16) {
-    import_crypto7.default.randomFillSync(rnds8Pool);
-    poolPtr = 0;
-  }
-  return rnds8Pool.slice(poolPtr, poolPtr += 16);
-}
-
-// node_modules/uuid/dist/esm-node/stringify.js
-var byteToHex = [];
-for (let i = 0; i < 256; ++i) {
-  byteToHex.push((i + 256).toString(16).slice(1));
-}
-function unsafeStringify(arr, offset = 0) {
-  return byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + "-" + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + "-" + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + "-" + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + "-" + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]];
-}
-
-// node_modules/uuid/dist/esm-node/native.js
-var import_crypto8 = __toESM(require("crypto"));
-var native_default = {
-  randomUUID: import_crypto8.default.randomUUID
-};
-
-// node_modules/uuid/dist/esm-node/v4.js
-function v4(options, buf, offset) {
-  if (native_default.randomUUID && !buf && !options) {
-    return native_default.randomUUID();
-  }
-  options = options || {};
-  const rnds = options.random || (options.rng || rng)();
-  rnds[6] = rnds[6] & 15 | 64;
-  rnds[8] = rnds[8] & 63 | 128;
-  if (buf) {
-    offset = offset || 0;
-    for (let i = 0; i < 16; ++i) {
-      buf[offset + i] = rnds[i];
-    }
-    return buf;
-  }
-  return unsafeStringify(rnds);
-}
-var v4_default = v4;
-
-// node_modules/auth0/dist/esm/auth/client-authentication.js
-var addClientAuthentication = async ({ payload, domain, clientId, clientAssertionSigningKey, clientAssertionSigningAlg, clientSecret, useMTLS }) => {
-  const cid = payload.client_id || clientId;
-  if (clientAssertionSigningKey && !payload.client_assertion) {
-    const alg = clientAssertionSigningAlg || "RS256";
-    const privateKey = await importPKCS8(clientAssertionSigningKey, alg);
-    payload.client_assertion = await new SignJWT({}).setProtectedHeader({ alg }).setIssuedAt().setSubject(cid).setJti(v4_default()).setIssuer(cid).setAudience(`https://${domain}/`).setExpirationTime("2mins").sign(privateKey);
-    payload.client_assertion_type = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
-  } else if (clientSecret && !payload.client_secret) {
-    payload.client_secret = clientSecret;
-  }
-  if ((!payload.client_secret || payload.client_secret.trim().length === 0) && (!payload.client_assertion || payload.client_assertion.trim().length === 0) && !useMTLS) {
-    throw new Error("The client_secret or client_assertion field is required, or it should be mTLS request.");
-  }
-  return payload;
-};
-
-// node_modules/auth0/dist/esm/version.js
-var version2 = "4.15.0";
-
-// node_modules/auth0/dist/esm/utils.js
-var generateClientInfo = () => ({
-  name: "node-auth0",
-  version: version2,
-  env: {
-    node: process.version.replace("v", "")
-  }
-});
-var mtlsPrefix = "mtls";
-
-// node_modules/auth0/dist/esm/lib/middleware/telemetry-middleware.js
-var TelemetryMiddleware = class {
-  constructor(options) {
-    this.clientInfo = options.clientInfo || generateClientInfo();
-  }
-  async pre(context) {
-    if ("string" === typeof this.clientInfo.name && this.clientInfo.name.length > 0) {
-      context.init.headers = {
-        ...context.init.headers,
-        "Auth0-Client": base64url_exports.encode(JSON.stringify(this.clientInfo))
-      };
-    }
-    return {
-      url: context.url,
-      init: context.init
-    };
-  }
-};
-
-// node_modules/auth0/dist/esm/auth/base-auth-api.js
-var AuthApiError = class extends Error {
-  constructor(error, error_description, statusCode, body, headers) {
-    super(error_description || error);
-    this.error = error;
-    this.error_description = error_description;
-    this.statusCode = statusCode;
-    this.body = body;
-    this.headers = headers;
-    this.name = "AuthApiError";
-  }
-};
-function parseErrorBody(body) {
-  const rawData = JSON.parse(body);
-  let data;
-  if (rawData.error) {
-    data = rawData;
-  } else {
-    data = {
-      error: rawData.code,
-      error_description: rawData.description
-    };
-  }
-  return data;
-}
-async function parseError(response) {
-  const body = await response.text();
-  try {
-    const data = parseErrorBody(body);
-    return new AuthApiError(data.error, data.error_description, response.status, body, response.headers);
-  } catch (_) {
-    return new ResponseError(response.status, body, response.headers, "Response returned an error code");
-  }
-}
-var BaseAuthAPI = class extends BaseAPI {
-  constructor(options) {
-    super({
-      ...options,
-      baseUrl: `https://${options.domain}`,
-      middleware: options.telemetry !== false ? [new TelemetryMiddleware(options)] : [],
-      parseError,
-      retry: { enabled: false, ...options.retry }
-    });
-    this.domain = options.domain;
-    this.clientId = options.clientId;
-    this.clientSecret = options.clientSecret;
-    this.clientAssertionSigningKey = options.clientAssertionSigningKey;
-    this.clientAssertionSigningAlg = options.clientAssertionSigningAlg;
-    this.useMTLS = options.useMTLS;
-  }
-  /**
-   * @private
-   */
-  async addClientAuthentication(payload) {
-    return addClientAuthentication({
-      payload,
-      domain: this.domain,
-      clientId: this.clientId,
-      clientSecret: this.clientSecret,
-      clientAssertionSigningKey: this.clientAssertionSigningKey,
-      clientAssertionSigningAlg: this.clientAssertionSigningAlg,
-      useMTLS: this.useMTLS
-    });
-  }
-};
-async function grant(grantType, bodyParameters, { idTokenValidateOptions, initOverrides } = {}, clientId, idTokenValidator, request) {
-  const response = await request({
-    path: "/oauth/token",
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded"
-    },
-    body: new URLSearchParams({
-      client_id: clientId,
-      ...bodyParameters,
-      grant_type: grantType
-    })
-  }, initOverrides);
-  const res = await JSONApiResponse.fromResponse(response);
-  if (res.data.id_token) {
-    await idTokenValidator.validate(res.data.id_token, idTokenValidateOptions);
-  }
-  return res;
-}
-
-// node_modules/auth0/dist/esm/auth/database.js
-var Database = class extends BaseAuthAPI {
-  /**
-   * Given a user's credentials, and a connection, this endpoint will create a new user using active authentication.
-   *
-   * This endpoint only works for database connections.
-   *
-   * See: https://auth0.com/docs/api/authentication#signup
-   *
-   * @example
-   * ```js
-   * var data = {
-   *   email: '{EMAIL}',
-   *   password: '{PASSWORD}',
-   *   connection: 'Username-Password-Authentication'
-   * };
-   *
-   * await auth0.database.signUp(data);
-   * ```
-   */
-  async signUp(bodyParameters, initOverrides) {
-    validateRequiredRequestParams(bodyParameters, ["email", "password", "connection"]);
-    const response = await this.request({
-      path: "/dbconnections/signup",
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: { client_id: this.clientId, ...bodyParameters }
-    }, initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * Given a user's email address and a connection, Auth0 will send a change password email.
-   *
-   * This endpoint only works for database connections.
-   *
-   * See: https://auth0.com/docs/api/authentication#change-password
-   *
-   * @example
-   * ```js
-   * var data = {
-   *   email: '{EMAIL}',
-   *   connection: 'Username-Password-Authentication'
-   * };
-   *
-   * await auth0.database.changePassword(data);
-   * ```
-   */
-  async changePassword(bodyParameters, initOverrides) {
-    validateRequiredRequestParams(bodyParameters, ["email", "connection"]);
-    const response = await this.request({
-      path: "/dbconnections/change_password",
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: { client_id: this.clientId, ...bodyParameters }
-    }, initOverrides);
-    return TextApiResponse.fromResponse(response);
-  }
-};
-
-// node_modules/auth0/dist/esm/auth/id-token-validator.js
-var DEFAULT_CLOCK_TOLERANCE = 60;
-var IdTokenValidatorError = class extends Error {
-};
-var IDTokenValidator = class {
-  constructor({ domain, clientId, clientSecret, agent, headers, timeoutDuration, idTokenSigningAlg = "RS256", clockTolerance = DEFAULT_CLOCK_TOLERANCE }) {
-    this.jwks = createRemoteJWKSet(new URL(`https://${domain}/.well-known/jwks.json`), {
-      timeoutDuration,
-      agent,
-      headers
-    });
-    this.alg = idTokenSigningAlg;
-    this.audience = clientId;
-    this.secret = new TextEncoder().encode(clientSecret);
-    this.issuer = `https://${domain}/`;
-    this.clockTolerance = clockTolerance;
-  }
-  async validate(idToken, { nonce, maxAge, organization } = {}) {
-    const secret = this.alg === "HS256" ? this.secret : this.jwks;
-    const header = decodeProtectedHeader(idToken);
-    const payload = decodeJwt(idToken);
-    if (header.alg !== "RS256" && header.alg !== "HS256") {
-      throw new Error(`Signature algorithm of "${header.alg}" is not supported. Expected the ID token to be signed with "RS256" or "HS256".`);
-    }
-    if (!payload.iss || typeof payload.iss !== "string") {
-      throw new IdTokenValidatorError("Issuer (iss) claim must be a string present in the ID token");
-    }
-    if (payload.iss !== this.issuer) {
-      throw new IdTokenValidatorError(`Issuer (iss) claim mismatch in the ID token; expected "${this.issuer}", found "${payload.iss}"`);
-    }
-    if (!payload.sub || typeof payload.sub !== "string") {
-      throw new IdTokenValidatorError("Subject (sub) claim must be a string present in the ID token");
-    }
-    if (!payload.aud || !(typeof payload.aud === "string" || Array.isArray(payload.aud))) {
-      throw new IdTokenValidatorError("Audience (aud) claim must be a string or array of strings present in the ID token");
-    }
-    if (Array.isArray(payload.aud) && !payload.aud.includes(this.audience)) {
-      throw new IdTokenValidatorError(`Audience (aud) claim mismatch in the ID token; expected "${this.audience}" but was not one of "${payload.aud.join(", ")}"`);
-    } else if (typeof payload.aud === "string" && payload.aud !== this.audience) {
-      throw new IdTokenValidatorError(`Audience (aud) claim mismatch in the ID token; expected "${this.audience}" but found "${payload.aud}"`);
-    }
-    if (organization) {
-      if (organization.indexOf("org_") === 0) {
-        if (!payload.org_id || typeof payload.org_id !== "string") {
-          throw new Error("Organization Id (org_id) claim must be a string present in the ID token");
-        }
-      } else {
-        if (!payload.org_name || typeof payload.org_name !== "string") {
-          throw new Error("Organization Name (org_name) claim must be a string present in the ID token");
-        }
-      }
-    }
-    const now = Math.floor(Date.now() / 1e3);
-    if (!payload.exp || typeof payload.exp !== "number") {
-      throw new IdTokenValidatorError("Expiration Time (exp) claim must be a number present in the ID token");
-    }
-    const expTime = payload.exp + this.clockTolerance;
-    if (now > expTime) {
-      throw new IdTokenValidatorError(`Expiration Time (exp) claim error in the ID token; current time (${now}) is after expiration time (${expTime})`);
-    }
-    if (!payload.iat || typeof payload.iat !== "number") {
-      throw new IdTokenValidatorError("Issued At (iat) claim must be a number present in the ID token");
-    }
-    if (nonce || payload.nonce) {
-      if (!payload.nonce || typeof payload.nonce !== "string") {
-        throw new IdTokenValidatorError("Nonce (nonce) claim must be a string present in the ID token");
-      }
-      if (payload.nonce !== nonce) {
-        throw new IdTokenValidatorError(`Nonce (nonce) claim mismatch in the ID token; expected "${nonce}", found "${payload.nonce}"`);
-      }
-    }
-    if (Array.isArray(payload.aud) && payload.aud.length > 1) {
-      if (!payload.azp || typeof payload.azp !== "string") {
-        throw new IdTokenValidatorError("Authorized Party (azp) claim must be a string present in the ID token when Audience (aud) claim has multiple values");
-      }
-      if (payload.azp !== this.audience) {
-        throw new IdTokenValidatorError(`Authorized Party (azp) claim mismatch in the ID token; expected "${this.audience}", found "${payload.azp}"`);
-      }
-    }
-    if (maxAge) {
-      if (!payload.auth_time || typeof payload.auth_time !== "number") {
-        throw new IdTokenValidatorError("Authentication Time (auth_time) claim must be a number present in the ID token when Max Age (max_age) is specified");
-      }
-      const authValidUntil = payload.auth_time + maxAge + this.clockTolerance;
-      if (now > authValidUntil) {
-        throw new IdTokenValidatorError(`Authentication Time (auth_time) claim in the ID token indicates that too much time has passed since the last end-user authentication. Currrent time (${now}) is after last auth at ${authValidUntil}`);
-      }
-    }
-    await jwtVerify(idToken, secret, {
-      issuer: this.issuer,
-      audience: this.audience,
-      clockTolerance: this.clockTolerance,
-      maxTokenAge: maxAge,
-      algorithms: ["HS256", "RS256"]
-    });
-  }
-};
-
-// node_modules/auth0/dist/esm/auth/oauth.js
-var OAuth = class extends BaseAuthAPI {
-  constructor(options) {
-    super({
-      ...options,
-      domain: options.useMTLS ? `${mtlsPrefix}.${options.domain}` : options.domain
-    });
-    this.idTokenValidator = new IDTokenValidator(options);
-  }
-  /**
-   * This is the flow that regular web apps use to access an API.
-   *
-   * Use this endpoint to exchange an Authorization Code for a Token.
-   *
-   * See: https://auth0.com/docs/api/authentication#authorization-code-flow44
-   *
-   * @example
-   * ```js
-   * const auth0 = new AuthenticationApi({
-   *    domain: 'my-domain.auth0.com',
-   *    clientId: 'myClientId',
-   *    clientSecret: 'myClientSecret'
-   * });
-   *
-   * await auth0.oauth.authorizationCodeGrant({ code: 'mycode' });
-   * ```
-   */
-  async authorizationCodeGrant(bodyParameters, options = {}) {
-    validateRequiredRequestParams(bodyParameters, ["code"]);
-    return grant("authorization_code", await this.addClientAuthentication(bodyParameters), options, this.clientId, this.idTokenValidator, this.request.bind(this));
-  }
-  /**
-   * PKCE was originally designed to protect the authorization code flow in mobile apps,
-   * but its ability to prevent authorization code injection makes it useful for every type of OAuth client,
-   * even web apps that use client authentication.
-   *
-   * See: https://auth0.com/docs/api/authentication#authorization-code-flow-with-pkce45
-   *
-   * @example
-   * ```js
-   * const auth0 = new AuthenticationApi({
-   *    domain: 'my-domain.auth0.com',
-   *    clientId: 'myClientId',
-   *    clientSecret: 'myClientSecret'
-   * });
-   *
-   * await auth0.oauth.authorizationCodeGrantWithPKCE({
-   *   code: 'mycode',
-   *   code_verifier: 'mycodeverifier'
-   * });
-   * ```
-   */
-  async authorizationCodeGrantWithPKCE(bodyParameters, options = {}) {
-    validateRequiredRequestParams(bodyParameters, ["code", "code_verifier"]);
-    return grant("authorization_code", await this.addClientAuthentication(bodyParameters), options, this.clientId, this.idTokenValidator, this.request.bind(this));
-  }
-  /**
-   * This is the OAuth 2.0 grant that server processes use to access an API.
-   *
-   * Use this endpoint to directly request an Access Token by using the Client's credentials
-   * (a Client ID and a Client Secret or a Client Assertion).
-   *
-   * See: https://auth0.com/docs/api/authentication#client-credentials-flow
-   *
-   * @example
-   * ```js
-   * const auth0 = new AuthenticationApi({
-   *    domain: 'my-domain.auth0.com',
-   *    clientId: 'myClientId',
-   *    clientSecret: 'myClientSecret'
-   * });
-   *
-   * await auth0.oauth.clientCredentialsGrant({ audience: 'myaudience' });
-   * ```
-   */
-  async clientCredentialsGrant(bodyParameters, options = {}) {
-    validateRequiredRequestParams(bodyParameters, ["audience"]);
-    return grant("client_credentials", await this.addClientAuthentication(bodyParameters), options, this.clientId, this.idTokenValidator, this.request.bind(this));
-  }
-  /**
-   * This is the OAuth 2.0 extension that allows to initiate an OAuth flow from the backchannel instead of by building a URL.
-   *
-   *
-   * See: https://www.rfc-editor.org/rfc/rfc9126.html
-   *
-   * @example
-   * ```js
-   * const auth0 = new AuthenticationApi({
-   *    domain: 'my-domain.auth0.com',
-   *    clientId: 'myClientId',
-   *    clientSecret: 'myClientSecret'
-   * });
-   *
-   * await auth0.oauth.pushedAuthorization({ response_type: 'id_token', redirect_uri: 'http://localhost' });
-   * ```
-   */
-  async pushedAuthorization(bodyParameters, options = {}) {
-    validateRequiredRequestParams(bodyParameters, ["client_id", "response_type", "redirect_uri"]);
-    const bodyParametersWithClientAuthentication = await this.addClientAuthentication(bodyParameters);
-    const response = await this.request({
-      path: "/oauth/par",
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      body: new URLSearchParams({
-        client_id: this.clientId,
-        ...bodyParametersWithClientAuthentication
-      })
-    }, options.initOverrides);
-    return JSONApiResponse.fromResponse(response);
-  }
-  /**
-   * This information is typically received from a highly trusted public client like a SPA*.
-   * (<strong>*Note:</string> For single-page applications and native/mobile apps, we recommend using web flows instead.)
-   *
-   * See: https://auth0.com/docs/api/authentication#resource-owner-password
-   *
-   * @example
-   * ```js
-   * const auth0 = new AuthenticationApi({
-   *    domain: 'my-domain.auth0.com',
-   *    clientId: 'myClientId'
-   *    clientSecret: 'myClientSecret'
-   * });
-   *
-   * await auth0.oauth.passwordGrant({
-   *     username: 'myusername@example.com',
-   *     password: 'mypassword'
-   *   },
-   *   { initOverrides: { headers: { 'auth0-forwarded-for': 'END.USER.IP.123' } } }
-   * );
-   * ```
-   *
-   * Set the'auth0-forwarded-for' header to the end-user IP as a string value if you want
-   * brute-force protection to work in server-side scenarios.
-   *
-   * See https://auth0.com/docs/get-started/authentication-and-authorization-flow/avoid-common-issues-with-resource-owner-password-flow-and-attack-protection
-   *
-   */
-  async passwordGrant(bodyParameters, options = {}) {
-    validateRequiredRequestParams(bodyParameters, ["username", "password"]);
-    return grant(bodyParameters.realm ? "http://auth0.com/oauth/grant-type/password-realm" : "password", await this.addClientAuthentication(bodyParameters), options, this.clientId, this.idTokenValidator, this.request.bind(this));
-  }
-  /**
-   * Use this endpoint to refresh an Access Token using the Refresh Token you got during authorization.
-   *
-   * See: https://auth0.com/docs/api/authentication#refresh-token
-   *
-   * @example
-   * ```js
-   * const auth0 = new AuthenticationApi({
-   *    domain: 'my-domain.auth0.com',
-   *    clientId: 'myClientId'
-   *    clientSecret: 'myClientSecret'
-   * });
-   *
-   * await auth0.oauth.refreshTokenGrant({ refresh_token: 'myrefreshtoken' })
-   * ```
-   */
-  async refreshTokenGrant(bodyParameters, options = {}) {
-    validateRequiredRequestParams(bodyParameters, ["refresh_token"]);
-    return grant("refresh_token", await this.addClientAuthentication(bodyParameters), options, this.clientId, this.idTokenValidator, this.request.bind(this));
-  }
-  /**
-   * Use this endpoint to invalidate a Refresh Token if it has been compromised.
-   *
-   * The behaviour of this endpoint depends on the state of the <a href="https://auth0.com/docs/secure/tokens/refresh-tokens/revoke-refresh-tokens#refresh-tokens-and-grants">Refresh Token Revocation Deletes Grant</a> toggle.
-   * If this toggle is enabled, then each revocation request invalidates not only the specific token, but all other tokens based on the same authorization grant.
-   * This means that all Refresh Tokens that have been issued for the same user, application, and audience will be revoked.
-   * If this toggle is disabled, then only the refresh token is revoked, while the grant is left intact.
-   *
-   * See: https://auth0.com/docs/api/authentication#revoke-refresh-token
-   *
-   * @example
-   * ```js
-   * const auth0 = new AuthenticationApi({
-   *    domain: 'my-domain.auth0.com',
-   *    clientId: 'myClientId'
-   *    clientSecret: 'myClientSecret'
-   * });
-   *
-   * await auth0.oauth.revokeRefreshToken({ token: 'myrefreshtoken' })
-   * ```
-   */
-  async revokeRefreshToken(bodyParameters, options = {}) {
-    validateRequiredRequestParams(bodyParameters, ["token"]);
-    const response = await this.request({
-      path: "/oauth/revoke",
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: await this.addClientAuthentication({ client_id: this.clientId, ...bodyParameters })
-    }, options.initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-};
-
-// node_modules/auth0/dist/esm/auth/passwordless.js
-var Passwordless = class extends BaseAuthAPI {
-  constructor(configuration) {
-    super(configuration);
-    this.idTokenValidator = new IDTokenValidator(configuration);
-  }
-  /**
-   * Start passwordless flow sending an email.
-   *
-   * Given the user `email` address, it will send an email with:
-   *
-   * <ul>
-   *   <li>A link (default, `send:"link"`). You can then authenticate with this
-   *     user opening the link and he will be automatically logged in to the
-   *     application. Optionally, you can append/override parameters to the link
-   *     (like `scope`, `redirect_uri`, `protocol`, `response_type`, etc.) using
-   *     `authParams` object.
-   *   </li>
-   *   <li>
-   *     A verification code (`send:"code"`). You can then authenticate with
-   *     this user using the `/oauth/token` endpoint specifying `email` as
-   *     `username` and `code` as `password`.
-   *   </li>
-   * </ul>
-   *
-   * See: https://auth0.com/docs/api/authentication#get-code-or-link
-   *
-   * @example
-   * ```js
-   * const auth0 = new AuthenticationApi({
-   *    domain: 'my-domain.auth0.com',
-   *    clientId: 'myClientId',
-   *    clientSecret: 'myClientSecret'
-   * });
-   *
-   * await auth0.passwordless.sendEmail({
-   *   email: '{EMAIL}',
-   *   send: 'link',
-   *   authParams: {} // Optional auth params.
-   * });
-   * ```
-   */
-  async sendEmail(bodyParameters, initOverrides) {
-    validateRequiredRequestParams(bodyParameters, ["email"]);
-    const response = await this.request({
-      path: "/passwordless/start",
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: await this.addClientAuthentication({
-        client_id: this.clientId,
-        connection: "email",
-        ...bodyParameters
-      })
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Start passwordless flow sending an SMS.
-   *
-   * Given the user `phone_number`, it will send a SMS message with a
-   * verification code. You can then authenticate with this user using the
-   * `/oauth/token` endpoint specifying `phone_number` as `username` and `code` as
-   * `password`:
-   *
-   * See: https://auth0.com/docs/api/authentication#get-code-or-link
-   *
-   * @example
-   * ```js
-   * const auth0 = new AuthenticationApi({
-   *    domain: 'my-domain.auth0.com',
-   *    clientId: 'myClientId',
-   *    clientSecret: 'myClientSecret'
-   * });
-   *
-   * await auth0.passwordless.sendSMS({
-   *   phone_number: '{PHONE}'
-   * });
-   * ```
-   */
-  async sendSMS(bodyParameters, initOverrides) {
-    validateRequiredRequestParams(bodyParameters, ["phone_number"]);
-    const response = await this.request({
-      path: "/passwordless/start",
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: await this.addClientAuthentication({
-        client_id: this.clientId,
-        connection: "sms",
-        ...bodyParameters
-      })
-    }, initOverrides);
-    return VoidApiResponse.fromResponse(response);
-  }
-  /**
-   * Once you have a verification code, use this endpoint to login the user with their email and verification code.
-   *
-   * @example
-   * ```js
-   * const auth0 = new AuthenticationApi({
-   *    domain: 'my-domain.auth0.com',
-   *    clientId: 'myClientId',
-   *    clientSecret: 'myClientSecret'
-   * });
-   *
-   * await auth0.passwordless.loginWithEmail({
-   *   email: 'foo@example.com',
-   *   code: 'ABC123'
-   * });
-   * ```
-   */
-  async loginWithEmail(bodyParameters, options = {}) {
-    validateRequiredRequestParams(bodyParameters, ["email", "code"]);
-    const { email: username, code: otp, ...otherParams } = bodyParameters;
-    return grant("http://auth0.com/oauth/grant-type/passwordless/otp", await this.addClientAuthentication({
-      username,
-      otp,
-      realm: "email",
-      ...otherParams
-    }), options, this.clientId, this.idTokenValidator, this.request.bind(this));
-  }
-  /**
-   * Once you have a verification code, use this endpoint to login the user with their phone number and verification code.
-   *
-   * @example
-   * ```js
-   * const auth0 = new AuthenticationApi({
-   *    domain: 'my-domain.auth0.com',
-   *    clientId: 'myClientId',
-   *    clientSecret: 'myClientSecret'
-   * });
-   *
-   * await auth0.passwordless.loginWithSMS({
-   *   phone_number: '0777777777',
-   *   code: 'ABC123'
-   * });
-   * ```
-   */
-  async loginWithSMS(bodyParameters, options = {}) {
-    validateRequiredRequestParams(bodyParameters, ["phone_number", "code"]);
-    const { phone_number: username, code: otp, ...otherParams } = bodyParameters;
-    return grant("http://auth0.com/oauth/grant-type/passwordless/otp", await this.addClientAuthentication({
-      username,
-      otp,
-      realm: "sms",
-      ...otherParams
-    }), options, this.clientId, this.idTokenValidator, this.request.bind(this));
-  }
-};
-
-// node_modules/auth0/dist/esm/auth/index.js
-var AuthenticationClient = class {
-  constructor(options) {
-    this.database = new Database(options);
-    this.oauth = new OAuth(options);
-    this.passwordless = new Passwordless(options);
-  }
-};
-
-// node_modules/auth0/dist/esm/management/token-provider.js
-var LEEWAY = 10 * 1e3;
-var TokenProvider = class {
-  constructor(options) {
-    this.options = options;
-    this.expiresAt = 0;
-    this.accessToken = "";
-    this.authenticationClient = new AuthenticationClient(options);
-  }
-  async getAccessToken() {
-    if (!this.accessToken || Date.now() > this.expiresAt - LEEWAY) {
-      this.pending = this.pending || this.authenticationClient.oauth.clientCredentialsGrant({
-        audience: this.options.audience
-      });
-      const { data: { access_token: accessToken, expires_in: expiresIn } } = await this.pending.finally(() => {
-        delete this.pending;
-      });
-      this.expiresAt = Date.now() + expiresIn * 1e3;
-      this.accessToken = accessToken;
-    }
-    return this.accessToken;
-  }
-};
-
-// node_modules/auth0/dist/esm/management/token-provider-middleware.js
-var TokenProviderMiddleware = class {
-  constructor(options) {
-    var _a;
-    if ("token" in options) {
-      this.tokenProvider = {
-        getAccessToken: () => Promise.resolve(options.token)
-      };
-    } else {
-      this.tokenProvider = new TokenProvider({
-        ...options,
-        audience: (_a = options.audience) !== null && _a !== void 0 ? _a : `https://${options.domain}/api/v2/`,
-        ...{ clientSecret: options.clientSecret },
-        ...{
-          clientAssertionSigningKey: options.clientAssertionSigningKey
-        }
-      });
-    }
-  }
-  async pre(context) {
-    const token = await this.tokenProvider.getAccessToken();
-    context.init.headers = {
-      ...context.init.headers,
-      Authorization: `Bearer ${token}`
-    };
-    return {
-      url: context.url,
-      init: context.init
-    };
-  }
-};
-
-// node_modules/auth0/dist/esm/management/management-client.js
-var ManagementApiError = class extends Error {
-  constructor(errorCode, error, statusCode, body, headers, msg) {
-    super(msg);
-    this.errorCode = errorCode;
-    this.error = error;
-    this.statusCode = statusCode;
-    this.body = body;
-    this.headers = headers;
-    this.msg = msg;
-    this.name = "ManagementApiError";
-  }
-};
-async function parseError2(response) {
-  const body = await response.text();
-  let data;
-  try {
-    data = JSON.parse(body);
-    return new ManagementApiError(data.errorCode, data.error, data.statusCode || response.status, body, response.headers, data.message);
-  } catch (_) {
-    return new ResponseError(response.status, body, response.headers, "Response returned an error code");
-  }
-}
-var ManagementClient = class extends ManagementClientBase {
-  constructor(options) {
-    super({
-      ...options,
-      baseUrl: `https://${options.domain}/api/v2`,
-      middleware: [
-        new TokenProviderMiddleware(options),
-        ...options.telemetry !== false ? [new TelemetryMiddleware(options)] : []
-      ],
-      parseError: parseError2
-    });
-  }
-};
-
 // src/claims.ts
 var MissingClaimError = class extends BadRequestError {
   constructor(claim) {
@@ -38826,23 +30328,8 @@ var getClaim = (req, claim, required) => {
 };
 
 // src/routes/api.ts
-var fetchClients = async (auth0, orgId) => {
-  const clients = await auth0.clients.getAll().then((c) => {
-    console.log("Response from auth0 api", JSON.stringify(c));
-    return c.data.filter(
-      (c2) => !orgId ? c2.client_metadata["OrganizationId"] === void 0 : c2.client_metadata["OrganizationId"] === orgId
-    );
-  });
-  return clients;
-};
 var api_default = (ctx) => {
   console.log("api route", ctx.meta);
-  const auth0 = new ManagementClient({
-    clientId: ctx.secrets.MANAGEMENT_CLIENT_ID || "",
-    clientSecret: ctx.secrets.MANAGEMENT_CLIENT_SECRET || "",
-    domain: ctx.secrets.AUTH0_DOMAIN || "",
-    audience: ctx.secrets.MANAGEMENT_AUDIENCE || ""
-  });
   const router = import_express3.default.Router();
   router.all("/", (req, res) => {
     res.status(200).json({ version, nodeVersion: process.version, meta: ctx.meta });
@@ -38858,8 +30345,7 @@ var api_default = (ctx) => {
     const org = getClaim(req, "https://p6m.dev/v1/org");
     const orgs = getClaim(req, "https://p6m.dev/v1/orgs");
     const orgId = (Object.entries(orgs).find(([, name2]) => name2 === org) || [])[0];
-    const clients = await fetchClients(auth0, orgId);
-    res.status(200).json(clients);
+    res.status(200).json([]);
   });
   return router;
 };
