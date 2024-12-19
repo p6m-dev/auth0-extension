@@ -26909,12 +26909,12 @@ var import_express = __toESM(require_express2());
 
 // webtask.json
 var name = "auth0";
-var version = "0.1.25";
+var version = "0.1.26";
 var webtask_default = {
   title: "P6m Auth0 Extension",
   name,
   version,
-  preVersion: "0.1.24",
+  preVersion: "0.1.25",
   author: "P6m",
   useHashName: false,
   description: "The P6m Auth0 Extension",
