@@ -26911,17 +26911,17 @@ var import_express = __toESM(require_express2());
 var name = "auth0";
 var version = "0.1.23";
 var webtask_default = {
-  title: "p6m-dev/auth0-extension",
+  title: "P6m Auth0 Extension",
   name,
   version,
   preVersion: "0.1.22",
   author: "P6m",
   useHashName: false,
-  description: "P6m Auth0 Extension",
+  description: "The P6m Auth0 Extension",
   type: "application",
   category: "end_user",
   logoUrl: "https://cdn.auth0.com/manhattan/versions/1.5639.0/assets/badge.png",
-  initialUrlPath: "/health",
+  initialUrlPath: "/api",
   repository: "https://github.com/p6m-dev/auth0-extension",
   keywords: ["p6m", "auth0", "extension", "webtask"],
   auth0: {
