@@ -30,12 +30,19 @@ export const identified = (ctx: Context) => {
       return next(new UnauthorizedError('Missing authorization'));
     }
 
-    const { payload } = await jwtVerify<UserInfo>(token, jwks, {
-      issuer: 'https://auth.p6m.run/',
-    });
+    try {
+      const { payload } = await jwtVerify<UserInfo>(token, jwks, {
+        issuer: 'https://auth.p6m.run/',
+      });
 
-    console.log('User:', JSON.stringify(req.userInfo));
-    req.userInfo = payload;
+      console.log('User:', JSON.stringify(req.userInfo));
+      req.userInfo = payload;
+    } catch (e) {
+      if (!(e instanceof Error)) {
+        throw e;
+      }
+      return next(new UnauthorizedError(e.message));
+    }
 
     next();
   };
