@@ -1,4 +1,5 @@
 import { Request } from 'express';
+import { KeyLike } from 'jose';
 
 type Secrets = Partial<{
   EXTENSION_SECRET: string;
@@ -39,9 +40,10 @@ export const ORG_CLAIM = 'https://p6m.dev/v1/org';
 export const ORGS_CLAIM = 'https://p6m.dev/v1/orgs';
 
 export type UserInfo = Partial<{
-  exp: number;
   'https://p6m.dev/v1/org': string;
+  'https://p6m.dev/v1/orgid': string;
   'https://p6m.dev/v1/orgs': Record<string, string>;
+  'https://p6m.dev/v1/orgids': string[];
 }>;
 
 export type RequestWithUserInfo = Request & {

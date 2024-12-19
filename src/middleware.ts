@@ -2,29 +2,40 @@ import { Request, Response, NextFunction } from 'express';
 import { Context, RequestWithUserInfo, UserInfo } from './types';
 import { fetchRemote } from './io';
 import { version } from '../webtask.json';
+import { createRemoteJWKSet, jwtVerify } from 'jose';
 
 export class BadRequestError extends Error {}
 export class NotFoundError extends Error {}
 export class UnauthorizedError extends Error {}
 
 export const identified = (ctx: Context) => {
+  const { AUTH0_DOMAIN } = ctx.secrets || {};
+  const jwks = createRemoteJWKSet(
+    new URL(`https://${AUTH0_DOMAIN}/.well-known/jwks.json`),
+  );
+
   return async (
     req: RequestWithUserInfo,
     res: Response,
     next: NextFunction,
   ) => {
-    const { AUTH0_DOMAIN } = ctx.secrets || {};
-    const authorization = req.headers['authorization'];
+    let token = req.headers['authorization'] || '';
 
-    if (!authorization) {
+    const [type, jwt] = token.split(' ');
+    if (type && type.toLowerCase() === 'bearer') {
+      token = jwt;
+    }
+
+    if (!token) {
       return next(new UnauthorizedError('Missing authorization'));
     }
 
-    req.userInfo = await fetchRemote<UserInfo>(
-      'GET',
-      new URL(`https://${AUTH0_DOMAIN}/userinfo`),
-      authorization,
-    );
+    const { payload } = await jwtVerify<UserInfo>(token, jwks, {
+      issuer: 'https://auth.p6m.run/',
+    });
+
+    console.log('User:', JSON.stringify(req.userInfo));
+    req.userInfo = payload;
 
     next();
   };
