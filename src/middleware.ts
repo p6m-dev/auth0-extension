@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
 import { Context, RequestWithUserInfo, UserInfo } from './types';
-import { fetchRemote } from './io';
 import { version } from '../webtask.json';
 import {
   createRemoteJWKSet,

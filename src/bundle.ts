@@ -1,3 +1,10 @@
+import 'module-alias/register';
+import moduleAlias from 'module-alias';
+import { Buffer } from 'buffer';
+
+moduleAlias.addAlias('node:buffer', 'buffer');
+global.Buffer = Buffer;
+
 import { IncomingMessage, ServerResponse } from 'http';
 import { createApp } from './app';
 import { Context } from './types';

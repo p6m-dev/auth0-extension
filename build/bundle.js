@@ -1433,7 +1433,7 @@ var require_safer = __commonJS({
   "node_modules/safer-buffer/safer.js"(exports2, module2) {
     "use strict";
     var buffer = require("buffer");
-    var Buffer3 = buffer.Buffer;
+    var Buffer4 = buffer.Buffer;
     var safer = {};
     var key;
     for (key in buffer) {
@@ -1442,12 +1442,12 @@ var require_safer = __commonJS({
       safer[key] = buffer[key];
     }
     var Safer = safer.Buffer = {};
-    for (key in Buffer3) {
-      if (!Buffer3.hasOwnProperty(key)) continue;
+    for (key in Buffer4) {
+      if (!Buffer4.hasOwnProperty(key)) continue;
       if (key === "allocUnsafe" || key === "allocUnsafeSlow") continue;
-      Safer[key] = Buffer3[key];
+      Safer[key] = Buffer4[key];
     }
-    safer.Buffer.prototype = Buffer3.prototype;
+    safer.Buffer.prototype = Buffer4.prototype;
     if (!Safer.from || Safer.from === Uint8Array.from) {
       Safer.from = function(value, encodingOrOffset, length) {
         if (typeof value === "number") {
@@ -1456,7 +1456,7 @@ var require_safer = __commonJS({
         if (value && typeof value.length === "undefined") {
           throw new TypeError("The first argument must be one of type string, Buffer, ArrayBuffer, Array, or Array-like Object. Received type " + typeof value);
         }
-        return Buffer3(value, encodingOrOffset, length);
+        return Buffer4(value, encodingOrOffset, length);
       };
     }
     if (!Safer.alloc) {
@@ -1467,7 +1467,7 @@ var require_safer = __commonJS({
         if (size < 0 || size >= 2 * (1 << 30)) {
           throw new RangeError('The value "' + size + '" is invalid for option "size"');
         }
-        var buf = Buffer3(size);
+        var buf = Buffer4(size);
         if (!fill || fill.length === 0) {
           buf.fill(0);
         } else if (typeof encoding === "string") {
@@ -1544,7 +1544,7 @@ var require_bom_handling = __commonJS({
 var require_internal = __commonJS({
   "node_modules/iconv-lite/encodings/internal.js"(exports2, module2) {
     "use strict";
-    var Buffer3 = require_safer().Buffer;
+    var Buffer4 = require_safer().Buffer;
     module2.exports = {
       // Encodings
       utf8: { type: "_internal", bomAware: true },
@@ -1566,7 +1566,7 @@ var require_internal = __commonJS({
       else if (this.enc === "cesu8") {
         this.enc = "utf8";
         this.encoder = InternalEncoderCesu8;
-        if (Buffer3.from("eda0bdedb2a9", "hex").toString() !== "\u{1F4A9}") {
+        if (Buffer4.from("eda0bdedb2a9", "hex").toString() !== "\u{1F4A9}") {
           this.decoder = InternalDecoderCesu8;
           this.defaultCharUnicode = iconv.defaultCharUnicode;
         }
@@ -1586,7 +1586,7 @@ var require_internal = __commonJS({
       this.enc = codec.enc;
     }
     InternalEncoder.prototype.write = function(str) {
-      return Buffer3.from(str, this.enc);
+      return Buffer4.from(str, this.enc);
     };
     InternalEncoder.prototype.end = function() {
     };
@@ -1598,15 +1598,15 @@ var require_internal = __commonJS({
       var completeQuads = str.length - str.length % 4;
       this.prevStr = str.slice(completeQuads);
       str = str.slice(0, completeQuads);
-      return Buffer3.from(str, "base64");
+      return Buffer4.from(str, "base64");
     };
     InternalEncoderBase64.prototype.end = function() {
-      return Buffer3.from(this.prevStr, "base64");
+      return Buffer4.from(this.prevStr, "base64");
     };
     function InternalEncoderCesu8(options, codec) {
     }
     InternalEncoderCesu8.prototype.write = function(str) {
-      var buf = Buffer3.alloc(str.length * 3), bufIdx = 0;
+      var buf = Buffer4.alloc(str.length * 3), bufIdx = 0;
       for (var i = 0; i < str.length; i++) {
         var charCode = str.charCodeAt(i);
         if (charCode < 128)
@@ -1688,7 +1688,7 @@ var require_internal = __commonJS({
 var require_utf16 = __commonJS({
   "node_modules/iconv-lite/encodings/utf16.js"(exports2) {
     "use strict";
-    var Buffer3 = require_safer().Buffer;
+    var Buffer4 = require_safer().Buffer;
     exports2.utf16be = Utf16BECodec;
     function Utf16BECodec() {
     }
@@ -1698,7 +1698,7 @@ var require_utf16 = __commonJS({
     function Utf16BEEncoder() {
     }
     Utf16BEEncoder.prototype.write = function(str) {
-      var buf = Buffer3.from(str, "ucs2");
+      var buf = Buffer4.from(str, "ucs2");
       for (var i = 0; i < buf.length; i += 2) {
         var tmp = buf[i];
         buf[i] = buf[i + 1];
@@ -1714,7 +1714,7 @@ var require_utf16 = __commonJS({
     Utf16BEDecoder.prototype.write = function(buf) {
       if (buf.length == 0)
         return "";
-      var buf2 = Buffer3.alloc(buf.length + 1), i = 0, j = 0;
+      var buf2 = Buffer4.alloc(buf.length + 1), i = 0, j = 0;
       if (this.overflowByte !== -1) {
         buf2[0] = buf[0];
         buf2[1] = this.overflowByte;
@@ -1761,7 +1761,7 @@ var require_utf16 = __commonJS({
         this.initialBytesLen += buf.length;
         if (this.initialBytesLen < 16)
           return "";
-        var buf = Buffer3.concat(this.initialBytes), encoding = detectEncoding(buf, this.options.defaultEncoding);
+        var buf = Buffer4.concat(this.initialBytes), encoding = detectEncoding(buf, this.options.defaultEncoding);
         this.decoder = this.iconv.getDecoder(encoding, this.options);
         this.initialBytes.length = this.initialBytesLen = 0;
       }
@@ -1769,7 +1769,7 @@ var require_utf16 = __commonJS({
     };
     Utf16Decoder.prototype.end = function() {
       if (!this.decoder) {
-        var buf = Buffer3.concat(this.initialBytes), encoding = detectEncoding(buf, this.options.defaultEncoding);
+        var buf = Buffer4.concat(this.initialBytes), encoding = detectEncoding(buf, this.options.defaultEncoding);
         this.decoder = this.iconv.getDecoder(encoding, this.options);
         var res = this.decoder.write(buf), trail = this.decoder.end();
         return trail ? res + trail : res;
@@ -1804,7 +1804,7 @@ var require_utf16 = __commonJS({
 var require_utf7 = __commonJS({
   "node_modules/iconv-lite/encodings/utf7.js"(exports2) {
     "use strict";
-    var Buffer3 = require_safer().Buffer;
+    var Buffer4 = require_safer().Buffer;
     exports2.utf7 = Utf7Codec;
     exports2.unicode11utf7 = "utf7";
     function Utf7Codec(codecOptions, iconv) {
@@ -1818,7 +1818,7 @@ var require_utf7 = __commonJS({
       this.iconv = codec.iconv;
     }
     Utf7Encoder.prototype.write = function(str) {
-      return Buffer3.from(str.replace(nonDirectChars, function(chunk) {
+      return Buffer4.from(str.replace(nonDirectChars, function(chunk) {
         return "+" + (chunk === "+" ? "" : this.iconv.encode(chunk, "utf16-be").toString("base64").replace(/=+$/, "")) + "-";
       }.bind(this)));
     };
@@ -1852,7 +1852,7 @@ var require_utf7 = __commonJS({
               res += "+";
             } else {
               var b64str = base64Accum + buf.slice(lastI, i2).toString();
-              res += this.iconv.decode(Buffer3.from(b64str, "base64"), "utf16-be");
+              res += this.iconv.decode(Buffer4.from(b64str, "base64"), "utf16-be");
             }
             if (buf[i2] != minusChar)
               i2--;
@@ -1869,7 +1869,7 @@ var require_utf7 = __commonJS({
         var canBeDecoded = b64str.length - b64str.length % 8;
         base64Accum = b64str.slice(canBeDecoded);
         b64str = b64str.slice(0, canBeDecoded);
-        res += this.iconv.decode(Buffer3.from(b64str, "base64"), "utf16-be");
+        res += this.iconv.decode(Buffer4.from(b64str, "base64"), "utf16-be");
       }
       this.inBase64 = inBase64;
       this.base64Accum = base64Accum;
@@ -1878,7 +1878,7 @@ var require_utf7 = __commonJS({
     Utf7Decoder.prototype.end = function() {
       var res = "";
       if (this.inBase64 && this.base64Accum.length > 0)
-        res = this.iconv.decode(Buffer3.from(this.base64Accum, "base64"), "utf16-be");
+        res = this.iconv.decode(Buffer4.from(this.base64Accum, "base64"), "utf16-be");
       this.inBase64 = false;
       this.base64Accum = "";
       return res;
@@ -1893,11 +1893,11 @@ var require_utf7 = __commonJS({
     function Utf7IMAPEncoder(options, codec) {
       this.iconv = codec.iconv;
       this.inBase64 = false;
-      this.base64Accum = Buffer3.alloc(6);
+      this.base64Accum = Buffer4.alloc(6);
       this.base64AccumIdx = 0;
     }
     Utf7IMAPEncoder.prototype.write = function(str) {
-      var inBase64 = this.inBase64, base64Accum = this.base64Accum, base64AccumIdx = this.base64AccumIdx, buf = Buffer3.alloc(str.length * 5 + 10), bufIdx = 0;
+      var inBase64 = this.inBase64, base64Accum = this.base64Accum, base64AccumIdx = this.base64AccumIdx, buf = Buffer4.alloc(str.length * 5 + 10), bufIdx = 0;
       for (var i2 = 0; i2 < str.length; i2++) {
         var uChar = str.charCodeAt(i2);
         if (32 <= uChar && uChar <= 126) {
@@ -1934,7 +1934,7 @@ var require_utf7 = __commonJS({
       return buf.slice(0, bufIdx);
     };
     Utf7IMAPEncoder.prototype.end = function() {
-      var buf = Buffer3.alloc(10), bufIdx = 0;
+      var buf = Buffer4.alloc(10), bufIdx = 0;
       if (this.inBase64) {
         if (this.base64AccumIdx > 0) {
           bufIdx += buf.write(this.base64Accum.slice(0, this.base64AccumIdx).toString("base64").replace(/\//g, ",").replace(/=+$/, ""), bufIdx);
@@ -1967,7 +1967,7 @@ var require_utf7 = __commonJS({
               res += "&";
             } else {
               var b64str = base64Accum + buf.slice(lastI, i2).toString().replace(/,/g, "/");
-              res += this.iconv.decode(Buffer3.from(b64str, "base64"), "utf16-be");
+              res += this.iconv.decode(Buffer4.from(b64str, "base64"), "utf16-be");
             }
             if (buf[i2] != minusChar)
               i2--;
@@ -1984,7 +1984,7 @@ var require_utf7 = __commonJS({
         var canBeDecoded = b64str.length - b64str.length % 8;
         base64Accum = b64str.slice(canBeDecoded);
         b64str = b64str.slice(0, canBeDecoded);
-        res += this.iconv.decode(Buffer3.from(b64str, "base64"), "utf16-be");
+        res += this.iconv.decode(Buffer4.from(b64str, "base64"), "utf16-be");
       }
       this.inBase64 = inBase64;
       this.base64Accum = base64Accum;
@@ -1993,7 +1993,7 @@ var require_utf7 = __commonJS({
     Utf7IMAPDecoder.prototype.end = function() {
       var res = "";
       if (this.inBase64 && this.base64Accum.length > 0)
-        res = this.iconv.decode(Buffer3.from(this.base64Accum, "base64"), "utf16-be");
+        res = this.iconv.decode(Buffer4.from(this.base64Accum, "base64"), "utf16-be");
       this.inBase64 = false;
       this.base64Accum = "";
       return res;
@@ -2005,7 +2005,7 @@ var require_utf7 = __commonJS({
 var require_sbcs_codec = __commonJS({
   "node_modules/iconv-lite/encodings/sbcs-codec.js"(exports2) {
     "use strict";
-    var Buffer3 = require_safer().Buffer;
+    var Buffer4 = require_safer().Buffer;
     exports2._sbcs = SBCSCodec;
     function SBCSCodec(codecOptions, iconv) {
       if (!codecOptions)
@@ -2018,8 +2018,8 @@ var require_sbcs_codec = __commonJS({
           asciiString += String.fromCharCode(i);
         codecOptions.chars = asciiString + codecOptions.chars;
       }
-      this.decodeBuf = Buffer3.from(codecOptions.chars, "ucs2");
-      var encodeBuf = Buffer3.alloc(65536, iconv.defaultCharSingleByte.charCodeAt(0));
+      this.decodeBuf = Buffer4.from(codecOptions.chars, "ucs2");
+      var encodeBuf = Buffer4.alloc(65536, iconv.defaultCharSingleByte.charCodeAt(0));
       for (var i = 0; i < codecOptions.chars.length; i++)
         encodeBuf[codecOptions.chars.charCodeAt(i)] = i;
       this.encodeBuf = encodeBuf;
@@ -2030,7 +2030,7 @@ var require_sbcs_codec = __commonJS({
       this.encodeBuf = codec.encodeBuf;
     }
     SBCSEncoder.prototype.write = function(str) {
-      var buf = Buffer3.alloc(str.length);
+      var buf = Buffer4.alloc(str.length);
       for (var i = 0; i < str.length; i++)
         buf[i] = this.encodeBuf[str.charCodeAt(i)];
       return buf;
@@ -2042,7 +2042,7 @@ var require_sbcs_codec = __commonJS({
     }
     SBCSDecoder.prototype.write = function(buf) {
       var decodeBuf = this.decodeBuf;
-      var newBuf = Buffer3.alloc(buf.length * 2);
+      var newBuf = Buffer4.alloc(buf.length * 2);
       var idx1 = 0, idx2 = 0;
       for (var i = 0; i < buf.length; i++) {
         idx1 = buf[i] * 2;
@@ -2665,7 +2665,7 @@ var require_sbcs_data_generated = __commonJS({
 var require_dbcs_codec = __commonJS({
   "node_modules/iconv-lite/encodings/dbcs-codec.js"(exports2) {
     "use strict";
-    var Buffer3 = require_safer().Buffer;
+    var Buffer4 = require_safer().Buffer;
     exports2._dbcs = DBCSCodec;
     var UNASSIGNED = -1;
     var GB18030_CODE = -2;
@@ -2848,7 +2848,7 @@ var require_dbcs_codec = __commonJS({
       this.gb18030 = codec.gb18030;
     }
     DBCSEncoder.prototype.write = function(str) {
-      var newBuf = Buffer3.alloc(str.length * (this.gb18030 ? 4 : 3)), leadSurrogate = this.leadSurrogate, seqObj = this.seqObj, nextChar = -1, i2 = 0, j = 0;
+      var newBuf = Buffer4.alloc(str.length * (this.gb18030 ? 4 : 3)), leadSurrogate = this.leadSurrogate, seqObj = this.seqObj, nextChar = -1, i2 = 0, j = 0;
       while (true) {
         if (nextChar === -1) {
           if (i2 == str.length) break;
@@ -2939,7 +2939,7 @@ var require_dbcs_codec = __commonJS({
     DBCSEncoder.prototype.end = function() {
       if (this.leadSurrogate === -1 && this.seqObj === void 0)
         return;
-      var newBuf = Buffer3.alloc(10), j = 0;
+      var newBuf = Buffer4.alloc(10), j = 0;
       if (this.seqObj) {
         var dbcsCode = this.seqObj[DEF_CHAR];
         if (dbcsCode !== void 0) {
@@ -2962,16 +2962,16 @@ var require_dbcs_codec = __commonJS({
     DBCSEncoder.prototype.findIdx = findIdx;
     function DBCSDecoder(options, codec) {
       this.nodeIdx = 0;
-      this.prevBuf = Buffer3.alloc(0);
+      this.prevBuf = Buffer4.alloc(0);
       this.decodeTables = codec.decodeTables;
       this.decodeTableSeq = codec.decodeTableSeq;
       this.defaultCharUnicode = codec.defaultCharUnicode;
       this.gb18030 = codec.gb18030;
     }
     DBCSDecoder.prototype.write = function(buf) {
-      var newBuf = Buffer3.alloc(buf.length * 2), nodeIdx = this.nodeIdx, prevBuf = this.prevBuf, prevBufOffset = this.prevBuf.length, seqStart = -this.prevBuf.length, uCode;
+      var newBuf = Buffer4.alloc(buf.length * 2), nodeIdx = this.nodeIdx, prevBuf = this.prevBuf, prevBufOffset = this.prevBuf.length, seqStart = -this.prevBuf.length, uCode;
       if (prevBufOffset > 0)
-        prevBuf = Buffer3.concat([prevBuf, buf.slice(0, 10)]);
+        prevBuf = Buffer4.concat([prevBuf, buf.slice(0, 10)]);
       for (var i2 = 0, j = 0; i2 < buf.length; i2++) {
         var curByte = i2 >= 0 ? buf[i2] : prevBuf[i2 + prevBufOffset];
         var uCode = this.decodeTables[nodeIdx][curByte];
@@ -3018,7 +3018,7 @@ var require_dbcs_codec = __commonJS({
       while (this.prevBuf.length > 0) {
         ret += this.defaultCharUnicode;
         var buf = this.prevBuf.slice(1);
-        this.prevBuf = Buffer3.alloc(0);
+        this.prevBuf = Buffer4.alloc(0);
         this.nodeIdx = 0;
         if (buf.length > 0)
           ret += this.write(buf);
@@ -4494,7 +4494,7 @@ var require_encodings = __commonJS({
 var require_streams = __commonJS({
   "node_modules/iconv-lite/lib/streams.js"(exports2, module2) {
     "use strict";
-    var Buffer3 = require("buffer").Buffer;
+    var Buffer4 = require("buffer").Buffer;
     var Transform = require("stream").Transform;
     module2.exports = function(iconv) {
       iconv.encodeStream = function encodeStream(encoding, options) {
@@ -4544,7 +4544,7 @@ var require_streams = __commonJS({
         chunks.push(chunk);
       });
       this.on("end", function() {
-        cb(null, Buffer3.concat(chunks));
+        cb(null, Buffer4.concat(chunks));
       });
       return this;
     };
@@ -4558,7 +4558,7 @@ var require_streams = __commonJS({
       constructor: { value: IconvLiteDecoderStream }
     });
     IconvLiteDecoderStream.prototype._transform = function(chunk, encoding, done) {
-      if (!Buffer3.isBuffer(chunk))
+      if (!Buffer4.isBuffer(chunk))
         return done(new Error("Iconv decoding stream needs buffers as its input."));
       try {
         var res = this.conv.write(chunk);
@@ -4595,10 +4595,10 @@ var require_streams = __commonJS({
 var require_extend_node = __commonJS({
   "node_modules/iconv-lite/lib/extend-node.js"(exports2, module2) {
     "use strict";
-    var Buffer3 = require("buffer").Buffer;
+    var Buffer4 = require("buffer").Buffer;
     module2.exports = function(iconv) {
       var original = void 0;
-      iconv.supportsNodeEncodingsExtension = !(Buffer3.from || new Buffer3(0) instanceof Uint8Array);
+      iconv.supportsNodeEncodingsExtension = !(Buffer4.from || new Buffer4(0) instanceof Uint8Array);
       iconv.extendNodeEncodings = function extendNodeEncodings() {
         if (original) return;
         original = {};
@@ -4619,14 +4619,14 @@ var require_extend_node = __commonJS({
           "utf16le": true,
           "utf-16le": true
         };
-        Buffer3.isNativeEncoding = function(enc) {
+        Buffer4.isNativeEncoding = function(enc) {
           return enc && nodeNativeEncodings[enc.toLowerCase()];
         };
         var SlowBuffer = require("buffer").SlowBuffer;
         original.SlowBufferToString = SlowBuffer.prototype.toString;
         SlowBuffer.prototype.toString = function(encoding, start, end) {
           encoding = String(encoding || "utf8").toLowerCase();
-          if (Buffer3.isNativeEncoding(encoding))
+          if (Buffer4.isNativeEncoding(encoding))
             return original.SlowBufferToString.call(this, encoding, start, end);
           if (typeof start == "undefined") start = 0;
           if (typeof end == "undefined") end = this.length;
@@ -4656,7 +4656,7 @@ var require_extend_node = __commonJS({
             }
           }
           encoding = String(encoding || "utf8").toLowerCase();
-          if (Buffer3.isNativeEncoding(encoding))
+          if (Buffer4.isNativeEncoding(encoding))
             return original.SlowBufferWrite.call(this, string, offset, length, encoding);
           if (string.length > 0 && (length < 0 || offset < 0))
             throw new RangeError("attempt to write beyond buffer bounds");
@@ -4665,28 +4665,28 @@ var require_extend_node = __commonJS({
           buf.copy(this, offset, 0, length);
           return length;
         };
-        original.BufferIsEncoding = Buffer3.isEncoding;
-        Buffer3.isEncoding = function(encoding) {
-          return Buffer3.isNativeEncoding(encoding) || iconv.encodingExists(encoding);
+        original.BufferIsEncoding = Buffer4.isEncoding;
+        Buffer4.isEncoding = function(encoding) {
+          return Buffer4.isNativeEncoding(encoding) || iconv.encodingExists(encoding);
         };
-        original.BufferByteLength = Buffer3.byteLength;
-        Buffer3.byteLength = SlowBuffer.byteLength = function(str, encoding) {
+        original.BufferByteLength = Buffer4.byteLength;
+        Buffer4.byteLength = SlowBuffer.byteLength = function(str, encoding) {
           encoding = String(encoding || "utf8").toLowerCase();
-          if (Buffer3.isNativeEncoding(encoding))
+          if (Buffer4.isNativeEncoding(encoding))
             return original.BufferByteLength.call(this, str, encoding);
           return iconv.encode(str, encoding).length;
         };
-        original.BufferToString = Buffer3.prototype.toString;
-        Buffer3.prototype.toString = function(encoding, start, end) {
+        original.BufferToString = Buffer4.prototype.toString;
+        Buffer4.prototype.toString = function(encoding, start, end) {
           encoding = String(encoding || "utf8").toLowerCase();
-          if (Buffer3.isNativeEncoding(encoding))
+          if (Buffer4.isNativeEncoding(encoding))
             return original.BufferToString.call(this, encoding, start, end);
           if (typeof start == "undefined") start = 0;
           if (typeof end == "undefined") end = this.length;
           return iconv.decode(this.slice(start, end), encoding);
         };
-        original.BufferWrite = Buffer3.prototype.write;
-        Buffer3.prototype.write = function(string, offset, length, encoding) {
+        original.BufferWrite = Buffer4.prototype.write;
+        Buffer4.prototype.write = function(string, offset, length, encoding) {
           var _offset = offset, _length = length, _encoding = encoding;
           if (isFinite(offset)) {
             if (!isFinite(length)) {
@@ -4700,7 +4700,7 @@ var require_extend_node = __commonJS({
             length = swap;
           }
           encoding = String(encoding || "utf8").toLowerCase();
-          if (Buffer3.isNativeEncoding(encoding))
+          if (Buffer4.isNativeEncoding(encoding))
             return original.BufferWrite.call(this, string, _offset, _length, _encoding);
           offset = +offset || 0;
           var remaining = this.length - offset;
@@ -4734,14 +4734,14 @@ var require_extend_node = __commonJS({
           return;
         if (!original)
           throw new Error("require('iconv-lite').undoExtendNodeEncodings(): Nothing to undo; extendNodeEncodings() is not called.");
-        delete Buffer3.isNativeEncoding;
+        delete Buffer4.isNativeEncoding;
         var SlowBuffer = require("buffer").SlowBuffer;
         SlowBuffer.prototype.toString = original.SlowBufferToString;
         SlowBuffer.prototype.write = original.SlowBufferWrite;
-        Buffer3.isEncoding = original.BufferIsEncoding;
-        Buffer3.byteLength = original.BufferByteLength;
-        Buffer3.prototype.toString = original.BufferToString;
-        Buffer3.prototype.write = original.BufferWrite;
+        Buffer4.isEncoding = original.BufferIsEncoding;
+        Buffer4.byteLength = original.BufferByteLength;
+        Buffer4.prototype.toString = original.BufferToString;
+        Buffer4.prototype.write = original.BufferWrite;
         if (iconv.supportsStreams) {
           var Readable = require("stream").Readable;
           Readable.prototype.setEncoding = original.ReadableSetEncoding;
@@ -4757,7 +4757,7 @@ var require_extend_node = __commonJS({
 var require_lib = __commonJS({
   "node_modules/iconv-lite/lib/index.js"(exports2, module2) {
     "use strict";
-    var Buffer3 = require_safer().Buffer;
+    var Buffer4 = require_safer().Buffer;
     var bomHandling = require_bom_handling();
     var iconv = module2.exports;
     iconv.encodings = null;
@@ -4768,7 +4768,7 @@ var require_lib = __commonJS({
       var encoder2 = iconv.getEncoder(encoding, options);
       var res = encoder2.write(str);
       var trail = encoder2.end();
-      return trail && trail.length > 0 ? Buffer3.concat([res, trail]) : res;
+      return trail && trail.length > 0 ? Buffer4.concat([res, trail]) : res;
     };
     iconv.decode = function decode3(buf, encoding, options) {
       if (typeof buf === "string") {
@@ -4776,7 +4776,7 @@ var require_lib = __commonJS({
           console.error("Iconv-lite warning: decode()-ing strings is deprecated. Refer to https://github.com/ashtuchkin/iconv-lite/wiki/Use-Buffers-when-decoding");
           iconv.skipDecodeWarning = true;
         }
-        buf = Buffer3.from("" + (buf || ""), "binary");
+        buf = Buffer4.from("" + (buf || ""), "binary");
       }
       var decoder2 = iconv.getDecoder(encoding, options);
       var res = decoder2.write(buf);
@@ -19136,34 +19136,34 @@ var require_safe_buffer = __commonJS({
   "node_modules/safe-buffer/index.js"(exports2, module2) {
     "use strict";
     var buffer = require("buffer");
-    var Buffer3 = buffer.Buffer;
+    var Buffer4 = buffer.Buffer;
     function copyProps(src, dst) {
       for (var key in src) {
         dst[key] = src[key];
       }
     }
-    if (Buffer3.from && Buffer3.alloc && Buffer3.allocUnsafe && Buffer3.allocUnsafeSlow) {
+    if (Buffer4.from && Buffer4.alloc && Buffer4.allocUnsafe && Buffer4.allocUnsafeSlow) {
       module2.exports = buffer;
     } else {
       copyProps(buffer, exports2);
       exports2.Buffer = SafeBuffer;
     }
     function SafeBuffer(arg, encodingOrOffset, length) {
-      return Buffer3(arg, encodingOrOffset, length);
+      return Buffer4(arg, encodingOrOffset, length);
     }
-    SafeBuffer.prototype = Object.create(Buffer3.prototype);
-    copyProps(Buffer3, SafeBuffer);
+    SafeBuffer.prototype = Object.create(Buffer4.prototype);
+    copyProps(Buffer4, SafeBuffer);
     SafeBuffer.from = function(arg, encodingOrOffset, length) {
       if (typeof arg === "number") {
         throw new TypeError("Argument must not be a number");
       }
-      return Buffer3(arg, encodingOrOffset, length);
+      return Buffer4(arg, encodingOrOffset, length);
     };
     SafeBuffer.alloc = function(size, fill, encoding) {
       if (typeof size !== "number") {
         throw new TypeError("Argument must be a number");
       }
-      var buf = Buffer3(size);
+      var buf = Buffer4(size);
       if (fill !== void 0) {
         if (typeof encoding === "string") {
           buf.fill(fill, encoding);
@@ -19179,7 +19179,7 @@ var require_safe_buffer = __commonJS({
       if (typeof size !== "number") {
         throw new TypeError("Argument must be a number");
       }
-      return Buffer3(size);
+      return Buffer4(size);
     };
     SafeBuffer.allocUnsafeSlow = function(size) {
       if (typeof size !== "number") {
@@ -19197,7 +19197,7 @@ var require_content_disposition = __commonJS({
     module2.exports = contentDisposition;
     module2.exports.parse = parse2;
     var basename = require("path").basename;
-    var Buffer3 = require_safe_buffer().Buffer;
+    var Buffer4 = require_safe_buffer().Buffer;
     var ENCODE_URL_ATTR_CHAR_REGEXP = /[\x00-\x20"'()*,/:;<=>?@[\\\]{}\x7f]/g;
     var HEX_ESCAPE_REGEXP = /%[0-9A-Fa-f]{2}/;
     var HEX_ESCAPE_REPLACE_REGEXP = /%([0-9A-Fa-f]{2})/g;
@@ -19276,7 +19276,7 @@ var require_content_disposition = __commonJS({
           value = getlatin1(binary);
           break;
         case "utf-8":
-          value = Buffer3.from(binary, "binary").toString("utf8");
+          value = Buffer4.from(binary, "binary").toString("utf8");
           break;
         default:
           throw new TypeError("unsupported charset in extended field");
@@ -21549,7 +21549,7 @@ var require_proxy_addr = __commonJS({
 var require_utils2 = __commonJS({
   "node_modules/express/lib/utils.js"(exports2) {
     "use strict";
-    var Buffer3 = require_safe_buffer().Buffer;
+    var Buffer4 = require_safe_buffer().Buffer;
     var contentDisposition = require_content_disposition();
     var contentType = require_content_type();
     var deprecate = require_depd()("express");
@@ -21667,7 +21667,7 @@ var require_utils2 = __commonJS({
     };
     function createETagGenerator(options) {
       return function generateETag(body, encoding) {
-        var buf = !Buffer3.isBuffer(body) ? Buffer3.from(body, encoding) : body;
+        var buf = !Buffer4.isBuffer(body) ? Buffer4.from(body, encoding) : body;
         return etag(buf, options);
       };
     }
@@ -22964,7 +22964,7 @@ var require_vary = __commonJS({
 var require_response = __commonJS({
   "node_modules/express/lib/response.js"(exports2, module2) {
     "use strict";
-    var Buffer3 = require_safe_buffer().Buffer;
+    var Buffer4 = require_safe_buffer().Buffer;
     var contentDisposition = require_content_disposition();
     var createError = require_http_errors();
     var deprecate = require_depd()("express");
@@ -23039,7 +23039,7 @@ var require_response = __commonJS({
         case "object":
           if (chunk === null) {
             chunk = "";
-          } else if (Buffer3.isBuffer(chunk)) {
+          } else if (Buffer4.isBuffer(chunk)) {
             if (!this.get("Content-Type")) {
               this.type("bin");
             }
@@ -23059,12 +23059,12 @@ var require_response = __commonJS({
       var generateETag = !this.get("ETag") && typeof etagFn === "function";
       var len;
       if (chunk !== void 0) {
-        if (Buffer3.isBuffer(chunk)) {
+        if (Buffer4.isBuffer(chunk)) {
           len = chunk.length;
         } else if (!generateETag && chunk.length < 1e3) {
-          len = Buffer3.byteLength(chunk, encoding);
+          len = Buffer4.byteLength(chunk, encoding);
         } else {
-          chunk = Buffer3.from(chunk, encoding);
+          chunk = Buffer4.from(chunk, encoding);
           encoding = void 0;
           len = chunk.length;
         }
@@ -23383,7 +23383,7 @@ var require_response = __commonJS({
         }
       });
       this.statusCode = status;
-      this.set("Content-Length", Buffer3.byteLength(body));
+      this.set("Content-Length", Buffer4.byteLength(body));
       if (this.req.method === "HEAD") {
         this.end();
       } else {
@@ -23947,33 +23947,33 @@ var require_safe_buffer2 = __commonJS({
   "node_modules/basic-auth/node_modules/safe-buffer/index.js"(exports2, module2) {
     "use strict";
     var buffer = require("buffer");
-    var Buffer3 = buffer.Buffer;
+    var Buffer4 = buffer.Buffer;
     function copyProps(src, dst) {
       for (var key in src) {
         dst[key] = src[key];
       }
     }
-    if (Buffer3.from && Buffer3.alloc && Buffer3.allocUnsafe && Buffer3.allocUnsafeSlow) {
+    if (Buffer4.from && Buffer4.alloc && Buffer4.allocUnsafe && Buffer4.allocUnsafeSlow) {
       module2.exports = buffer;
     } else {
       copyProps(buffer, exports2);
       exports2.Buffer = SafeBuffer;
     }
     function SafeBuffer(arg, encodingOrOffset, length) {
-      return Buffer3(arg, encodingOrOffset, length);
+      return Buffer4(arg, encodingOrOffset, length);
     }
-    copyProps(Buffer3, SafeBuffer);
+    copyProps(Buffer4, SafeBuffer);
     SafeBuffer.from = function(arg, encodingOrOffset, length) {
       if (typeof arg === "number") {
         throw new TypeError("Argument must not be a number");
       }
-      return Buffer3(arg, encodingOrOffset, length);
+      return Buffer4(arg, encodingOrOffset, length);
     };
     SafeBuffer.alloc = function(size, fill, encoding) {
       if (typeof size !== "number") {
         throw new TypeError("Argument must be a number");
       }
-      var buf = Buffer3(size);
+      var buf = Buffer4(size);
       if (fill !== void 0) {
         if (typeof encoding === "string") {
           buf.fill(fill, encoding);
@@ -23989,7 +23989,7 @@ var require_safe_buffer2 = __commonJS({
       if (typeof size !== "number") {
         throw new TypeError("Argument must be a number");
       }
-      return Buffer3(size);
+      return Buffer4(size);
     };
     SafeBuffer.allocUnsafeSlow = function(size) {
       if (typeof size !== "number") {
@@ -24004,7 +24004,7 @@ var require_safe_buffer2 = __commonJS({
 var require_basic_auth = __commonJS({
   "node_modules/basic-auth/index.js"(exports2, module2) {
     "use strict";
-    var Buffer3 = require_safe_buffer2().Buffer;
+    var Buffer4 = require_safe_buffer2().Buffer;
     module2.exports = auth;
     module2.exports.parse = parse2;
     var CREDENTIALS_REGEXP = /^ *(?:[Bb][Aa][Ss][Ii][Cc]) +([A-Za-z0-9._~+/-]+=*) *$/;
@@ -24020,7 +24020,7 @@ var require_basic_auth = __commonJS({
       return parse2(header);
     }
     function decodeBase64(str) {
-      return Buffer3.from(str, "base64").toString();
+      return Buffer4.from(str, "base64").toString();
     }
     function getAuthorization(req) {
       if (!req.headers || typeof req.headers !== "object") {
@@ -24847,6 +24847,11 @@ var require_morgan = __commonJS({
   }
 });
 
+// src/bundle.ts
+var import_register = require("module-alias/register");
+var import_module_alias = __toESM(require("module-alias"));
+var import_buffer = require("buffer");
+
 // src/app.ts
 var import_express4 = __toESM(require_express2());
 var import_cookie_parser = __toESM(require_cookie_parser());
@@ -24857,12 +24862,12 @@ var import_express = __toESM(require_express2());
 
 // webtask.json
 var name = "auth0";
-var version = "0.1.38";
+var version = "0.1.40";
 var webtask_default = {
   title: "P6m Auth0 Extension",
   name,
   version,
-  preVersion: "0.1.38",
+  preVersion: "0.1.39",
   author: "P6m",
   useHashName: false,
   description: "The P6m Auth0 Extension",
@@ -26425,6 +26430,8 @@ var createApp = (ctx) => {
 };
 
 // src/bundle.ts
+import_module_alias.default.addAlias("node:buffer", "buffer");
+global.Buffer = import_buffer.Buffer;
 if (require.main === module) {
   process.on("unhandledRejection", (reason, promise) => {
     console.warn("Unhandled Rejection at:", promise, "reason:", reason);
