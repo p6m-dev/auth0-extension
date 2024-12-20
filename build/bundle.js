@@ -25,6 +25,163 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   mod
 ));
 
+// node_modules/module-alias/index.js
+var require_module_alias = __commonJS({
+  "node_modules/module-alias/index.js"(exports2, module2) {
+    "use strict";
+    var BuiltinModule = require("module");
+    var Module = module2.constructor.length > 1 ? module2.constructor : BuiltinModule;
+    var nodePath = require("path");
+    var modulePaths = [];
+    var moduleAliases = {};
+    var moduleAliasNames = [];
+    var oldNodeModulePaths = Module._nodeModulePaths;
+    Module._nodeModulePaths = function(from) {
+      var paths = oldNodeModulePaths.call(this, from);
+      if (from.indexOf("node_modules") === -1) {
+        paths = modulePaths.concat(paths);
+      }
+      return paths;
+    };
+    var oldResolveFilename = Module._resolveFilename;
+    Module._resolveFilename = function(request, parentModule, isMain, options) {
+      for (var i = moduleAliasNames.length; i-- > 0; ) {
+        var alias = moduleAliasNames[i];
+        if (isPathMatchesAlias(request, alias)) {
+          var aliasTarget = moduleAliases[alias];
+          if (typeof moduleAliases[alias] === "function") {
+            var fromPath = parentModule.filename;
+            aliasTarget = moduleAliases[alias](fromPath, request, alias);
+            if (!aliasTarget || typeof aliasTarget !== "string") {
+              throw new Error("[module-alias] Expecting custom handler function to return path.");
+            }
+          }
+          request = nodePath.join(aliasTarget, request.substr(alias.length));
+          break;
+        }
+      }
+      return oldResolveFilename.call(this, request, parentModule, isMain, options);
+    };
+    function isPathMatchesAlias(path2, alias) {
+      if (path2.indexOf(alias) === 0) {
+        if (path2.length === alias.length) return true;
+        if (path2[alias.length] === "/") return true;
+      }
+      return false;
+    }
+    function addPathHelper(path2, targetArray) {
+      path2 = nodePath.normalize(path2);
+      if (targetArray && targetArray.indexOf(path2) === -1) {
+        targetArray.unshift(path2);
+      }
+    }
+    function removePathHelper(path2, targetArray) {
+      if (targetArray) {
+        var index = targetArray.indexOf(path2);
+        if (index !== -1) {
+          targetArray.splice(index, 1);
+        }
+      }
+    }
+    function addPath(path2) {
+      var parent;
+      path2 = nodePath.normalize(path2);
+      if (modulePaths.indexOf(path2) === -1) {
+        modulePaths.push(path2);
+        var mainModule = getMainModule();
+        if (mainModule) {
+          addPathHelper(path2, mainModule.paths);
+        }
+        parent = module2.parent;
+        while (parent && parent !== mainModule) {
+          addPathHelper(path2, parent.paths);
+          parent = parent.parent;
+        }
+      }
+    }
+    function addAliases(aliases) {
+      for (var alias in aliases) {
+        addAlias(alias, aliases[alias]);
+      }
+    }
+    function addAlias(alias, target) {
+      moduleAliases[alias] = target;
+      moduleAliasNames = Object.keys(moduleAliases);
+      moduleAliasNames.sort();
+    }
+    function reset() {
+      var mainModule = getMainModule();
+      modulePaths.forEach(function(path2) {
+        if (mainModule) {
+          removePathHelper(path2, mainModule.paths);
+        }
+        Object.getOwnPropertyNames(require.cache).forEach(function(name2) {
+          if (name2.indexOf(path2) !== -1) {
+            delete require.cache[name2];
+          }
+        });
+        var parent = module2.parent;
+        while (parent && parent !== mainModule) {
+          removePathHelper(path2, parent.paths);
+          parent = parent.parent;
+        }
+      });
+      modulePaths = [];
+      moduleAliases = {};
+      moduleAliasNames = [];
+    }
+    function init(options) {
+      if (typeof options === "string") {
+        options = { base: options };
+      }
+      options = options || {};
+      var candidatePackagePaths;
+      if (options.base) {
+        candidatePackagePaths = [nodePath.resolve(options.base.replace(/\/package\.json$/, ""))];
+      } else {
+        candidatePackagePaths = [nodePath.join(__dirname, "../.."), process.cwd()];
+      }
+      var npmPackage;
+      var base;
+      for (var i in candidatePackagePaths) {
+        try {
+          base = candidatePackagePaths[i];
+          npmPackage = require(nodePath.join(base, "package.json"));
+          break;
+        } catch (e) {
+        }
+      }
+      if (typeof npmPackage !== "object") {
+        var pathString = candidatePackagePaths.join(",\n");
+        throw new Error("Unable to find package.json in any of:\n[" + pathString + "]");
+      }
+      var aliases = npmPackage._moduleAliases || {};
+      for (var alias in aliases) {
+        if (aliases[alias][0] !== "/") {
+          aliases[alias] = nodePath.join(base, aliases[alias]);
+        }
+      }
+      addAliases(aliases);
+      if (npmPackage._moduleDirectories instanceof Array) {
+        npmPackage._moduleDirectories.forEach(function(dir) {
+          if (dir === "node_modules") return;
+          var modulePath = nodePath.join(base, dir);
+          addPath(modulePath);
+        });
+      }
+    }
+    function getMainModule() {
+      return require.main._simulateRepl ? void 0 : require.main;
+    }
+    module2.exports = init;
+    module2.exports.addPath = addPath;
+    module2.exports.addAlias = addAlias;
+    module2.exports.addAliases = addAliases;
+    module2.exports.isPathMatchesAlias = isPathMatchesAlias;
+    module2.exports.reset = reset;
+  }
+});
+
 // node_modules/depd/index.js
 var require_depd = __commonJS({
   "node_modules/depd/index.js"(exports2, module2) {
@@ -24847,9 +25004,11 @@ var require_morgan = __commonJS({
   }
 });
 
+// node_modules/module-alias/register.js
+require_module_alias()();
+
 // src/bundle.ts
-var import_register = require("module-alias/register");
-var import_module_alias = __toESM(require("module-alias"));
+var import_module_alias = __toESM(require_module_alias());
 var import_buffer = require("buffer");
 
 // src/app.ts
@@ -24862,12 +25021,12 @@ var import_express = __toESM(require_express2());
 
 // webtask.json
 var name = "auth0";
-var version = "0.1.40";
+var version = "0.1.41";
 var webtask_default = {
   title: "P6m Auth0 Extension",
   name,
   version,
-  preVersion: "0.1.39",
+  preVersion: "0.1.40",
   author: "P6m",
   useHashName: false,
   description: "The P6m Auth0 Extension",
