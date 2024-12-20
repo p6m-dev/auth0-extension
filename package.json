@@ -1,6 +1,6 @@
 {
   "name": "@p6m-dev/auth0-extension",
-  "version": "0.1.40",
+  "version": "0.1.41",
   "description": "P6m Auth0 Extension",
   "main": "build/bundle.js",
   "scripts": {
@@ -41,6 +41,7 @@
     "globals": "^15.13.0",
     "husky": "^9.1.7",
     "jose": "^5.9.6",
+    "module-alias": "^2.2.3",
     "morgan": "^1.10.0",
     "node-fetch": "^3.3.2",
     "prettier": "^3.4.2",
@@ -52,7 +53,5 @@
     "webtask-json-validator": "^4.1.0",
     "webtask-tools": "^3.4.1"
   },
-  "dependencies": {
-    "module-alias": "^2.2.3"
-  }
+  "dependencies": {}
 }
